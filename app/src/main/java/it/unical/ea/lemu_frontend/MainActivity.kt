@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Lemu_FrontEndTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -40,25 +39,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Start(){
-
     val navController = rememberNavController()
-
-    //var isLogoVisible by rememberSaveable { mutableStateOf(true) }
-    //var isArrowVisible by rememberSaveable { mutableStateOf(false) }
+    var isLogoVisible by rememberSaveable { mutableStateOf(true) }
+    var isArrowVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
-
+            BottomAppBarActivity(navController = navController)
         },
-        topBar = { }
+        topBar = {TopAppBarActivity(
+            isLogoVisible = isLogoVisible,
+            isArrowVisible = isArrowVisible,
+            navController = navController
+        )}
     ) { innerPadding ->
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
 
-
             }
-
-
         }
     }
 }
