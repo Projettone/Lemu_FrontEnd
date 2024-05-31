@@ -4,12 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    Start()
                 }
             }
         }
@@ -30,17 +39,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun Start(){
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Lemu_FrontEndTheme {
-        Greeting("Android")
+    val navController = rememberNavController()
+
+    //var isLogoVisible by rememberSaveable { mutableStateOf(true) }
+    //var isArrowVisible by rememberSaveable { mutableStateOf(false) }
+
+    Scaffold(
+        bottomBar = {
+
+        },
+        topBar = { }
+    ) { innerPadding ->
+        NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
+            composable("home") {
+
+
+            }
+
+
+        }
     }
 }
