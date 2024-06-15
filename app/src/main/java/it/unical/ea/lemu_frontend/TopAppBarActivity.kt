@@ -62,8 +62,9 @@ fun TopAppBarActivity(isLogoVisible: Boolean, isArrowVisible: Boolean,navControl
                     painter = painterResource(id = R.drawable.logolemu),
                     contentDescription = null,
                     modifier = Modifier
+                        .height(55.dp)
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .padding(top = 5.dp)
                 )
             }
         }
@@ -79,7 +80,7 @@ fun TopAppBarActivity(isLogoVisible: Boolean, isArrowVisible: Boolean,navControl
                         )
                     )
                 )
-                .padding(start = 5.dp, bottom = 5.dp, end = 10.dp, top = 5.dp ),
+                .padding(start = 10.dp, bottom = 5.dp, end = 10.dp, top = 5.dp ),
             //.padding(horizontal = 16.dp, vertical = 8.dp), // Aggiungi padding interno alla Row
             verticalAlignment = Alignment.CenterVertically, // Allinea verticalmente al centro
             horizontalArrangement = Arrangement.Start // Allinea orizzontalmente all'inizio
