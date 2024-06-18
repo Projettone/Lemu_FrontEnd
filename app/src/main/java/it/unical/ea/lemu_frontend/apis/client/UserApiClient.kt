@@ -58,12 +58,9 @@ fun main() {
             val message = apiResponse.message
             val data = apiResponse.data
 
-            // Stampa il messaggio ricevuto
             println("Messaggio dal server: $message")
 
-            // Esempio di ulteriore elaborazione dei dati ricevuti
             data?.let {
-                // Gestione dei dati (es. aggiornamento dell'interfaccia utente)
             }
         } else {
             val errorMessage = apiResponse.message
