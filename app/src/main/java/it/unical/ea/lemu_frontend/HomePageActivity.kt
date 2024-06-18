@@ -175,9 +175,117 @@ fun HomePageActivity(navController: NavController, productList: List<ProductInfo
                                 }
                             }
                         }
-                        
+                        //immagini categorie "scopri di piu"
+                        LazyRow(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomStart)
+                                .padding(top = 55.dp)
+                        ) {
+                            itemsIndexed(images) { index, imageRes ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillParentMaxWidth()
+                                        .aspectRatio(16 / 9f),
+                                    contentAlignment = Alignment.Center
+
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = imageRes),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier
+                                            .border(width = 2.dp, color = Color.White)
+                                            .padding(5.dp)
+
+
+                                    ){
+                                        Text(text = "Scopri di più"
+                                            , color = Color.White,
+                                            fontSize = 45.sp,
+                                            fontFamily = FontFamily.Serif
+
+                                        )
+                                    }
+                                }
+
+                            }
+                        }
                     }//FINE BOX
                 }//FINE ITEM
+
+                //selezionati per te
+                if(isLogged) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .background(customColor)
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(top = 5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Selezionati per te..",
+                                    modifier = Modifier.padding(start = 6.dp),
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold
+
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(9.dp))
+                            LaunchedEffect(Unit) {
+                                //delay(5000)
+                                while (true) {
+                                    lazyListState2.animateScrollBy(20.dp.value) // Scorrimento di 20dp
+                                    delay(1000)
+                                }
+                            }
+                            LazyRow(
+                                state = lazyListState2,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                            ) {
+                                items(images2) { imageRes ->
+                                    Box(
+                                        modifier = Modifier
+                                            .border(
+                                                0.5.dp,
+                                                LightGrayColor,
+                                                RoundedCornerShape(9.dp)
+                                            )
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(color = Color.White)
+                                            .padding(20.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = imageRes),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(100.dp)
+                                                .aspectRatio(1f),
+                                            contentScale = ContentScale.Fit
+                                        )
+
+
+                                    }
+                                    Spacer(modifier = Modifier.width(16.dp)) 
+                                }
+
+                            }
+                        }
+
+                    }
+                }//fine selezionati per te
 
 
             }// FINE LAZYCOLUM INIZIALE
