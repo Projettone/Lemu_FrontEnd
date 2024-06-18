@@ -1,5 +1,7 @@
 package it.unical.ea.lemu_frontend
 
+import LoginActivity
+import PreviewLoginScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +58,11 @@ fun Start(){
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
                 HomePageActivity(navController = navController, productList = null )
+            }
+            composable("login"){
+                isLogoVisible = true
+                isArrowVisible = true
+                PreviewLoginScreen()
             }
         }
     }

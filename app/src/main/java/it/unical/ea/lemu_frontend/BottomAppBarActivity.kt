@@ -70,7 +70,7 @@ fun BottomAppBarActivity(navController: NavController) {
             selected = selectedIconIndex == 3,
             onClick = {
                 selectedIconIndex = 3
-
+                navController.navigate("login")
             },
             icon = {
                 IconWithIndicator(
