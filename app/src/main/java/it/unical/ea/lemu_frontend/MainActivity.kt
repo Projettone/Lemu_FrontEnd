@@ -40,6 +40,7 @@ fun Start(){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
+    var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
         bottomBar = {
@@ -48,6 +49,7 @@ fun Start(){
         topBar = {TopAppBarActivity(
             isLogoVisible = isLogoVisible,
             isArrowVisible = isArrowVisible,
+            isSearchBarVisible= isSearchBarVisible,
             navController = navController
         )}
     ) { innerPadding ->
