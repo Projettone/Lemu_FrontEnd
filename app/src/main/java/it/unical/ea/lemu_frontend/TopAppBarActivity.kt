@@ -39,7 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun TopAppBarActivity(isLogoVisible: Boolean, isArrowVisible: Boolean,navController: NavController, ) {
+fun TopAppBarActivity(
+    isLogoVisible: Boolean,
+    isArrowVisible: Boolean,
+    navController: NavController,
+    isSearchBarVisible: Boolean, ) {
     var text by remember { mutableStateOf("") }
     val startColor = Color(0xFF0077B6) // Celeste scuro
     val endColor = Color(0xFF83F5F9) // Celeste più chiaro
@@ -49,6 +53,7 @@ fun TopAppBarActivity(isLogoVisible: Boolean, isArrowVisible: Boolean,navControl
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(60.dp)
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(
@@ -68,74 +73,73 @@ fun TopAppBarActivity(isLogoVisible: Boolean, isArrowVisible: Boolean,navControl
                 )
             }
         }
-
-
-        Row(
-            modifier = Modifier
-                .background(
-                    brush = Brush.verticalGradient(
-                        listOf(
-                            endColor, // Colore di inizio
-                            startColor // Colore di fine
-                        )
-                    )
-                )
-                .padding(start = 10.dp, bottom = 5.dp, end = 10.dp, top = 5.dp ),
-            //.padding(horizontal = 16.dp, vertical = 8.dp), // Aggiungi padding interno alla Row
-            verticalAlignment = Alignment.CenterVertically, // Allinea verticalmente al centro
-            horizontalArrangement = Arrangement.Start // Allinea orizzontalmente all'inizio
-        ) {
-            if(isArrowVisible) {
-                IconButton(onClick = {
-                    navController.navigateUp()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back Arrow",
-                        tint = Color.Black,
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(5.dp)) // Aggiungi uno spazio tra l'icona e il TextField
-
-            TextField(
+        if(isSearchBarVisible) {
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(color = Color.White)
-                ,
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = startColor
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                endColor, // Colore di inizio
+                                startColor // Colore di fine
+                            )
+                        )
 
-                ),
-                value = text,
-                onValueChange = { newText ->
-                    text = newText
-                },
-                placeholder = {
-                    Text("Cerca qui...", color = Color.Gray)
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        // Action when search button is pressed on the keyboard
-                        // For example, trigger search functionality
-                    }
-                ),
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search Icon",
-                        tint = Color.Black
                     )
+                    .padding(start = 10.dp, bottom = 5.dp, end = 10.dp, top = 5.dp),
+                verticalAlignment = Alignment.CenterVertically, // Allinea verticalmente al centro
+                horizontalArrangement = Arrangement.Start // Allinea orizzontalmente all'inizio
+            ) {
+                if (isArrowVisible) {
+                    IconButton(onClick = {
+                        navController.navigateUp()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Back Arrow",
+                            tint = Color.Black,
+                        )
+                    }
                 }
-            )
+                Spacer(modifier = Modifier.width(5.dp)) // Aggiungi uno spazio tra l'icona e il TextField
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color = Color.White),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = startColor
+
+                    ),
+                    value = text,
+                    onValueChange = { newText ->
+                        text = newText
+                    },
+                    placeholder = {
+                        Text("Cerca qui...", color = Color.Gray)
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            // Action when search button is pressed on the keyboard
+                            // For example, trigger search functionality
+                        }
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search Icon",
+                            tint = Color.Black
+                        )
+                    }
+                )
+
+            }
         }
     }
 }
