@@ -1,4 +1,4 @@
-package it.unical.ea.lemu_frontend.viewModels
+package it.unical.ea.lemu_frontend.viewmodels
 
 data class ProductInfo(
     val id: Int,
