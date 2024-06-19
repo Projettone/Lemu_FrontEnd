@@ -45,8 +45,12 @@ data class UtenteRegistrazioneDto (
 
 ) {
     companion object {
-        fun validateCredenzialiUsername(username: String): Boolean {
-            return username.isNotEmpty()
+        fun validateCredenzialiNome(nome: String): Boolean {
+            return nome.isNotEmpty()
+        }
+
+        fun validateCredenzialiCognome(cognome: String): Boolean {
+            return cognome.isNotEmpty()
         }
 
         fun validateCredenzialiEmail(email: String): Boolean {
