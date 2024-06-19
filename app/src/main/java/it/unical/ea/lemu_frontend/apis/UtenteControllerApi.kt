@@ -44,7 +44,7 @@ class UtenteControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080/")
         }
     }
 
