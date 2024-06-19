@@ -51,7 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import it.unical.ea.lemu_frontend.viewModels.ProductInfo
+import it.unical.ea.lemu_frontend.viewmodels.ProductInfo
 import kotlinx.coroutines.delay
 
 @Composable
