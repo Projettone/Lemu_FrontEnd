@@ -14,7 +14,9 @@
 )
 
 package org.openapitools.client.apis
-
+//TO DO: per ora le ho commentate perché quelle di google vanno in conflitto
+//import com.google.ai.client.generativeai.common.ServerException
+//import com.google.assistant.appactions.suggestions.client.ClientException
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
@@ -38,7 +40,7 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class UtenteControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
@@ -59,7 +61,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun authenticate(email: kotlin.String, password: kotlin.String) : Unit {
+    fun authenticate(email: String, password: String) : Unit {
         val localVarResponse = authenticateWithHttpInfo(email = email, password = password)
 
         return when (localVarResponse.responseType) {
@@ -87,7 +89,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun authenticateWithHttpInfo(email: kotlin.String, password: kotlin.String) : ApiResponse<Unit?> {
+    fun authenticateWithHttpInfo(email: String, password: String) : ApiResponse<Unit?> {
         val localVariableConfig = authenticateRequestConfig(email = email, password = password)
 
         return request<Unit, Unit>(
@@ -102,9 +104,9 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
      * @param password
      * @return RequestConfig
      */
-    fun authenticateRequestConfig(email: kotlin.String, password: kotlin.String) : RequestConfig<Unit> {
+    fun authenticateRequestConfig(email: String, password: String) : RequestConfig<Unit> {
         val localVariableBody = null
-        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
             .apply {
                 put("email", listOf(email.toString()))
                 put("password", listOf(password.toString()))
@@ -193,6 +195,6 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
 
-    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
+    private fun encodeURIComponent(uriComponent: String): String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }
