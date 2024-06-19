@@ -1,10 +1,11 @@
 package it.unical.ea.lemu_frontend
 
 import LoginActivity
-import PreviewLoginScreen
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +63,7 @@ fun Start(){
             composable("login"){
                 isLogoVisible = true
                 isArrowVisible = true
-                PreviewLoginScreen()
+                LoginActivity()
             }
         }
     }
