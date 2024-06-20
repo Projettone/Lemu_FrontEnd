@@ -22,18 +22,22 @@ import com.squareup.moshi.JsonClass
 /**
  *
  *
- * @param credenzialiPassword
- * @param credenzialiEmail
+ * @param success
+ * @param message
+ * @param `data`
  */
 
 
-data class UtenteLoginDto (
+data class ApiResponseString (
 
-    @Json(name = "credenzialiPassword")
-    val credenzialiPassword: String,
+    @Json(name = "success")
+    val success: kotlin.Boolean? = null,
 
-    @Json(name = "credenzialiEmail")
-    val credenzialiEmail: String? = null
+    @Json(name = "message")
+    val message: kotlin.String? = null,
+
+    @Json(name = "data")
+    val `data`: kotlin.String? = null
 
 )
 

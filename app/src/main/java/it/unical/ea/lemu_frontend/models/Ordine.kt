@@ -15,9 +15,12 @@
 
 package org.openapitools.client.models
 
+import org.openapitools.client.models.Indirizzo
 import it.unical.ea.lemu_frontend.models.OrdineProdotto
+import org.openapitools.client.models.Utente
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 /**
  *

@@ -22,18 +22,26 @@ import com.squareup.moshi.JsonClass
 /**
  *
  *
- * @param credenzialiPassword
+ * @param nome
+ * @param cognome
  * @param credenzialiEmail
+ * @param credenzialiPassword
  */
 
 
-data class UtenteLoginDto (
+data class UtenteRegistrazioneDto (
 
-    @Json(name = "credenzialiPassword")
-    val credenzialiPassword: String,
+    @Json(name = "nome")
+    val nome: String? = null,
+
+    @Json(name = "cognome")
+    val cognome: String? = null,
 
     @Json(name = "credenzialiEmail")
-    val credenzialiEmail: String? = null
+    val credenzialiEmail: String? = null,
+
+    @Json(name = "credenzialiPassword")
+    val credenzialiPassword: String? = null
 
 )
 

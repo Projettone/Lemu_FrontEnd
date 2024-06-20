@@ -13,12 +13,13 @@
     "UnusedImport"
 )
 
-package it.unical.ea.lemu_frontend.models
+package org.openapitools.client.models
 
 import org.openapitools.client.models.Ordine
 import org.openapitools.client.models.Prodotto
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
 /**
  *
