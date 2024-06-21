@@ -19,7 +19,7 @@ import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
-import org.openapitools.client.models.WishlistDto
+import org.openapitools.client.models.CarrelloDto
 
 import com.squareup.moshi.Json
 
@@ -37,7 +37,7 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
@@ -48,8 +48,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @param wishlistDto
-     * @return WishlistDto
+     * @param carrelloDto
+     * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -58,11 +58,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun createWishlist(wishlistDto: WishlistDto) : WishlistDto {
-        val localVarResponse = createWishlistWithHttpInfo(wishlistDto = wishlistDto)
+    fun createCarrello(carrelloDto: CarrelloDto) : CarrelloDto {
+        val localVarResponse = createCarrelloWithHttpInfo(carrelloDto = carrelloDto)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CarrelloDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -79,36 +79,36 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @param wishlistDto
-     * @return ApiResponse<WishlistDto?>
+     * @param carrelloDto
+     * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun createWishlistWithHttpInfo(wishlistDto: WishlistDto) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = createWishlistRequestConfig(wishlistDto = wishlistDto)
+    fun createCarrelloWithHttpInfo(carrelloDto: CarrelloDto) : ApiResponse<CarrelloDto?> {
+        val localVariableConfig = createCarrelloRequestConfig(carrelloDto = carrelloDto)
 
-        return request<WishlistDto, WishlistDto>(
+        return request<CarrelloDto, CarrelloDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation createWishlist
+     * To obtain the request config of the operation createCarrello
      *
-     * @param wishlistDto
+     * @param carrelloDto
      * @return RequestConfig
      */
-    fun createWishlistRequestConfig(wishlistDto: WishlistDto) : RequestConfig<WishlistDto> {
-        val localVariableBody = wishlistDto
+    fun createCarrelloRequestConfig(carrelloDto: CarrelloDto) : RequestConfig<CarrelloDto> {
+        val localVariableBody = carrelloDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
 
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/wishlists",
+            path = "/api/carrello",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -128,8 +128,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun deleteWishlist(id: Long) : Unit {
-        val localVarResponse = deleteWishlistWithHttpInfo(id = id)
+    fun deleteCarrello(id: Long) : Unit {
+        val localVarResponse = deleteCarrelloWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
             ResponseType.Success -> Unit
@@ -155,8 +155,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun deleteWishlistWithHttpInfo(id: Long) : ApiResponse<Unit?> {
-        val localVariableConfig = deleteWishlistRequestConfig(id = id)
+    fun deleteCarrelloWithHttpInfo(id: Long) : ApiResponse<Unit?> {
+        val localVariableConfig = deleteCarrelloRequestConfig(id = id)
 
         return request<Unit, Unit>(
             localVariableConfig
@@ -164,19 +164,19 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     * To obtain the request config of the operation deleteWishlist
+     * To obtain the request config of the operation deleteCarrello
      *
      * @param id
      * @return RequestConfig
      */
-    fun deleteWishlistRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun deleteCarrelloRequestConfig(id: Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.DELETE,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -187,7 +187,7 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @return kotlin.collections.List<WishlistDto>
+     * @return kotlin.collections.List<CarrelloDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -196,11 +196,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getAllWishlists() : List<WishlistDto> {
-        val localVarResponse = getAllWishlistsWithHttpInfo()
+    fun getAllCarrelli() : List<CarrelloDto> {
+        val localVarResponse = getAllCarrelliWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<WishlistDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as List<CarrelloDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -217,33 +217,33 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @return ApiResponse<kotlin.collections.List<WishlistDto>?>
+     * @return ApiResponse<kotlin.collections.List<CarrelloDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getAllWishlistsWithHttpInfo() : ApiResponse<List<WishlistDto>?> {
-        val localVariableConfig = getAllWishlistsRequestConfig()
+    fun getAllCarrelliWithHttpInfo() : ApiResponse<List<CarrelloDto>?> {
+        val localVariableConfig = getAllCarrelliRequestConfig()
 
-        return request<Unit, List<WishlistDto>>(
+        return request<Unit, List<CarrelloDto>>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation getAllWishlists
+     * To obtain the request config of the operation getAllCarrelli
      *
      * @return RequestConfig
      */
-    fun getAllWishlistsRequestConfig() : RequestConfig<Unit> {
+    fun getAllCarrelliRequestConfig() : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/wishlists",
+            path = "/api/carrello",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -255,7 +255,7 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @return WishlistDto
+     * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -264,11 +264,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getWishlistById(id: Long) : WishlistDto {
-        val localVarResponse = getWishlistByIdWithHttpInfo(id = id)
+    fun getCarrelloById(id: Long) : CarrelloDto {
+        val localVarResponse = getCarrelloByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CarrelloDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -286,34 +286,34 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @return ApiResponse<WishlistDto?>
+     * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getWishlistByIdWithHttpInfo(id: Long) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = getWishlistByIdRequestConfig(id = id)
+    fun getCarrelloByIdWithHttpInfo(id: Long) : ApiResponse<CarrelloDto?> {
+        val localVariableConfig = getCarrelloByIdRequestConfig(id = id)
 
-        return request<Unit, WishlistDto>(
+        return request<Unit, CarrelloDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation getWishlistById
+     * To obtain the request config of the operation getCarrelloById
      *
      * @param id
      * @return RequestConfig
      */
-    fun getWishlistByIdRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun getCarrelloByIdRequestConfig(id: Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -325,8 +325,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @param wishlistDto
-     * @return WishlistDto
+     * @param carrelloDto
+     * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -335,11 +335,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun updateWishlist(id: Long, wishlistDto: WishlistDto) : WishlistDto {
-        val localVarResponse = updateWishlistWithHttpInfo(id = id, wishlistDto = wishlistDto)
+    fun updateCarrello(id: Long, carrelloDto: CarrelloDto) : CarrelloDto {
+        val localVarResponse = updateCarrelloWithHttpInfo(id = id, carrelloDto = carrelloDto)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CarrelloDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -357,37 +357,37 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @param wishlistDto
-     * @return ApiResponse<WishlistDto?>
+     * @param carrelloDto
+     * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun updateWishlistWithHttpInfo(id: Long, wishlistDto: WishlistDto) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = updateWishlistRequestConfig(id = id, wishlistDto = wishlistDto)
+    fun updateCarrelloWithHttpInfo(id: Long, carrelloDto: CarrelloDto) : ApiResponse<CarrelloDto?> {
+        val localVariableConfig = updateCarrelloRequestConfig(id = id, carrelloDto = carrelloDto)
 
-        return request<WishlistDto, WishlistDto>(
+        return request<CarrelloDto, CarrelloDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation updateWishlist
+     * To obtain the request config of the operation updateCarrello
      *
      * @param id
-     * @param wishlistDto
+     * @param carrelloDto
      * @return RequestConfig
      */
-    fun updateWishlistRequestConfig(id: Long, wishlistDto: WishlistDto) : RequestConfig<WishlistDto> {
-        val localVariableBody = wishlistDto
+    fun updateCarrelloRequestConfig(id: Long, carrelloDto: CarrelloDto) : RequestConfig<CarrelloDto> {
+        val localVariableBody = carrelloDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
 
         return RequestConfig(
             method = RequestMethod.PUT,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

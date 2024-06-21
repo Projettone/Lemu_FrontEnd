@@ -19,7 +19,7 @@ import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
-import org.openapitools.client.models.WishlistDto
+import org.openapitools.client.models.WishlistProdottiDto
 
 import com.squareup.moshi.Json
 
@@ -37,7 +37,7 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class WishlistProdottiControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
@@ -48,8 +48,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @param wishlistDto
-     * @return WishlistDto
+     * @param wishlistProdottiDto
+     * @return WishlistProdottiDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -58,11 +58,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun createWishlist(wishlistDto: WishlistDto) : WishlistDto {
-        val localVarResponse = createWishlistWithHttpInfo(wishlistDto = wishlistDto)
+    fun createWishlistProdotti(wishlistProdottiDto: WishlistProdottiDto) : WishlistProdottiDto {
+        val localVarResponse = createWishlistProdottiWithHttpInfo(wishlistProdottiDto = wishlistProdottiDto)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistProdottiDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -79,36 +79,36 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @param wishlistDto
-     * @return ApiResponse<WishlistDto?>
+     * @param wishlistProdottiDto
+     * @return ApiResponse<WishlistProdottiDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun createWishlistWithHttpInfo(wishlistDto: WishlistDto) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = createWishlistRequestConfig(wishlistDto = wishlistDto)
+    fun createWishlistProdottiWithHttpInfo(wishlistProdottiDto: WishlistProdottiDto) : ApiResponse<WishlistProdottiDto?> {
+        val localVariableConfig = createWishlistProdottiRequestConfig(wishlistProdottiDto = wishlistProdottiDto)
 
-        return request<WishlistDto, WishlistDto>(
+        return request<WishlistProdottiDto, WishlistProdottiDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation createWishlist
+     * To obtain the request config of the operation createWishlistProdotti
      *
-     * @param wishlistDto
+     * @param wishlistProdottiDto
      * @return RequestConfig
      */
-    fun createWishlistRequestConfig(wishlistDto: WishlistDto) : RequestConfig<WishlistDto> {
-        val localVariableBody = wishlistDto
+    fun createWishlistProdottiRequestConfig(wishlistProdottiDto: WishlistProdottiDto) : RequestConfig<WishlistProdottiDto> {
+        val localVariableBody = wishlistProdottiDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
 
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/wishlists",
+            path = "/api/wishlistProdotti",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -128,8 +128,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun deleteWishlist(id: Long) : Unit {
-        val localVarResponse = deleteWishlistWithHttpInfo(id = id)
+    fun deleteWishlistProdotti(id: Long) : Unit {
+        val localVarResponse = deleteWishlistProdottiWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
             ResponseType.Success -> Unit
@@ -155,8 +155,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun deleteWishlistWithHttpInfo(id: Long) : ApiResponse<Unit?> {
-        val localVariableConfig = deleteWishlistRequestConfig(id = id)
+    fun deleteWishlistProdottiWithHttpInfo(id: Long) : ApiResponse<Unit?> {
+        val localVariableConfig = deleteWishlistProdottiRequestConfig(id = id)
 
         return request<Unit, Unit>(
             localVariableConfig
@@ -164,19 +164,19 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     * To obtain the request config of the operation deleteWishlist
+     * To obtain the request config of the operation deleteWishlistProdotti
      *
      * @param id
      * @return RequestConfig
      */
-    fun deleteWishlistRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun deleteWishlistProdottiRequestConfig(id: Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.DELETE,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/wishlistProdotti/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -187,7 +187,7 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @return kotlin.collections.List<WishlistDto>
+     * @return kotlin.collections.List<WishlistProdottiDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -196,11 +196,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getAllWishlists() : List<WishlistDto> {
-        val localVarResponse = getAllWishlistsWithHttpInfo()
+    fun getAllWishlistProdotti() : List<WishlistProdottiDto> {
+        val localVarResponse = getAllWishlistProdottiWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<WishlistDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as List<WishlistProdottiDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -217,33 +217,33 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      *
      *
-     * @return ApiResponse<kotlin.collections.List<WishlistDto>?>
+     * @return ApiResponse<kotlin.collections.List<WishlistProdottiDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getAllWishlistsWithHttpInfo() : ApiResponse<List<WishlistDto>?> {
-        val localVariableConfig = getAllWishlistsRequestConfig()
+    fun getAllWishlistProdottiWithHttpInfo() : ApiResponse<List<WishlistProdottiDto>?> {
+        val localVariableConfig = getAllWishlistProdottiRequestConfig()
 
-        return request<Unit, List<WishlistDto>>(
+        return request<Unit, List<WishlistProdottiDto>>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation getAllWishlists
+     * To obtain the request config of the operation getAllWishlistProdotti
      *
      * @return RequestConfig
      */
-    fun getAllWishlistsRequestConfig() : RequestConfig<Unit> {
+    fun getAllWishlistProdottiRequestConfig() : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/wishlists",
+            path = "/api/wishlistProdotti",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -255,7 +255,7 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @return WishlistDto
+     * @return WishlistProdottiDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -264,11 +264,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getWishlistById(id: Long) : WishlistDto {
-        val localVarResponse = getWishlistByIdWithHttpInfo(id = id)
+    fun getWishlistProdottiById(id: Long) : WishlistProdottiDto {
+        val localVarResponse = getWishlistProdottiByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistProdottiDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -286,34 +286,34 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @return ApiResponse<WishlistDto?>
+     * @return ApiResponse<WishlistProdottiDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getWishlistByIdWithHttpInfo(id: Long) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = getWishlistByIdRequestConfig(id = id)
+    fun getWishlistProdottiByIdWithHttpInfo(id: Long) : ApiResponse<WishlistProdottiDto?> {
+        val localVariableConfig = getWishlistProdottiByIdRequestConfig(id = id)
 
-        return request<Unit, WishlistDto>(
+        return request<Unit, WishlistProdottiDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation getWishlistById
+     * To obtain the request config of the operation getWishlistProdottiById
      *
      * @param id
      * @return RequestConfig
      */
-    fun getWishlistByIdRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun getWishlistProdottiByIdRequestConfig(id: Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/wishlistProdotti/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -325,8 +325,8 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @param wishlistDto
-     * @return WishlistDto
+     * @param wishlistProdottiDto
+     * @return WishlistProdottiDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -335,11 +335,11 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun updateWishlist(id: Long, wishlistDto: WishlistDto) : WishlistDto {
-        val localVarResponse = updateWishlistWithHttpInfo(id = id, wishlistDto = wishlistDto)
+    fun updateWishlistProdotti(id: Long, wishlistProdottiDto: WishlistProdottiDto) : WishlistProdottiDto {
+        val localVarResponse = updateWishlistProdottiWithHttpInfo(id = id, wishlistProdottiDto = wishlistProdottiDto)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as WishlistProdottiDto
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -357,37 +357,37 @@ class WishlistControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      *
      *
      * @param id
-     * @param wishlistDto
-     * @return ApiResponse<WishlistDto?>
+     * @param wishlistProdottiDto
+     * @return ApiResponse<WishlistProdottiDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun updateWishlistWithHttpInfo(id: Long, wishlistDto: WishlistDto) : ApiResponse<WishlistDto?> {
-        val localVariableConfig = updateWishlistRequestConfig(id = id, wishlistDto = wishlistDto)
+    fun updateWishlistProdottiWithHttpInfo(id: Long, wishlistProdottiDto: WishlistProdottiDto) : ApiResponse<WishlistProdottiDto?> {
+        val localVariableConfig = updateWishlistProdottiRequestConfig(id = id, wishlistProdottiDto = wishlistProdottiDto)
 
-        return request<WishlistDto, WishlistDto>(
+        return request<WishlistProdottiDto, WishlistProdottiDto>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation updateWishlist
+     * To obtain the request config of the operation updateWishlistProdotti
      *
      * @param id
-     * @param wishlistDto
+     * @param wishlistProdottiDto
      * @return RequestConfig
      */
-    fun updateWishlistRequestConfig(id: Long, wishlistDto: WishlistDto) : RequestConfig<WishlistDto> {
-        val localVariableBody = wishlistDto
+    fun updateWishlistProdottiRequestConfig(id: Long, wishlistProdottiDto: WishlistProdottiDto) : RequestConfig<WishlistProdottiDto> {
+        val localVariableBody = wishlistProdottiDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
 
         return RequestConfig(
             method = RequestMethod.PUT,
-            path = "/api/wishlists/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/api/wishlistProdotti/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
