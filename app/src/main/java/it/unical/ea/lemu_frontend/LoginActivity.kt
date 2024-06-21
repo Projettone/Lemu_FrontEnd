@@ -13,13 +13,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import it.unical.ea.lemu_frontend.R
-import it.unical.ea.lemu_frontend.models.UtenteLoginDto
+import org.openapitools.client.models.UtenteLoginDto
 import it.unical.ea.lemu_frontend.ui.theme.endColor
 import it.unical.ea.lemu_frontend.ui.theme.startColor
 import it.unical.ea.lemu_frontend.viewmodels.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.openapitools.client.models.UtenteRegistrazioneDto
 
 
 @Composable
@@ -79,7 +80,31 @@ fun LoginActivity() {
                             credenzialiPassword = password
                         )
 
+                        val regDto = UtenteRegistrazioneDto(
+                            credenzialiEmail = email,
+                            credenzialiPassword = password,
+                            nome = "fra",
+                            cognome = "ca"
+                        )
 
+                        loginViewModel.registerUser(regDto) { apiResponse ->
+                            if (apiResponse.success) {
+                                val message = apiResponse.message
+                                val data = apiResponse.data
+
+                                println("Messaggio dal server: $message")
+                                println("Messaggio dal server: data $data")
+
+                                data?.let {
+                                    // Gestione del caso di successo
+                                }
+                            } else {
+                                val errorMessage = apiResponse.data
+                                println("Errore dal server: $errorMessage")
+                            }
+                        }
+
+                        /*
                         loginViewModel.loginUser(utente) { apiResponse ->
                             if (apiResponse.success) {
                                 val message = apiResponse.message
@@ -96,6 +121,8 @@ fun LoginActivity() {
                                 println("Errore dal server: $errorMessage")
                             }
                         }
+
+                         */
                     }
                 }
             },

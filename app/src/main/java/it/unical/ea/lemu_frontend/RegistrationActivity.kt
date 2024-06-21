@@ -10,8 +10,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.internal.NoOpContinuation.context
-import kotlin.coroutines.jvm.internal.CompletedContinuation.context
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> Unit) {
@@ -20,6 +20,8 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confermaPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
 
     Column(
         modifier = Modifier
@@ -105,9 +107,9 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (isValidInput(nome, cognome, email, password, confermaPassword)) {
-                        onRegisterClicked(nome, cognome, email, password)
-                    }
+                    //if (isValidInput(nome, cognome, email, password, confermaPassword)) {
+                      //  onRegisterClicked(nome, cognome, email, password)
+                    //}
                 }
             )
         )
