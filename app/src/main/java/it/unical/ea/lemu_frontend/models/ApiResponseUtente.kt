@@ -32,10 +32,10 @@ import com.squareup.moshi.JsonClass
 data class ApiResponseUtente (
 
     @Json(name = "success")
-    val success: Boolean? = null,
+    var success: Boolean? = null,
 
     @Json(name = "message")
-    val message: String? = null,
+    var message: String? = null,
 
     @Json(name = "data")
     val `data`: Utente? = null

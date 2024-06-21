@@ -75,54 +75,9 @@ fun LoginActivity() {
                 } else {
                     println("Credenziali: $email $password")
                     coroutineScope.launch {
-                        val utente = UtenteLoginDto(
-                            credenzialiEmail = email,
-                            credenzialiPassword = password
-                        )
 
-                        val regDto = UtenteRegistrazioneDto(
-                            credenzialiEmail = email,
-                            credenzialiPassword = password,
-                            nome = "fra",
-                            cognome = "ca"
-                        )
+                        loginViewModel.login(email, password)
 
-                        loginViewModel.registerUser(regDto) { apiResponse ->
-                            if (apiResponse.success) {
-                                val message = apiResponse.message
-                                val data = apiResponse.data
-
-                                println("Messaggio dal server: $message")
-                                println("Messaggio dal server: data $data")
-
-                                data?.let {
-                                    // Gestione del caso di successo
-                                }
-                            } else {
-                                val errorMessage = apiResponse.data
-                                println("Errore dal server: $errorMessage")
-                            }
-                        }
-
-                        /*
-                        loginViewModel.loginUser(utente) { apiResponse ->
-                            if (apiResponse.success) {
-                                val message = apiResponse.message
-                                val data = apiResponse.data
-
-                                println("Messaggio dal server: $message")
-                                println("Messaggio dal server: data $data")
-
-                                data?.let {
-                                    // Gestione del caso di successo
-                                }
-                            } else {
-                                val errorMessage = apiResponse.data
-                                println("Errore dal server: $errorMessage")
-                            }
-                        }
-
-                         */
                     }
                 }
             },
