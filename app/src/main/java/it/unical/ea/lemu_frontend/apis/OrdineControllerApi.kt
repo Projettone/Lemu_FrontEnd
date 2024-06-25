@@ -36,20 +36,20 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class OrdineControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
         }
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @param body
-     * @return String
+     * 
+     * 
+     * @param jwt 
+     * @param body 
+     * @return kotlin.Any
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -58,11 +58,11 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun add1(jwt: String, body: Any) : String {
+    fun add1(jwt: kotlin.String, body: kotlin.Any) : kotlin.Any {
         val localVarResponse = add1WithHttpInfo(jwt = jwt, body = body)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as String
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -77,20 +77,20 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @param body
-     * @return ApiResponse<String?>
+     * 
+     * 
+     * @param jwt 
+     * @param body 
+     * @return ApiResponse<kotlin.Any?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun add1WithHttpInfo(jwt: String, body: Any) : ApiResponse<String?> {
+    fun add1WithHttpInfo(jwt: kotlin.String, body: kotlin.Any) : ApiResponse<kotlin.Any?> {
         val localVariableConfig = add1RequestConfig(jwt = jwt, body = body)
 
-        return request<Any, String>(
+        return request<kotlin.Any, kotlin.Any>(
             localVariableConfig
         )
     }
@@ -98,22 +98,22 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     /**
      * To obtain the request config of the operation add1
      *
-     * @param jwt
-     * @param body
+     * @param jwt 
+     * @param body 
      * @return RequestConfig
      */
-    fun add1RequestConfig(jwt: String, body: Any) : RequestConfig<Any> {
+    fun add1RequestConfig(jwt: kotlin.String, body: kotlin.Any) : RequestConfig<kotlin.Any> {
         val localVariableBody = body
-        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
                 put("jwt", listOf(jwt.toString()))
             }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/ordini/ordine",
+            path = "/ordinecontroller-api/add",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -122,10 +122,10 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @return collections.List<Any>
+     * 
+     * 
+     * @param id 
+     * @return kotlin.collections.List<kotlin.Any>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -134,11 +134,11 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun findbyUser(jwt: String) : List<Any> {
-        val localVarResponse = findbyUserWithHttpInfo(jwt = jwt)
+    fun findbyUser(id: kotlin.Long) : kotlin.collections.List<kotlin.Any> {
+        val localVarResponse = findbyUserWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<Any>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<kotlin.Any>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -153,19 +153,19 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @return ApiResponse<List<Any>?>
+     * 
+     * 
+     * @param id 
+     * @return ApiResponse<kotlin.collections.List<kotlin.Any>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun findbyUserWithHttpInfo(jwt: String) : ApiResponse<List<Any>?> {
-        val localVariableConfig = findbyUserRequestConfig(jwt = jwt)
+    fun findbyUserWithHttpInfo(id: kotlin.Long) : ApiResponse<kotlin.collections.List<kotlin.Any>?> {
+        val localVariableConfig = findbyUserRequestConfig(id = id)
 
-        return request<Unit, List<Any>>(
+        return request<Unit, kotlin.collections.List<kotlin.Any>>(
             localVariableConfig
         )
     }
@@ -173,20 +173,17 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     /**
      * To obtain the request config of the operation findbyUser
      *
-     * @param jwt
+     * @param id 
      * @return RequestConfig
      */
-    fun findbyUserRequestConfig(jwt: String) : RequestConfig<Unit> {
+    fun findbyUserRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
-        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
-            .apply {
-                put("jwt", listOf(jwt.toString()))
-            }
+        val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/ordini/ordine",
+            path = "/ordinecontroller-api/all/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -195,10 +192,10 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
     /**
-     *
-     *
-     * @param orderId
-     * @return Any
+     * 
+     * 
+     * @param orderId 
+     * @return kotlin.Any
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -207,11 +204,11 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getById1(orderId: Long) : Any {
+    fun getById1(orderId: kotlin.Long) : kotlin.Any {
         val localVarResponse = getById1WithHttpInfo(orderId = orderId)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as Any
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -226,19 +223,19 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
     /**
-     *
-     *
-     * @param orderId
-     * @return ApiResponse<Any?>
+     * 
+     * 
+     * @param orderId 
+     * @return ApiResponse<kotlin.Any?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getById1WithHttpInfo(orderId: Long) : ApiResponse<Any?> {
+    fun getById1WithHttpInfo(orderId: kotlin.Long) : ApiResponse<kotlin.Any?> {
         val localVariableConfig = getById1RequestConfig(orderId = orderId)
 
-        return request<Unit, Any>(
+        return request<Unit, kotlin.Any>(
             localVariableConfig
         )
     }
@@ -246,17 +243,17 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     /**
      * To obtain the request config of the operation getById1
      *
-     * @param orderId
+     * @param orderId 
      * @return RequestConfig
      */
-    fun getById1RequestConfig(orderId: Long) : RequestConfig<Unit> {
+    fun getById1RequestConfig(orderId: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/ordini/ordine/{orderId}".replace("{"+"orderId"+"}", encodeURIComponent(orderId.toString())),
+            path = "/ordinecontroller-api/ordine/{orderId}".replace("{"+"orderId"+"}", encodeURIComponent(orderId.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -265,6 +262,6 @@ class OrdineControllerApi(basePath: String = defaultBasePath, client: OkHttpClie
     }
 
 
-    private fun encodeURIComponent(uriComponent: String): String =
+    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }

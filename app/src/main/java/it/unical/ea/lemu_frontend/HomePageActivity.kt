@@ -1,5 +1,5 @@
 package it.unical.ea.lemu_frontend
-
+/*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -431,4 +431,4 @@ fun HomePageActivity(navController: NavController, productList: List<ProductInfo
 }
 
 
-
+ */

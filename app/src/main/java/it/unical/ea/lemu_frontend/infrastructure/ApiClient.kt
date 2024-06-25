@@ -28,7 +28,7 @@ import java.time.OffsetTime
 import java.util.Locale
 import com.squareup.moshi.adapter
 
-val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
+ val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
 
 open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClient) {
     companion object {
@@ -80,7 +80,7 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
                         (content as Map<String, PartConfig<*>>).forEach { (name, part) ->
                             if (part.body is File) {
                                 val partHeaders = part.headers.toMutableMap() +
-                                        ("Content-Disposition" to "form-data; name=\"$name\"; filename=\"${part.body.name}\"")
+                                    ("Content-Disposition" to "form-data; name=\"$name\"; filename=\"${part.body.name}\"")
                                 val fileMediaType = guessContentTypeFromFile(part.body).toMediaTypeOrNull()
                                 addPart(
                                     partHeaders.toHeaders(),
@@ -88,7 +88,7 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
                                 )
                             } else {
                                 val partHeaders = part.headers.toMutableMap() +
-                                        ("Content-Disposition" to "form-data; name=\"$name\"")
+                                    ("Content-Disposition" to "form-data; name=\"$name\"")
                                 addPart(
                                     partHeaders.toHeaders(),
                                     parameterToString(part.body).toRequestBody(null)
@@ -174,7 +174,7 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
         val headers = requestConfig.headers
 
         if (headers[Accept].isNullOrEmpty()) {
-            throw IllegalStateException("Missing Accept header. This is required.")
+            throw kotlin.IllegalStateException("Missing Accept header. This is required.")
         }
 
         val contentType = if (headers[ContentType] != null) {

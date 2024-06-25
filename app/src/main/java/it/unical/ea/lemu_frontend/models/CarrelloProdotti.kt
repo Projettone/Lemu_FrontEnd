@@ -22,19 +22,19 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param carrello
- * @param prodotto
- * @param quantita
+ * @param id 
+ * @param carrello 
+ * @param prodotto 
+ * @param quantita 
  */
 
 
 data class CarrelloProdotti (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "carrello")
     val carrello: Carrello? = null,
@@ -43,7 +43,7 @@ data class CarrelloProdotti (
     val prodotto: Prodotto? = null,
 
     @Json(name = "quantita")
-    val quantita: Int? = null
+    val quantita: kotlin.Int? = null
 
 )
 

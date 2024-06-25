@@ -20,24 +20,24 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param nome
- * @param immagine
+ * @param id 
+ * @param nome 
+ * @param immagine 
  */
 
 
 data class CategoriaDto (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "nome")
-    val nome: String? = null,
+    val nome: kotlin.String? = null,
 
     @Json(name = "immagine")
-    val immagine: String? = null
+    val immagine: kotlin.String? = null
 
 )
 

@@ -20,24 +20,36 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param utenteId
- * @param prodotti
+ * @param id 
+ * @param utenteId 
+ * @param prodotti 
+ * @param nome 
+ * @param tipo 
+ * @param condivisiCon 
  */
 
 
 data class WishlistDto (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "utenteId")
-    val utenteId: Long? = null,
+    val utenteId: kotlin.Long? = null,
 
     @Json(name = "prodotti")
-    val prodotti: List<Long>? = null
+    val prodotti: kotlin.collections.List<kotlin.Long>? = null,
+
+    @Json(name = "nome")
+    val nome: kotlin.String? = null,
+
+    @Json(name = "tipo")
+    val tipo: kotlin.String? = null,
+
+    @Json(name = "condivisiCon")
+    val condivisiCon: kotlin.collections.List<kotlin.String>? = null
 
 )
 

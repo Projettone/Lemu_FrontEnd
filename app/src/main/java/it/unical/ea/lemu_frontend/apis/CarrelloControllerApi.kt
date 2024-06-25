@@ -37,18 +37,18 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class CarrelloControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
         }
     }
 
     /**
-     *
-     *
-     * @param carrelloDto
+     * 
+     * 
+     * @param carrelloDto 
      * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -77,9 +77,9 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param carrelloDto
+     * 
+     * 
+     * @param carrelloDto 
      * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -97,7 +97,7 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation createCarrello
      *
-     * @param carrelloDto
+     * @param carrelloDto 
      * @return RequestConfig
      */
     fun createCarrelloRequestConfig(carrelloDto: CarrelloDto) : RequestConfig<CarrelloDto> {
@@ -105,10 +105,10 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/carrello",
+            path = "/carrello-api/add",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -117,9 +117,9 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -128,7 +128,7 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun deleteCarrello(id: Long) : Unit {
+    fun deleteCarrello(id: kotlin.Long) : Unit {
         val localVarResponse = deleteCarrelloWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
@@ -147,15 +147,15 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun deleteCarrelloWithHttpInfo(id: Long) : ApiResponse<Unit?> {
+    fun deleteCarrelloWithHttpInfo(id: kotlin.Long) : ApiResponse<Unit?> {
         val localVariableConfig = deleteCarrelloRequestConfig(id = id)
 
         return request<Unit, Unit>(
@@ -166,17 +166,17 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation deleteCarrello
      *
-     * @param id
+     * @param id 
      * @return RequestConfig
      */
-    fun deleteCarrelloRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun deleteCarrelloRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.DELETE,
-            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/carrello-api/delete/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -185,76 +185,9 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @return kotlin.collections.List<CarrelloDto>
-     * @throws IllegalStateException If the request is not correctly configured
-     * @throws IOException Rethrows the OkHttp execute method exception
-     * @throws UnsupportedOperationException If the API returns an informational or redirection response
-     * @throws ClientException If the API returns a client error response
-     * @throws ServerException If the API returns a server error response
-     */
-    @Suppress("UNCHECKED_CAST")
-    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getAllCarrelli() : List<CarrelloDto> {
-        val localVarResponse = getAllCarrelliWithHttpInfo()
-
-        return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<CarrelloDto>
-            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
-            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
-            ResponseType.ClientError -> {
-                val localVarError = localVarResponse as ClientError<*>
-                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
-            }
-            ResponseType.ServerError -> {
-                val localVarError = localVarResponse as ServerError<*>
-                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
-            }
-        }
-    }
-
-    /**
-     *
-     *
-     * @return ApiResponse<kotlin.collections.List<CarrelloDto>?>
-     * @throws IllegalStateException If the request is not correctly configured
-     * @throws IOException Rethrows the OkHttp execute method exception
-     */
-    @Suppress("UNCHECKED_CAST")
-    @Throws(IllegalStateException::class, IOException::class)
-    fun getAllCarrelliWithHttpInfo() : ApiResponse<List<CarrelloDto>?> {
-        val localVariableConfig = getAllCarrelliRequestConfig()
-
-        return request<Unit, List<CarrelloDto>>(
-            localVariableConfig
-        )
-    }
-
-    /**
-     * To obtain the request config of the operation getAllCarrelli
-     *
-     * @return RequestConfig
-     */
-    fun getAllCarrelliRequestConfig() : RequestConfig<Unit> {
-        val localVariableBody = null
-        val localVariableQuery: MultiValueMap = mutableMapOf()
-        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
-        return RequestConfig(
-            method = RequestMethod.GET,
-            path = "/api/carrello",
-            query = localVariableQuery,
-            headers = localVariableHeaders,
-            requiresAuthentication = false,
-            body = localVariableBody
-        )
-    }
-
-    /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -264,7 +197,7 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getCarrelloById(id: Long) : CarrelloDto {
+    fun getCarrelloById(id: kotlin.Long) : CarrelloDto {
         val localVarResponse = getCarrelloByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
@@ -283,16 +216,16 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getCarrelloByIdWithHttpInfo(id: Long) : ApiResponse<CarrelloDto?> {
+    fun getCarrelloByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<CarrelloDto?> {
         val localVariableConfig = getCarrelloByIdRequestConfig(id = id)
 
         return request<Unit, CarrelloDto>(
@@ -303,17 +236,17 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation getCarrelloById
      *
-     * @param id
+     * @param id 
      * @return RequestConfig
      */
-    fun getCarrelloByIdRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun getCarrelloByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/carrello-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -322,10 +255,10 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param id
-     * @param carrelloDto
+     * 
+     * 
+     * @param id 
+     * @param carrelloDto 
      * @return CarrelloDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -335,7 +268,7 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun updateCarrello(id: Long, carrelloDto: CarrelloDto) : CarrelloDto {
+    fun updateCarrello(id: kotlin.Long, carrelloDto: CarrelloDto) : CarrelloDto {
         val localVarResponse = updateCarrelloWithHttpInfo(id = id, carrelloDto = carrelloDto)
 
         return when (localVarResponse.responseType) {
@@ -354,17 +287,17 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param id
-     * @param carrelloDto
+     * 
+     * 
+     * @param id 
+     * @param carrelloDto 
      * @return ApiResponse<CarrelloDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun updateCarrelloWithHttpInfo(id: Long, carrelloDto: CarrelloDto) : ApiResponse<CarrelloDto?> {
+    fun updateCarrelloWithHttpInfo(id: kotlin.Long, carrelloDto: CarrelloDto) : ApiResponse<CarrelloDto?> {
         val localVariableConfig = updateCarrelloRequestConfig(id = id, carrelloDto = carrelloDto)
 
         return request<CarrelloDto, CarrelloDto>(
@@ -375,19 +308,19 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation updateCarrello
      *
-     * @param id
-     * @param carrelloDto
+     * @param id 
+     * @param carrelloDto 
      * @return RequestConfig
      */
-    fun updateCarrelloRequestConfig(id: Long, carrelloDto: CarrelloDto) : RequestConfig<CarrelloDto> {
+    fun updateCarrelloRequestConfig(id: kotlin.Long, carrelloDto: CarrelloDto) : RequestConfig<CarrelloDto> {
         val localVariableBody = carrelloDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.PUT,
-            path = "/api/carrello/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/carrello-api/update/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -396,6 +329,6 @@ class CarrelloControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
 
-    private fun encodeURIComponent(uriComponent: String): String =
+    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }

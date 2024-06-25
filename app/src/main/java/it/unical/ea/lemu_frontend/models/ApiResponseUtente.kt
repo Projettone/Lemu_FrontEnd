@@ -21,21 +21,21 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param success
- * @param message
- * @param `data`
+ * @param success 
+ * @param message 
+ * @param `data` 
  */
 
 
 data class ApiResponseUtente (
 
     @Json(name = "success")
-    var success: Boolean? = null,
+    val success: kotlin.Boolean? = null,
 
     @Json(name = "message")
-    var message: String? = null,
+    val message: kotlin.String? = null,
 
     @Json(name = "data")
     val `data`: Utente? = null

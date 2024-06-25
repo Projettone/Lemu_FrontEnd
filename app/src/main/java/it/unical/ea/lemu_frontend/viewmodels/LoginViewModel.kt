@@ -1,7 +1,6 @@
 package it.unical.ea.lemu_frontend.viewmodels
 
 import android.util.Log
-import it.unical.ea.lemu_frontend.apis.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient

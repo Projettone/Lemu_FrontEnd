@@ -20,24 +20,24 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param via
- * @param numeroCivico
- * @param citta
+ * @param via 
+ * @param numeroCivico 
+ * @param citta 
  */
 
 
 data class Indirizzo (
 
     @Json(name = "via")
-    val via: String? = null,
+    val via: kotlin.String? = null,
 
     @Json(name = "numeroCivico")
-    val numeroCivico: Int? = null,
+    val numeroCivico: kotlin.Int? = null,
 
     @Json(name = "citta")
-    val citta: String? = null
+    val citta: kotlin.String? = null
 
 )
 

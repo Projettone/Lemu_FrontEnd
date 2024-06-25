@@ -22,20 +22,20 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param nome
- * @param descrizione
- * @param prezzo
- * @param venduti
- * @param categoria
- * @param immagineProdotto
- * @param valutazione
- * @param numeroRecensioni
- * @param recensione
- * @param utente
- * @param disponibilita
+ * @param id 
+ * @param nome 
+ * @param descrizione 
+ * @param prezzo 
+ * @param venduti 
+ * @param categoria 
+ * @param immagineProdotto 
+ * @param valutazione 
+ * @param numeroRecensioni 
+ * @param recensione 
+ * @param utente 
+ * @param disponibilita 
  */
 
 

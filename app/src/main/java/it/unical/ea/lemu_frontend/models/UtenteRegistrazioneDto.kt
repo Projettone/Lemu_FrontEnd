@@ -20,28 +20,28 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param nome
- * @param cognome
- * @param credenzialiEmail
- * @param credenzialiPassword
+ * @param nome 
+ * @param cognome 
+ * @param credenzialiEmail 
+ * @param credenzialiPassword 
  */
 
 
 data class UtenteRegistrazioneDto (
 
     @Json(name = "nome")
-    val nome: String? = null,
+    val nome: kotlin.String? = null,
 
     @Json(name = "cognome")
-    val cognome: String? = null,
+    val cognome: kotlin.String? = null,
 
     @Json(name = "credenzialiEmail")
-    val credenzialiEmail: String? = null,
+    val credenzialiEmail: kotlin.String? = null,
 
     @Json(name = "credenzialiPassword")
-    val credenzialiPassword: String? = null
+    val credenzialiPassword: kotlin.String? = null
 
 )
 

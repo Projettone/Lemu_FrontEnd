@@ -22,19 +22,19 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param ordine
- * @param prodotto
- * @param quantita
+ * @param id 
+ * @param ordine 
+ * @param prodotto 
+ * @param quantita 
  */
 
 
 data class OrdineProdotto (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "ordine")
     val ordine: Ordine? = null,
@@ -43,7 +43,7 @@ data class OrdineProdotto (
     val prodotto: Prodotto? = null,
 
     @Json(name = "quantita")
-    val quantita: Int? = null
+    val quantita: kotlin.Int? = null
 
 )
 

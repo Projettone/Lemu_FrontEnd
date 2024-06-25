@@ -44,15 +44,15 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
         }
     }
 
     /**
-     *
-     *
-     * @param email
-     * @param password
+     * 
+     * 
+     * @param email 
+     * @param password 
      * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -80,10 +80,10 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
     /**
-     *
-     *
-     * @param email
-     * @param password
+     * 
+     * 
+     * @param email 
+     * @param password 
      * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -100,8 +100,8 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     /**
      * To obtain the request config of the operation authenticate
      *
-     * @param email
-     * @param password
+     * @param email 
+     * @param password 
      * @return RequestConfig
      */
     fun authenticateRequestConfig(email: kotlin.String, password: kotlin.String) : RequestConfig<Unit> {
@@ -112,7 +112,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
                 put("password", listOf(password.toString()))
             }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/api/v1/authenticate",
@@ -124,9 +124,9 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
     /**
-     *
-     *
-     * @param utenteLoginDto
+     * 
+     * 
+     * @param utenteLoginDto 
      * @return ApiResponseString
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -155,9 +155,9 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
     /**
-     *
-     *
-     * @param utenteLoginDto
+     * 
+     * 
+     * @param utenteLoginDto 
      * @return ApiResponse<ApiResponseString?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -175,7 +175,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     /**
      * To obtain the request config of the operation login
      *
-     * @param utenteLoginDto
+     * @param utenteLoginDto 
      * @return RequestConfig
      */
     fun loginRequestConfig(utenteLoginDto: UtenteLoginDto) : RequestConfig<UtenteLoginDto> {
@@ -183,7 +183,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/api/v1/login",
@@ -195,9 +195,9 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
     /**
-     *
-     *
-     * @param utenteRegistrazioneDto
+     * 
+     * 
+     * @param utenteRegistrazioneDto 
      * @return ApiResponseUtente
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -226,9 +226,9 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     }
 
     /**
-     *
-     *
-     * @param utenteRegistrazioneDto
+     * 
+     * 
+     * @param utenteRegistrazioneDto 
      * @return ApiResponse<ApiResponseUtente?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -246,7 +246,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
     /**
      * To obtain the request config of the operation register
      *
-     * @param utenteRegistrazioneDto
+     * @param utenteRegistrazioneDto 
      * @return RequestConfig
      */
     fun registerRequestConfig(utenteRegistrazioneDto: UtenteRegistrazioneDto) : RequestConfig<UtenteRegistrazioneDto> {
@@ -254,7 +254,7 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/api/v1/register",

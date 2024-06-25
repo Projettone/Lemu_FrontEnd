@@ -58,7 +58,7 @@ fun Start(){
     ) { innerPadding ->
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
-                HomePageActivity(navController = navController, productList = null )
+                //HomePageActivity(navController = navController, productList = null )
             }
             composable("login"){
                 isLogoVisible = true

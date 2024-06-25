@@ -37,19 +37,19 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.10:8080")
         }
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @param prodottoDto
+     * 
+     * 
+     * @param jwt 
+     * @param prodottoDto 
      * @return ProdottoDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -59,7 +59,7 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun add(jwt: String, prodottoDto: ProdottoDto) : ProdottoDto {
+    fun add(jwt: kotlin.String, prodottoDto: ProdottoDto) : ProdottoDto {
         val localVarResponse = addWithHttpInfo(jwt = jwt, prodottoDto = prodottoDto)
 
         return when (localVarResponse.responseType) {
@@ -78,17 +78,17 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param jwt
-     * @param prodottoDto
+     * 
+     * 
+     * @param jwt 
+     * @param prodottoDto 
      * @return ApiResponse<ProdottoDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun addWithHttpInfo(jwt: String, prodottoDto: ProdottoDto) : ApiResponse<ProdottoDto?> {
+    fun addWithHttpInfo(jwt: kotlin.String, prodottoDto: ProdottoDto) : ApiResponse<ProdottoDto?> {
         val localVariableConfig = addRequestConfig(jwt = jwt, prodottoDto = prodottoDto)
 
         return request<ProdottoDto, ProdottoDto>(
@@ -99,22 +99,22 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation add
      *
-     * @param jwt
-     * @param prodottoDto
+     * @param jwt 
+     * @param prodottoDto 
      * @return RequestConfig
      */
-    fun addRequestConfig(jwt: String, prodottoDto: ProdottoDto) : RequestConfig<ProdottoDto> {
+    fun addRequestConfig(jwt: kotlin.String, prodottoDto: ProdottoDto) : RequestConfig<ProdottoDto> {
         val localVariableBody = prodottoDto
-        val localVariableQuery: MultiValueMap = mutableMapOf<String, List<String>>()
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
                 put("jwt", listOf(jwt.toString()))
             }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/prodotti/prodotti",
+            path = "/prodottocontroller-api/add",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -123,8 +123,8 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return kotlin.collections.List<ProdottoDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -134,11 +134,11 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun findAll() : List<ProdottoDto> {
+    fun findAll() : kotlin.collections.List<ProdottoDto> {
         val localVarResponse = findAllWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<ProdottoDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<ProdottoDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -153,18 +153,18 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return ApiResponse<kotlin.collections.List<ProdottoDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun findAllWithHttpInfo() : ApiResponse<List<ProdottoDto>?> {
+    fun findAllWithHttpInfo() : ApiResponse<kotlin.collections.List<ProdottoDto>?> {
         val localVariableConfig = findAllRequestConfig()
 
-        return request<Unit, List<ProdottoDto>>(
+        return request<Unit, kotlin.collections.List<ProdottoDto>>(
             localVariableConfig
         )
     }
@@ -178,10 +178,10 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/prodotti/prodotti",
+            path = "/prodottocontroller-api/all",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -190,9 +190,9 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param idItem
+     * 
+     * 
+     * @param id 
      * @return ProdottoDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -202,8 +202,8 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getById(idItem: Long) : ProdottoDto {
-        val localVarResponse = getByIdWithHttpInfo(idItem = idItem)
+    fun getById(id: kotlin.Long) : ProdottoDto {
+        val localVarResponse = getByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
             ResponseType.Success -> (localVarResponse as Success<*>).data as ProdottoDto
@@ -221,17 +221,17 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
     /**
-     *
-     *
-     * @param idItem
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<ProdottoDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getByIdWithHttpInfo(idItem: Long) : ApiResponse<ProdottoDto?> {
-        val localVariableConfig = getByIdRequestConfig(idItem = idItem)
+    fun getByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<ProdottoDto?> {
+        val localVariableConfig = getByIdRequestConfig(id = id)
 
         return request<Unit, ProdottoDto>(
             localVariableConfig
@@ -241,17 +241,17 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     /**
      * To obtain the request config of the operation getById
      *
-     * @param idItem
+     * @param id 
      * @return RequestConfig
      */
-    fun getByIdRequestConfig(idItem: Long) : RequestConfig<Unit> {
+    fun getByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/prodotti/prodotti/{idItem}".replace("{"+"idItem"+"}", encodeURIComponent(idItem.toString())),
+            path = "/prodottocontroller-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -260,6 +260,6 @@ class ProdottoControllerApi(basePath: String = defaultBasePath, client: OkHttpCl
     }
 
 
-    private fun encodeURIComponent(uriComponent: String): String =
+    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }

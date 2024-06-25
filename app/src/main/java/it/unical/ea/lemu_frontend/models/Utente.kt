@@ -26,42 +26,42 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param nome
- * @param cognome
- * @param isAdmin
- * @param bannato
- * @param immagineProfilo
- * @param indirizzo
- * @param credenziali
- * @param carrello
- * @param wishlist
- * @param recensione
- * @param ordini
+ * @param id 
+ * @param nome 
+ * @param cognome 
+ * @param isAdmin 
+ * @param bannato 
+ * @param immagineProfilo 
+ * @param indirizzo 
+ * @param credenziali 
+ * @param carrello 
+ * @param wishlist 
+ * @param recensione 
+ * @param ordini 
  */
 
 
 data class Utente (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "nome")
-    val nome: String? = null,
+    val nome: kotlin.String? = null,
 
     @Json(name = "cognome")
-    val cognome: String? = null,
+    val cognome: kotlin.String? = null,
 
     @Json(name = "isAdmin")
-    val isAdmin: Boolean? = null,
+    val isAdmin: kotlin.Boolean? = null,
 
     @Json(name = "bannato")
-    val bannato: Boolean? = null,
+    val bannato: kotlin.Boolean? = null,
 
     @Json(name = "immagineProfilo")
-    val immagineProfilo: String? = null,
+    val immagineProfilo: kotlin.String? = null,
 
     @Json(name = "indirizzo")
     val indirizzo: Indirizzo? = null,
@@ -76,10 +76,10 @@ data class Utente (
     val wishlist: Wishlist? = null,
 
     @Json(name = "recensione")
-    val recensione: List<Recensione>? = null,
+    val recensione: kotlin.collections.List<Recensione>? = null,
 
     @Json(name = "ordini")
-    val ordini: List<Ordine>? = null
+    val ordini: kotlin.collections.List<Ordine>? = null
 
 )
 

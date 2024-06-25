@@ -23,21 +23,21 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param indirizzo
- * @param utente
- * @param dataAcquisto
- * @param prezzoTotaleOrdine
- * @param ordineProdotti
+ * @param id 
+ * @param indirizzo 
+ * @param utente 
+ * @param dataAcquisto 
+ * @param prezzoTotaleOrdine 
+ * @param ordineProdotti 
  */
 
 
 data class Ordine (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "indirizzo")
     val indirizzo: Indirizzo? = null,
@@ -49,10 +49,10 @@ data class Ordine (
     val dataAcquisto: java.time.LocalDate? = null,
 
     @Json(name = "prezzoTotaleOrdine")
-    val prezzoTotaleOrdine: Double? = null,
+    val prezzoTotaleOrdine: kotlin.Double? = null,
 
     @Json(name = "ordineProdotti")
-    val ordineProdotti: List<OrdineProdotto>? = null
+    val ordineProdotti: kotlin.collections.List<OrdineProdotto>? = null
 
 )
 

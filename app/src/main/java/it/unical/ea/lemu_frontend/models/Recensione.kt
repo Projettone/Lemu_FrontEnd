@@ -22,26 +22,26 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param rating
- * @param commento
- * @param prodotto
- * @param autore
+ * @param id 
+ * @param rating 
+ * @param commento 
+ * @param prodotto 
+ * @param autore 
  */
 
 
 data class Recensione (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "rating")
-    val rating: Float? = null,
+    val rating: kotlin.Float? = null,
 
     @Json(name = "commento")
-    val commento: String? = null,
+    val commento: kotlin.String? = null,
 
     @Json(name = "prodotto")
     val prodotto: Prodotto? = null,

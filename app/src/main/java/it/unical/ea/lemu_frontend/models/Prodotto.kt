@@ -22,52 +22,52 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param nome
- * @param descrizione
- * @param prezzo
- * @param venduti
- * @param categoria
- * @param immagineProdotto
- * @param recensione
- * @param utente
- * @param disponibilita
+ * @param id 
+ * @param nome 
+ * @param descrizione 
+ * @param prezzo 
+ * @param venduti 
+ * @param categoria 
+ * @param immagineProdotto 
+ * @param recensione 
+ * @param utente 
+ * @param disponibilita 
  */
 
 
 data class Prodotto (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "nome")
-    val nome: String? = null,
+    val nome: kotlin.String? = null,
 
     @Json(name = "descrizione")
-    val descrizione: String? = null,
+    val descrizione: kotlin.String? = null,
 
     @Json(name = "prezzo")
-    val prezzo: Float? = null,
+    val prezzo: kotlin.Float? = null,
 
     @Json(name = "venduti")
-    val venduti: Int? = null,
+    val venduti: kotlin.Int? = null,
 
     @Json(name = "categoria")
-    val categoria: String? = null,
+    val categoria: kotlin.String? = null,
 
     @Json(name = "immagineProdotto")
-    val immagineProdotto: String? = null,
+    val immagineProdotto: kotlin.String? = null,
 
     @Json(name = "recensione")
-    val recensione: List<Recensione>? = null,
+    val recensione: kotlin.collections.List<Recensione>? = null,
 
     @Json(name = "utente")
     val utente: Utente? = null,
 
     @Json(name = "disponibilita")
-    val disponibilita: Boolean? = null
+    val disponibilita: kotlin.Boolean? = null
 
 )
 

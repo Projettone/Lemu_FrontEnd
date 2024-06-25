@@ -16,30 +16,43 @@
 package org.openapitools.client.models
 
 import org.openapitools.client.models.Utente
+import org.openapitools.client.models.WishlistCondivisione
 import org.openapitools.client.models.WishlistProdotti
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param utente
- * @param wishlistProdotti
+ * @param id 
+ * @param utente 
+ * @param wishlistProdotti 
+ * @param nome 
+ * @param tipo 
+ * @param wishlistCondivisione 
  */
 
 
 data class Wishlist (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "utente")
     val utente: Utente? = null,
 
     @Json(name = "wishlistProdotti")
-    val wishlistProdotti: List<WishlistProdotti>? = null
+    val wishlistProdotti: kotlin.collections.List<WishlistProdotti>? = null,
+
+    @Json(name = "nome")
+    val nome: kotlin.String? = null,
+
+    @Json(name = "tipo")
+    val tipo: kotlin.String? = null,
+
+    @Json(name = "wishlistCondivisione")
+    val wishlistCondivisione: kotlin.collections.List<WishlistCondivisione>? = null
 
 )
 

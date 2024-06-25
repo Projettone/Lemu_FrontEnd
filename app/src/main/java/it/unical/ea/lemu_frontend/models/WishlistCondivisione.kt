@@ -21,24 +21,24 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param wishlist
- * @param email
+ * @param id 
+ * @param wishlist 
+ * @param email 
  */
 
 
 data class WishlistCondivisione (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "wishlist")
     val wishlist: Wishlist? = null,
 
     @Json(name = "email")
-    val email: String? = null
+    val email: kotlin.String? = null
 
 )
 

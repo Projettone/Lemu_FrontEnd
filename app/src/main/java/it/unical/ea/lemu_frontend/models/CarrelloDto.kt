@@ -20,24 +20,24 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param id
- * @param utenteId
- * @param prodotti
+ * @param id 
+ * @param utenteId 
+ * @param prodotti 
  */
 
 
 data class CarrelloDto (
 
     @Json(name = "id")
-    val id: Long? = null,
+    val id: kotlin.Long? = null,
 
     @Json(name = "utenteId")
-    val utenteId: Long? = null,
+    val utenteId: kotlin.Long? = null,
 
     @Json(name = "prodotti")
-    val prodotti: List<Long>? = null
+    val prodotti: kotlin.collections.List<kotlin.Long>? = null
 
 )
 

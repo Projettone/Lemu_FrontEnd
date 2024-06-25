@@ -20,11 +20,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * 
  *
- *
- * @param success
- * @param message
- * @param `data`
+ * @param success 
+ * @param message 
+ * @param `data` 
  */
 
 

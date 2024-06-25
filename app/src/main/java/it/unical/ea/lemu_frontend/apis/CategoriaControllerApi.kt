@@ -37,17 +37,17 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class CategoriaControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
         }
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return kotlin.collections.List<CategoriaDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -57,11 +57,11 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getAllCategorie() : List<CategoriaDto> {
+    fun getAllCategorie() : kotlin.collections.List<CategoriaDto> {
         val localVarResponse = getAllCategorieWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<CategoriaDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<CategoriaDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -76,18 +76,18 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return ApiResponse<kotlin.collections.List<CategoriaDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getAllCategorieWithHttpInfo() : ApiResponse<List<CategoriaDto>?> {
+    fun getAllCategorieWithHttpInfo() : ApiResponse<kotlin.collections.List<CategoriaDto>?> {
         val localVariableConfig = getAllCategorieRequestConfig()
 
-        return request<Unit, List<CategoriaDto>>(
+        return request<Unit, kotlin.collections.List<CategoriaDto>>(
             localVariableConfig
         )
     }
@@ -101,10 +101,10 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/categoria",
+            path = "/categoria-api/all",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -113,9 +113,9 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return CategoriaDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -125,7 +125,7 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getCategoriaById(id: Long) : CategoriaDto {
+    fun getCategoriaById(id: kotlin.Long) : CategoriaDto {
         val localVarResponse = getCategoriaByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
@@ -144,16 +144,16 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<CategoriaDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getCategoriaByIdWithHttpInfo(id: Long) : ApiResponse<CategoriaDto?> {
+    fun getCategoriaByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<CategoriaDto?> {
         val localVariableConfig = getCategoriaByIdRequestConfig(id = id)
 
         return request<Unit, CategoriaDto>(
@@ -164,17 +164,17 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
     /**
      * To obtain the request config of the operation getCategoriaById
      *
-     * @param id
+     * @param id 
      * @return RequestConfig
      */
-    fun getCategoriaByIdRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun getCategoriaByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/categoria/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/categoria-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -183,6 +183,6 @@ class CategoriaControllerApi(basePath: String = defaultBasePath, client: OkHttpC
     }
 
 
-    private fun encodeURIComponent(uriComponent: String): String =
+    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }

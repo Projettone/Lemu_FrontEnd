@@ -37,18 +37,18 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class WishlistCondivisioneControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://10.0.2.2:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://localhost:8080")
         }
     }
 
     /**
-     *
-     *
-     * @param wishlistCondivisioneDto
+     * 
+     * 
+     * @param wishlistCondivisioneDto 
      * @return WishlistCondivisioneDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -77,9 +77,9 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param wishlistCondivisioneDto
+     * 
+     * 
+     * @param wishlistCondivisioneDto 
      * @return ApiResponse<WishlistCondivisioneDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -97,7 +97,7 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     /**
      * To obtain the request config of the operation createEmailCondivisione
      *
-     * @param wishlistCondivisioneDto
+     * @param wishlistCondivisioneDto 
      * @return RequestConfig
      */
     fun createEmailCondivisioneRequestConfig(wishlistCondivisioneDto: WishlistCondivisioneDto) : RequestConfig<WishlistCondivisioneDto> {
@@ -105,10 +105,10 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/api/emailCondivisioni",
+            path = "/wishlistcondivisione-api/add",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -117,9 +117,9 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -128,7 +128,7 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun deleteWishlistCondivisione(id: Long) : Unit {
+    fun deleteWishlistCondivisione(id: kotlin.Long) : Unit {
         val localVarResponse = deleteWishlistCondivisioneWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
@@ -147,15 +147,15 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun deleteWishlistCondivisioneWithHttpInfo(id: Long) : ApiResponse<Unit?> {
+    fun deleteWishlistCondivisioneWithHttpInfo(id: kotlin.Long) : ApiResponse<Unit?> {
         val localVariableConfig = deleteWishlistCondivisioneRequestConfig(id = id)
 
         return request<Unit, Unit>(
@@ -166,17 +166,17 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     /**
      * To obtain the request config of the operation deleteWishlistCondivisione
      *
-     * @param id
+     * @param id 
      * @return RequestConfig
      */
-    fun deleteWishlistCondivisioneRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun deleteWishlistCondivisioneRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.DELETE,
-            path = "/api/emailCondivisioni/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/wishlistcondivisione-api/delete/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -185,8 +185,8 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return kotlin.collections.List<WishlistCondivisioneDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -196,11 +196,11 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getAllWishlistCondivisioni() : List<WishlistCondivisioneDto> {
+    fun getAllWishlistCondivisioni() : kotlin.collections.List<WishlistCondivisioneDto> {
         val localVarResponse = getAllWishlistCondivisioniWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as List<WishlistCondivisioneDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<WishlistCondivisioneDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -215,18 +215,18 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return ApiResponse<kotlin.collections.List<WishlistCondivisioneDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getAllWishlistCondivisioniWithHttpInfo() : ApiResponse<List<WishlistCondivisioneDto>?> {
+    fun getAllWishlistCondivisioniWithHttpInfo() : ApiResponse<kotlin.collections.List<WishlistCondivisioneDto>?> {
         val localVariableConfig = getAllWishlistCondivisioniRequestConfig()
 
-        return request<Unit, List<WishlistCondivisioneDto>>(
+        return request<Unit, kotlin.collections.List<WishlistCondivisioneDto>>(
             localVariableConfig
         )
     }
@@ -240,10 +240,10 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/emailCondivisioni",
+            path = "/wishlistcondivisione-api/all",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -252,9 +252,9 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return WishlistCondivisioneDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -264,7 +264,7 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getWishlistCondivisioneById(id: Long) : WishlistCondivisioneDto {
+    fun getWishlistCondivisioneById(id: kotlin.Long) : WishlistCondivisioneDto {
         val localVarResponse = getWishlistCondivisioneByIdWithHttpInfo(id = id)
 
         return when (localVarResponse.responseType) {
@@ -283,16 +283,16 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
+     * 
+     * 
+     * @param id 
      * @return ApiResponse<WishlistCondivisioneDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getWishlistCondivisioneByIdWithHttpInfo(id: Long) : ApiResponse<WishlistCondivisioneDto?> {
+    fun getWishlistCondivisioneByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<WishlistCondivisioneDto?> {
         val localVariableConfig = getWishlistCondivisioneByIdRequestConfig(id = id)
 
         return request<Unit, WishlistCondivisioneDto>(
@@ -303,17 +303,17 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     /**
      * To obtain the request config of the operation getWishlistCondivisioneById
      *
-     * @param id
+     * @param id 
      * @return RequestConfig
      */
-    fun getWishlistCondivisioneByIdRequestConfig(id: Long) : RequestConfig<Unit> {
+    fun getWishlistCondivisioneByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/api/emailCondivisioni/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/wishlistcondivisione-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -322,10 +322,10 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
-     * @param wishlistCondivisioneDto
+     * 
+     * 
+     * @param id 
+     * @param wishlistCondivisioneDto 
      * @return WishlistCondivisioneDto
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -335,7 +335,7 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun updateWishlistCondivisione(id: Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : WishlistCondivisioneDto {
+    fun updateWishlistCondivisione(id: kotlin.Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : WishlistCondivisioneDto {
         val localVarResponse = updateWishlistCondivisioneWithHttpInfo(id = id, wishlistCondivisioneDto = wishlistCondivisioneDto)
 
         return when (localVarResponse.responseType) {
@@ -354,17 +354,17 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
     /**
-     *
-     *
-     * @param id
-     * @param wishlistCondivisioneDto
+     * 
+     * 
+     * @param id 
+     * @param wishlistCondivisioneDto 
      * @return ApiResponse<WishlistCondivisioneDto?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun updateWishlistCondivisioneWithHttpInfo(id: Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : ApiResponse<WishlistCondivisioneDto?> {
+    fun updateWishlistCondivisioneWithHttpInfo(id: kotlin.Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : ApiResponse<WishlistCondivisioneDto?> {
         val localVariableConfig = updateWishlistCondivisioneRequestConfig(id = id, wishlistCondivisioneDto = wishlistCondivisioneDto)
 
         return request<WishlistCondivisioneDto, WishlistCondivisioneDto>(
@@ -375,19 +375,19 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     /**
      * To obtain the request config of the operation updateWishlistCondivisione
      *
-     * @param id
-     * @param wishlistCondivisioneDto
+     * @param id 
+     * @param wishlistCondivisioneDto 
      * @return RequestConfig
      */
-    fun updateWishlistCondivisioneRequestConfig(id: Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : RequestConfig<WishlistCondivisioneDto> {
+    fun updateWishlistCondivisioneRequestConfig(id: kotlin.Long, wishlistCondivisioneDto: WishlistCondivisioneDto) : RequestConfig<WishlistCondivisioneDto> {
         val localVariableBody = wishlistCondivisioneDto
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-
+        
         return RequestConfig(
             method = RequestMethod.PUT,
-            path = "/api/emailCondivisioni/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/wishlistcondivisione-api/update/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -396,6 +396,6 @@ class WishlistCondivisioneControllerApi(basePath: String = defaultBasePath, clie
     }
 
 
-    private fun encodeURIComponent(uriComponent: String): String =
+    private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]
 }
