@@ -1,10 +1,15 @@
 package it.unical.ea.lemu_frontend
 
 import LoginActivity
+import RegistrationActivity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,17 +26,28 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        authViewModel = AuthViewModel(this)
+        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            authViewModel.handleSignInResult(result.resultCode, result.data)
+        }
+
         setContent {
             Lemu_FrontEndTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Start()
+                    Start(authViewModel, signInLauncher)
                 }
             }
         }
@@ -39,7 +55,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Start(){
+fun Start( authViewModel: AuthViewModel,
+           signInLauncher: ActivityResultLauncher<Intent>){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
@@ -63,7 +80,13 @@ fun Start(){
             composable("login"){
                 isLogoVisible = true
                 isArrowVisible = true
-                LoginActivity()
+                LoginActivity(navController = navController,
+                    authViewModel = authViewModel,
+                    signInLauncher = signInLauncher)
+            }
+            composable("registration") {
+                RegistrationActivity(navController = navController,
+                    authViewModel = authViewModel)
             }
         }
     }

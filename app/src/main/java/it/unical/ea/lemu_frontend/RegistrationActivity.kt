@@ -11,16 +11,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import it.unical.ea.lemu_frontend.ui.theme.endColor
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
-fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> Unit) {
-    var nome by remember { mutableStateOf("") }
-    var cognome by remember { mutableStateOf("") }
+fun RegistrationActivity(navController: NavController, authViewModel: AuthViewModel) {
+    var name by remember { mutableStateOf("") }
+    var surname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confermaPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val coroutineScope = CoroutineScope(Dispatchers.IO)
+    //val authViewModel = AuthViewModel()
 
 
     Column(
@@ -31,9 +41,9 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = nome,
-            onValueChange = { nome = it },
-            label = { Text("Nome") },
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("name") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -47,9 +57,9 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
         )
 
         OutlinedTextField(
-            value = cognome,
-            onValueChange = { cognome = it },
-            label = { Text("Cognome") },
+            value = surname,
+            onValueChange = { surname = it },
+            label = { Text("surname") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -95,8 +105,8 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
         )
 
         OutlinedTextField(
-            value = confermaPassword,
-            onValueChange = { confermaPassword = it },
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
             label = { Text("Conferma Password") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -107,8 +117,8 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    //if (isValidInput(nome, cognome, email, password, confermaPassword)) {
-                      //  onRegisterClicked(nome, cognome, email, password)
+                    //if (isValidInput(name, surname, email, password, confirmPassword)) {
+                      //  onRegisterClicked(name, surname, email, password)
                     //}
                 }
             )
@@ -118,15 +128,38 @@ fun RegistrationActivity(onRegisterClicked: (String, String, String, String) -> 
 
         Button(
             onClick = {
-                if (email.isBlank() || password.isBlank()) {
-                    Toast.makeText(context, "Inserisci email e password", Toast.LENGTH_SHORT).show()
-                } else{
+                if (name.isBlank() || surname.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+                    Toast.makeText(context, "Inserisci tutti i dati", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+                if(password != confirmPassword){
+                    Toast.makeText(context, "Le password non coincidono", Toast.LENGTH_SHORT).show()
+                }else{
+                    coroutineScope.launch {
+                        try {
+                            val response = authViewModel.register(name, surname, email, password)
+                            withContext(Dispatchers.Main) {
+                                if (response == true) {
+                                    Toast.makeText(context, "Registrazione avvenuta con successo", Toast.LENGTH_SHORT).show()
+                                     navController.navigate("home")
+                                } else {
+                                    Toast.makeText(context, "Errore durante la registrazione, controlla le credenziali e riprova", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Errore durante la registrazione", Toast.LENGTH_SHORT).show()
+                            }
+                            e.printStackTrace()
+                        }
 
+                    }
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = endColor)
         ) {
             Text("Registrati")
         }
