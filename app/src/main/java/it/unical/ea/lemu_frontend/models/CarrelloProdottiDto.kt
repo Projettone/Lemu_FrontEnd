@@ -43,5 +43,8 @@ data class CarrelloProdottiDto (
     @Json(name = "quantita")
     val quantita: kotlin.Int? = null
 
-)
+) {
+
+
+}
 

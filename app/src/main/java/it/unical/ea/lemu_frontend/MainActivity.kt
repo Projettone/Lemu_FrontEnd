@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import org.openapitools.client.models.Utente
 
 class MainActivity : ComponentActivity() {
 
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
         authViewModel = AuthViewModel(this)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            authViewModel.handleSignInResult(result.resultCode, result.data)
+            authViewModel.handleSignInResult(result.data)
         }
 
         setContent {
@@ -61,10 +63,21 @@ fun Start( authViewModel: AuthViewModel,
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
+    val isLoggedIn by authViewModel.isLoggedIn
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate("profile") {
+                popUpTo("home") { inclusive = true }
+            }
+        }
+    }
+
+
 
     Scaffold(
         bottomBar = {
-            BottomAppBarActivity(navController = navController)
+            BottomAppBarActivity(navController = navController, authViewModel = authViewModel)
         },
         topBar = {TopAppBarActivity(
             isLogoVisible = isLogoVisible,
@@ -87,6 +100,9 @@ fun Start( authViewModel: AuthViewModel,
             composable("registration") {
                 RegistrationActivity(navController = navController,
                     authViewModel = authViewModel)
+            }
+            composable("profile") {
+                UserProfileActivity(authViewModel = authViewModel, navController = navController)
             }
         }
     }

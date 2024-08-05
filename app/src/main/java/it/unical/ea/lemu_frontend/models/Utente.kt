@@ -81,5 +81,8 @@ data class Utente (
     @Json(name = "ordini")
     val ordini: kotlin.collections.List<Ordine>? = null
 
-)
+) {
+
+
+}
 

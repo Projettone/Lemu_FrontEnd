@@ -51,5 +51,8 @@ data class WishlistDto (
     @Json(name = "condivisiCon")
     val condivisiCon: kotlin.collections.List<kotlin.String>? = null
 
-)
+) {
+
+
+}
 

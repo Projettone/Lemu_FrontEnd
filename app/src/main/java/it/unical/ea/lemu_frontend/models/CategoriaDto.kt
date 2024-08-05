@@ -39,5 +39,8 @@ data class CategoriaDto (
     @Json(name = "immagine")
     val immagine: kotlin.String? = null
 
-)
+) {
+
+
+}
 

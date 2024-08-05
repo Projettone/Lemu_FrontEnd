@@ -41,5 +41,8 @@ data class Carrello (
     @Json(name = "carrelloProdotti")
     val carrelloProdotti: kotlin.collections.List<CarrelloProdotti>? = null
 
-)
+) {
+
+
+}
 

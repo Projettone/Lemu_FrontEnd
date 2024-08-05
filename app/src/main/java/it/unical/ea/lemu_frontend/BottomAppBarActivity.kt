@@ -24,14 +24,17 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun BottomAppBarActivity(navController: NavController) {
+fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewModel) {
     var selectedIconIndex by remember { mutableStateOf(1) }
     val colorDivider = Color(0xFF0077B6)
+
     NavigationBar(
         modifier = Modifier
             .height(56.dp)
@@ -69,7 +72,11 @@ fun BottomAppBarActivity(navController: NavController) {
             selected = selectedIconIndex == 3,
             onClick = {
                 selectedIconIndex = 3
-                navController.navigate("login")
+                if (authViewModel.checkAuthentication()){
+                    navController.navigate("profile")
+                } else{
+                    navController.navigate("login")
+                }
             },
             icon = {
                 IconWithIndicator(

@@ -39,5 +39,8 @@ data class ApiResponseString (
     @Json(name = "data")
     val `data`: kotlin.String? = null
 
-)
+) {
+
+
+}
 

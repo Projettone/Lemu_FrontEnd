@@ -39,5 +39,8 @@ data class CarrelloDto (
     @Json(name = "prodotti")
     val prodotti: kotlin.collections.List<kotlin.Long>? = null
 
-)
+) {
+
+
+}
 

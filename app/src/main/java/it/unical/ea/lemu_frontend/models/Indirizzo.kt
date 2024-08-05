@@ -39,5 +39,8 @@ data class Indirizzo (
     @Json(name = "citta")
     val citta: kotlin.String? = null
 
-)
+) {
+
+
+}
 

@@ -20,9 +20,12 @@ import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
 import org.openapitools.client.models.ApiResponseString
+import org.openapitools.client.models.ApiResponseUtenteDto
+import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteRegistrazioneDto
 
 import com.squareup.moshi.Json
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 import org.openapitools.client.infrastructure.ApiClient
 import org.openapitools.client.infrastructure.ApiResponse
@@ -38,7 +41,7 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
-class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
@@ -116,6 +119,77 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/utente-api/authenticate",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @return ApiResponseUtenteDto
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun getUserData() : ApiResponseUtenteDto {
+        val localVarResponse = getUserDataWithHttpInfo()
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiResponseUtenteDto
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @return ApiResponse<ApiResponseUtenteDto?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun getUserDataWithHttpInfo() : ApiResponse<ApiResponseUtenteDto?> {
+        val localVariableConfig = getUserDataRequestConfig()
+
+        return request<Unit, ApiResponseUtenteDto>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation getUserData
+     *
+     * @return RequestConfig
+     */
+    fun getUserDataRequestConfig() : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/utente-api/user",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -260,6 +334,158 @@ class UtenteControllerApi(basePath: kotlin.String = defaultBasePath, client: OkH
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/utente-api/register",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param newPassword 
+     * @return ApiResponseString
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun updatePassword(newPassword: kotlin.String) : ApiResponseString {
+        val localVarResponse = updatePasswordWithHttpInfo(newPassword = newPassword)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiResponseString
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param newPassword 
+     * @return ApiResponse<ApiResponseString?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun updatePasswordWithHttpInfo(newPassword: kotlin.String) : ApiResponse<ApiResponseString?> {
+        val localVariableConfig = updatePasswordRequestConfig(newPassword = newPassword)
+
+        return request<Unit, ApiResponseString>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation updatePassword
+     *
+     * @param newPassword 
+     * @return RequestConfig
+     */
+    fun updatePasswordRequestConfig(newPassword: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("newPassword", listOf(newPassword.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/update-password",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param indirizzo 
+     * @return ApiResponseString
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun updateShippingAddress(indirizzo: Indirizzo) : ApiResponseString {
+        val localVarResponse = updateShippingAddressWithHttpInfo(indirizzo = indirizzo)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiResponseString
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param indirizzo 
+     * @return ApiResponse<ApiResponseString?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun updateShippingAddressWithHttpInfo(indirizzo: Indirizzo) : ApiResponse<ApiResponseString?> {
+        val localVariableConfig = updateShippingAddressRequestConfig(indirizzo = indirizzo)
+
+        return request<Indirizzo, ApiResponseString>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation updateShippingAddress
+     *
+     * @param indirizzo 
+     * @return RequestConfig
+     */
+    fun updateShippingAddressRequestConfig(indirizzo: Indirizzo) : RequestConfig<Indirizzo> {
+        val localVariableBody = indirizzo
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/update-shipping-address",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

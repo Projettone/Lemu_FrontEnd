@@ -45,5 +45,8 @@ data class OrdineProdotto (
     @Json(name = "quantita")
     val quantita: kotlin.Int? = null
 
-)
+) {
+
+
+}
 

@@ -40,5 +40,8 @@ data class WishlistCondivisione (
     @Json(name = "email")
     val email: kotlin.String? = null
 
-)
+) {
+
+
+}
 

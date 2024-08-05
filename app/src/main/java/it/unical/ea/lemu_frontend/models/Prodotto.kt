@@ -69,5 +69,8 @@ data class Prodotto (
     @Json(name = "disponibilita")
     val disponibilita: kotlin.Boolean? = null
 
-)
+) {
+
+
+}
 

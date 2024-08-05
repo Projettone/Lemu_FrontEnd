@@ -54,5 +54,8 @@ data class Wishlist (
     @Json(name = "wishlistCondivisione")
     val wishlistCondivisione: kotlin.collections.List<WishlistCondivisione>? = null
 
-)
+) {
+
+
+}
 

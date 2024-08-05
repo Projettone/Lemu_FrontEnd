@@ -41,5 +41,8 @@ data class WishlistProdotti (
     @Json(name = "prodotto")
     val prodotto: Prodotto? = null
 
-)
+) {
+
+
+}
 

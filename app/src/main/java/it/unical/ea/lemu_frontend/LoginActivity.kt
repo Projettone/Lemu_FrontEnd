@@ -84,7 +84,7 @@ fun LoginActivity(navController: NavController, authViewModel: AuthViewModel, si
                         val response = authViewModel.authenticate(email, password)
                         withContext(Dispatchers.Main) {
                             if (response == true) {
-                                navController.navigate("home")
+                                navController.navigate("profile")
                             } else {
                                 Toast.makeText(context, "Errore, controlla le credenziali e riprova", Toast.LENGTH_SHORT).show()
                             }

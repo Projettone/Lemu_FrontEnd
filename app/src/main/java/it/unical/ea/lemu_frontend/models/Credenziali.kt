@@ -35,5 +35,8 @@ data class Credenziali (
     @Json(name = "password")
     val password: kotlin.String? = null
 
-)
+) {
+
+
+}
 

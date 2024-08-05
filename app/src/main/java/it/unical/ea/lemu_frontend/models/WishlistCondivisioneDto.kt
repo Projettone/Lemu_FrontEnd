@@ -39,5 +39,8 @@ data class WishlistCondivisioneDto (
     @Json(name = "email")
     val email: kotlin.String? = null
 
-)
+) {
+
+
+}
 

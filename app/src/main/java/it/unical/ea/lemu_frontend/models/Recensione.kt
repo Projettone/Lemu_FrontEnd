@@ -49,5 +49,8 @@ data class Recensione (
     @Json(name = "autore")
     val autore: Utente? = null
 
-)
+) {
+
+
+}
 

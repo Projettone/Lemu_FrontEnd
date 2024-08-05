@@ -43,5 +43,8 @@ data class UtenteRegistrazioneDto (
     @Json(name = "credenzialiPassword")
     val credenzialiPassword: kotlin.String? = null
 
-)
+) {
+
+
+}
 

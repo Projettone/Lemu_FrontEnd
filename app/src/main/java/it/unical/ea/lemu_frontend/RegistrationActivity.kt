@@ -30,7 +30,6 @@ fun RegistrationActivity(navController: NavController, authViewModel: AuthViewMo
     var confirmPassword by remember { mutableStateOf("") }
     val context = LocalContext.current
     val coroutineScope = CoroutineScope(Dispatchers.IO)
-    //val authViewModel = AuthViewModel()
 
 
     Column(
@@ -141,7 +140,7 @@ fun RegistrationActivity(navController: NavController, authViewModel: AuthViewMo
                             withContext(Dispatchers.Main) {
                                 if (response == true) {
                                     Toast.makeText(context, "Registrazione avvenuta con successo", Toast.LENGTH_SHORT).show()
-                                     navController.navigate("home")
+                                     navController.navigate("profile")
                                 } else {
                                     Toast.makeText(context, "Errore durante la registrazione, controlla le credenziali e riprova", Toast.LENGTH_SHORT).show()
                                 }

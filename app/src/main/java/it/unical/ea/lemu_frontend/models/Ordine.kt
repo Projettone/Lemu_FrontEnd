@@ -54,5 +54,8 @@ data class Ordine (
     @Json(name = "ordineProdotti")
     val ordineProdotti: kotlin.collections.List<OrdineProdotto>? = null
 
-)
+) {
+
+
+}
 

@@ -39,5 +39,8 @@ data class WishlistProdottiDto (
     @Json(name = "prodottoId")
     val prodottoId: kotlin.Long? = null
 
-)
+) {
+
+
+}
 
