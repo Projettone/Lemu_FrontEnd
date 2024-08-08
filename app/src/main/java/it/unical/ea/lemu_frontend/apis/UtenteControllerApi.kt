@@ -24,7 +24,6 @@ import org.openapitools.client.models.ApiResponseUtenteDto
 import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteRegistrazioneDto
 
-import com.squareup.moshi.Json
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 import org.openapitools.client.infrastructure.ApiClient
@@ -34,12 +33,10 @@ import org.openapitools.client.infrastructure.ClientError
 import org.openapitools.client.infrastructure.ServerException
 import org.openapitools.client.infrastructure.ServerError
 import org.openapitools.client.infrastructure.MultiValueMap
-import org.openapitools.client.infrastructure.PartConfig
 import org.openapitools.client.infrastructure.RequestConfig
 import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
-import org.openapitools.client.infrastructure.toMultiValue
 
 class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
@@ -119,6 +116,83 @@ class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/utente-api/authenticate",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return kotlin.Boolean
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun banUser(email: kotlin.String) : kotlin.Boolean {
+        val localVarResponse = banUserWithHttpInfo(email = email)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Boolean
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return ApiResponse<kotlin.Boolean?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun banUserWithHttpInfo(email: kotlin.String) : ApiResponse<kotlin.Boolean?> {
+        val localVariableConfig = banUserRequestConfig(email = email)
+
+        return request<Unit, kotlin.Boolean>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation banUser
+     *
+     * @param email 
+     * @return RequestConfig
+     */
+    fun banUserRequestConfig(email: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("email", listOf(email.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/ban-user",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -273,6 +347,83 @@ class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: ko
     /**
      * 
      * 
+     * @param email 
+     * @return kotlin.Boolean
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun makeAdmin(email: kotlin.String) : kotlin.Boolean {
+        val localVarResponse = makeAdminWithHttpInfo(email = email)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Boolean
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return ApiResponse<kotlin.Boolean?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun makeAdminWithHttpInfo(email: kotlin.String) : ApiResponse<kotlin.Boolean?> {
+        val localVariableConfig = makeAdminRequestConfig(email = email)
+
+        return request<Unit, kotlin.Boolean>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation makeAdmin
+     *
+     * @param email 
+     * @return RequestConfig
+     */
+    fun makeAdminRequestConfig(email: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("email", listOf(email.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/make-admin",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
      * @param utenteRegistrazioneDto 
      * @return ApiResponseString
      * @throws IllegalStateException If the request is not correctly configured
@@ -334,6 +485,160 @@ class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/utente-api/register",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return kotlin.Boolean
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun revokeAdmin(email: kotlin.String) : kotlin.Boolean {
+        val localVarResponse = revokeAdminWithHttpInfo(email = email)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Boolean
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return ApiResponse<kotlin.Boolean?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun revokeAdminWithHttpInfo(email: kotlin.String) : ApiResponse<kotlin.Boolean?> {
+        val localVariableConfig = revokeAdminRequestConfig(email = email)
+
+        return request<Unit, kotlin.Boolean>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation revokeAdmin
+     *
+     * @param email 
+     * @return RequestConfig
+     */
+    fun revokeAdminRequestConfig(email: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("email", listOf(email.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/revoke-admin",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return kotlin.Boolean
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun unbanUser(email: kotlin.String) : kotlin.Boolean {
+        val localVarResponse = unbanUserWithHttpInfo(email = email)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Boolean
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param email 
+     * @return ApiResponse<kotlin.Boolean?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun unbanUserWithHttpInfo(email: kotlin.String) : ApiResponse<kotlin.Boolean?> {
+        val localVariableConfig = unbanUserRequestConfig(email = email)
+
+        return request<Unit, kotlin.Boolean>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation unbanUser
+     *
+     * @param email 
+     * @return RequestConfig
+     */
+    fun unbanUserRequestConfig(email: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("email", listOf(email.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/unban-user",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

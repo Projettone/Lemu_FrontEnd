@@ -28,17 +28,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
 import org.openapitools.client.models.Utente
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         authViewModel = AuthViewModel(this)
+        userProfileViewModel = UserProfileViewModel(authViewModel)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
         }
@@ -49,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Start(authViewModel, signInLauncher)
+                    Start(authViewModel, userProfileViewModel, signInLauncher)
                 }
             }
         }
@@ -58,6 +61,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Start( authViewModel: AuthViewModel,
+           userProfileViewModel: UserProfileViewModel,
            signInLauncher: ActivityResultLauncher<Intent>){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
@@ -102,7 +106,7 @@ fun Start( authViewModel: AuthViewModel,
                     authViewModel = authViewModel)
             }
             composable("profile") {
-                UserProfileActivity(authViewModel = authViewModel, navController = navController)
+                UserProfileActivity(authViewModel = authViewModel, userProfileViewModel = userProfileViewModel, navController = navController)
             }
         }
     }

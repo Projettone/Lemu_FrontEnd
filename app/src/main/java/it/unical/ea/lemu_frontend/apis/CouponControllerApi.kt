@@ -19,7 +19,9 @@ import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
-import org.openapitools.client.models.ProdottoDto
+import org.openapitools.client.models.CouponDto
+
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 import org.openapitools.client.infrastructure.ApiClient
 import org.openapitools.client.infrastructure.ApiResponse
@@ -33,20 +35,19 @@ import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 
-class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class CouponControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.10:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
         }
     }
 
     /**
      * 
      * 
-     * @param jwt 
-     * @param prodottoDto 
-     * @return ProdottoDto
+     * @param valore 
+     * @return kotlin.Any
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -55,11 +56,11 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun add(jwt: kotlin.String, prodottoDto: ProdottoDto) : ProdottoDto {
-        val localVarResponse = addWithHttpInfo(jwt = jwt, prodottoDto = prodottoDto)
+    fun creaCoupon(valore: kotlin.Double) : kotlin.Any {
+        val localVarResponse = creaCouponWithHttpInfo(valore = valore)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as ProdottoDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -76,41 +77,39 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
     /**
      * 
      * 
-     * @param jwt 
-     * @param prodottoDto 
-     * @return ApiResponse<ProdottoDto?>
+     * @param valore 
+     * @return ApiResponse<kotlin.Any?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun addWithHttpInfo(jwt: kotlin.String, prodottoDto: ProdottoDto) : ApiResponse<ProdottoDto?> {
-        val localVariableConfig = addRequestConfig(jwt = jwt, prodottoDto = prodottoDto)
+    fun creaCouponWithHttpInfo(valore: kotlin.Double) : ApiResponse<kotlin.Any?> {
+        val localVariableConfig = creaCouponRequestConfig(valore = valore)
 
-        return request<ProdottoDto, ProdottoDto>(
+        return request<Unit, kotlin.Any>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation add
+     * To obtain the request config of the operation creaCoupon
      *
-     * @param jwt 
-     * @param prodottoDto 
+     * @param valore 
      * @return RequestConfig
      */
-    fun addRequestConfig(jwt: kotlin.String, prodottoDto: ProdottoDto) : RequestConfig<ProdottoDto> {
-        val localVariableBody = prodottoDto
-        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
-            .apply {
-                put("jwt", listOf(jwt.toString()))
-            }
+    fun creaCouponRequestConfig(valore: kotlin.Double) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        localVariableHeaders["Content-Type"] = "application/json"
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.POST,
-            path = "/prodottocontroller-api/add",
+            path = "/coupon-api/crea-coupon/{valore}".replace("{"+"valore"+"}", encodeURIComponent(valore.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -121,7 +120,7 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
     /**
      * 
      * 
-     * @return kotlin.collections.List<ProdottoDto>
+     * @return kotlin.collections.List<CouponDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -130,11 +129,11 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun findAll() : kotlin.collections.List<ProdottoDto> {
-        val localVarResponse = findAllWithHttpInfo()
+    fun getAllValid() : kotlin.collections.List<CouponDto> {
+        val localVarResponse = getAllValidWithHttpInfo()
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<ProdottoDto>
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<CouponDto>
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -151,33 +150,37 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
     /**
      * 
      * 
-     * @return ApiResponse<kotlin.collections.List<ProdottoDto>?>
+     * @return ApiResponse<kotlin.collections.List<CouponDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun findAllWithHttpInfo() : ApiResponse<kotlin.collections.List<ProdottoDto>?> {
-        val localVariableConfig = findAllRequestConfig()
+    fun getAllValidWithHttpInfo() : ApiResponse<kotlin.collections.List<CouponDto>?> {
+        val localVariableConfig = getAllValidRequestConfig()
 
-        return request<Unit, kotlin.collections.List<ProdottoDto>>(
+        return request<Unit, kotlin.collections.List<CouponDto>>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation findAll
+     * To obtain the request config of the operation getAllValid
      *
      * @return RequestConfig
      */
-    fun findAllRequestConfig() : RequestConfig<Unit> {
+    fun getAllValidRequestConfig() : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.GET,
-            path = "/prodottocontroller-api/all",
+            path = "/coupon-api/all-valid",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -188,8 +191,8 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
     /**
      * 
      * 
-     * @param id 
-     * @return ProdottoDto
+     * @param couponCode 
+     * @return kotlin.Any
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
@@ -198,11 +201,11 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun getById(id: kotlin.Long) : ProdottoDto {
-        val localVarResponse = getByIdWithHttpInfo(id = id)
+    fun riscattaCoupon(couponCode: kotlin.String) : kotlin.Any {
+        val localVarResponse = riscattaCouponWithHttpInfo(couponCode = couponCode)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as ProdottoDto
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -219,35 +222,39 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
     /**
      * 
      * 
-     * @param id 
-     * @return ApiResponse<ProdottoDto?>
+     * @param couponCode 
+     * @return ApiResponse<kotlin.Any?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun getByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<ProdottoDto?> {
-        val localVariableConfig = getByIdRequestConfig(id = id)
+    fun riscattaCouponWithHttpInfo(couponCode: kotlin.String) : ApiResponse<kotlin.Any?> {
+        val localVariableConfig = riscattaCouponRequestConfig(couponCode = couponCode)
 
-        return request<Unit, ProdottoDto>(
+        return request<Unit, kotlin.Any>(
             localVariableConfig
         )
     }
 
     /**
-     * To obtain the request config of the operation getById
+     * To obtain the request config of the operation riscattaCoupon
      *
-     * @param id 
+     * @param couponCode 
      * @return RequestConfig
      */
-    fun getByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
+    fun riscattaCouponRequestConfig(couponCode: kotlin.String) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
-            method = RequestMethod.GET,
-            path = "/prodottocontroller-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            method = RequestMethod.POST,
+            path = "/coupon-api/riscatta/{couponCode}".replace("{"+"couponCode"+"}", encodeURIComponent(couponCode.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

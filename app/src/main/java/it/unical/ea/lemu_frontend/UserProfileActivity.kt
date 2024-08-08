@@ -1,12 +1,15 @@
 package it.unical.ea.lemu_frontend
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -23,15 +26,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.openapitools.client.models.CouponDto
 import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteDto
 
 @Composable
 fun UserProfileActivity(
     authViewModel: AuthViewModel,
+    userProfileViewModel: UserProfileViewModel,
     navController: NavController
 ) {
     var isLoggingOut by remember { mutableStateOf(false) }
@@ -41,7 +47,14 @@ fun UserProfileActivity(
     var via by remember { mutableStateOf(user?.indirizzo?.via ?: "") }
     var numeroCivico by remember { mutableStateOf(user?.indirizzo?.numeroCivico?.toString() ?: "") }
     var citta by remember { mutableStateOf(user?.indirizzo?.citta ?: "") }
+    val saldo by userProfileViewModel.saldo.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            userProfileViewModel.updateSaldo()
+        }
+    }
 
     if (isLoggingOut) {
         LaunchedEffect(Unit) {
@@ -96,6 +109,7 @@ fun UserProfileActivity(
                 numeroCivico = numeroCivico.toIntOrNull(),
                 citta = citta
             ),
+            saldo = saldo,
             onAddressChange = { newAddress ->
                 via = newAddress.via.toString()
                 numeroCivico = newAddress.numeroCivico?.toString() ?: ""
@@ -127,7 +141,27 @@ fun UserProfileActivity(
                 }
             },
             onChangePasswordClick = { showChangePasswordDialog = true },
-            onLogoutClick = { isLoggingOut = true }
+            onLogoutClick = { isLoggingOut = true },
+            onRedeemCoupon = { CouponCode ->
+                coroutineScope.launch {
+                    try {
+                        userProfileViewModel.redeemCoupon(CouponCode)
+                        Toast.makeText(
+                            context,
+                            "Coupon riscattato con successo",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } catch (e: Exception){
+                        Toast.makeText(
+                            context,
+                            "Errore durante il riscatto del Coupon",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        e.printStackTrace()
+                    }
+                }
+            },
+            userProfileViewModel = userProfileViewModel
         )
     }
 }
@@ -136,11 +170,18 @@ fun UserProfileActivity(
 fun ScrollableContent(
     user: UtenteDto?,
     indirizzo: Indirizzo,
+    saldo: Double,
     onAddressChange: (Indirizzo) -> Unit,
     onSave: () -> Unit,
     onChangePasswordClick: () -> Unit,
-    onLogoutClick: () -> Unit
-) {
+    onLogoutClick: () -> Unit,
+    onRedeemCoupon: (String) -> Unit,
+    userProfileViewModel: UserProfileViewModel
+    ) {
+    val context = LocalContext.current
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -148,6 +189,13 @@ fun ScrollableContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         UserProfileHeader(user)
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Saldo: €${String.format("%.2f", saldo)}",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
         Spacer(modifier = Modifier.height(24.dp))
         EditableUserInfo(
             indirizzo = indirizzo,
@@ -157,8 +205,29 @@ fun ScrollableContent(
         Spacer(modifier = Modifier.height(24.dp))
         ChangePasswordButton(onClick = onChangePasswordClick)
         Spacer(modifier = Modifier.height(16.dp))
+        RedeemCouponBox(onRedeemCoupon = onRedeemCoupon)
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        user?.let {
+            if (it.isAdmin == true) {
+                AdminActions(
+                    userProfileViewModel = userProfileViewModel,
+                    onActionComplete = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
         LogoutButton(onClick = onLogoutClick)
+
+
+
     }
+
+
 }
 
 @Composable
@@ -221,7 +290,7 @@ fun EditableUserInfo(
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.Gray.copy(alpha = 0.1f))
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -229,7 +298,7 @@ fun EditableUserInfo(
             ) {
                 Text(
                     text = "Indirizzo di spedizione:",
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 if (isEditing) {
@@ -246,7 +315,16 @@ fun EditableUserInfo(
                             )
                         },
                         label = { Text("Via") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedIndicatorColor = Color(0xFF3F51B5), // Colore della linea di focus
+                            unfocusedIndicatorColor = Color.Gray, // Colore della linea di non-focus
+                            focusedLabelColor = Color(0xFF3F51B5), // Colore dell'etichetta in focus
+                            unfocusedLabelColor = Color.Gray, // Colore dell'etichetta non in focus
+                            cursorColor = Color(0xFF3F51B5) // Colore del cursore
+                        )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -263,7 +341,16 @@ fun EditableUserInfo(
                         },
                         label = { Text("Numero Civico") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedIndicatorColor = Color(0xFF3F51B5),
+                            unfocusedIndicatorColor = Color.Gray,
+                            focusedLabelColor = Color(0xFF3F51B5),
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color(0xFF3F51B5)
+                        )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -279,7 +366,16 @@ fun EditableUserInfo(
                             )
                         },
                         label = { Text("Città") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedIndicatorColor = Color(0xFF3F51B5),
+                            unfocusedIndicatorColor = Color.Gray,
+                            focusedLabelColor = Color(0xFF3F51B5),
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color(0xFF3F51B5)
+                        )
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
@@ -287,9 +383,10 @@ fun EditableUserInfo(
                             onSave()
                             isEditing = false
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
                     ) {
-                        Text("Salva Indirizzo")
+                        Text("Salva Indirizzo", color = Color.White)
                     }
                 } else {
                     Text(text = "Via: $via")
@@ -299,13 +396,14 @@ fun EditableUserInfo(
                     Button(
                         onClick = { isEditing = true },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
                     ) {
-                        Text("Modifica")
+                        Text("Modifica", color = Color.White)
                     }
                 }
             }
         }
+
     }
 }
 
@@ -425,3 +523,295 @@ fun ChangePasswordDialog(
     )
 }
 
+
+@Composable
+fun AdminActions(
+    userProfileViewModel: UserProfileViewModel,
+    onActionComplete: (String) -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val coupons by userProfileViewModel.coupons.collectAsState()
+
+    AdminCouponManagement(
+        coupons = coupons,
+        userProfileViewModel = userProfileViewModel
+    )
+
+    fun handleAdminAction(
+        email: String,
+        action: suspend (String) -> Boolean,
+        onSuccessMessage: String,
+        onFailureMessage: String
+    ) {
+        if (email.isBlank()) {
+            Toast.makeText(context, "Inserire una Email valida", Toast.LENGTH_SHORT).show()
+        } else {
+            coroutineScope.launch {
+                val response = action(email)
+                withContext(Dispatchers.Main) {
+                    onActionComplete(
+                        if (response) onSuccessMessage else onFailureMessage
+                    )
+                }
+            }
+        }
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0)),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Pannello Amministratore",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("User Email") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedIndicatorColor = Color(0xFF3F51B5),
+                    unfocusedIndicatorColor = Color.Gray,
+                    focusedLabelColor = Color(0xFF3F51B5),
+                    unfocusedLabelColor = Color.Gray,
+                    cursorColor = Color(0xFF3F51B5)
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        handleAdminAction(
+                            email = email,
+                            action = userProfileViewModel::banUser,
+                            onSuccessMessage = "Utente bannato con successo",
+                            onFailureMessage = "Errore durante l'operazione di ban"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Text("Ban", color = Color.White)
+                }
+
+                Button(
+                    onClick = {
+                        handleAdminAction(
+                            email = email,
+                            action = userProfileViewModel::unbanUser,
+                            onSuccessMessage = "Utente sbannato con successo",
+                            onFailureMessage = "Errore durante l'operazione di unban"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107)),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Text("Unban", color = Color.Black)
+                }
+
+                Button(
+                    onClick = {
+                        handleAdminAction(
+                            email = email,
+                            action = userProfileViewModel::makeAdmin,
+                            onSuccessMessage = "L'utente è diventato amministratore",
+                            onFailureMessage = "Errore durante l'operazione"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Text("Rendi Admin", color = Color.White)
+                }
+
+                Button(
+                    onClick = {
+                        handleAdminAction(
+                            email = email,
+                            action = userProfileViewModel::revokeAdmin,
+                            onSuccessMessage = "Diritti di amministratore revocati",
+                            onFailureMessage = "Errore durante la rimozione dei diritti di amministratore"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9E9E9E)),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Text("Rimuovi Admin", color = Color.White)
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun RedeemCouponBox(onRedeemCoupon: (String) -> Unit) {
+    var CouponCode by remember { mutableStateOf("") }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Riscatta Buono",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = CouponCode,
+                onValueChange = { CouponCode = it },
+                label = { Text("Codice Buono") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { onRedeemCoupon(CouponCode) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+            ) {
+                Text("Riscatta", color = Color.White)
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun AdminCouponManagement(
+    coupons: List<CouponDto>,
+    userProfileViewModel: UserProfileViewModel
+) {
+    var newCouponValue by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Gestione Coupon",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = newCouponValue,
+                onValueChange = { newCouponValue = it },
+                label = { Text("Valore del Coupon") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    val value = newCouponValue.toDoubleOrNull()
+                    if (value != null) {
+                        coroutineScope.launch {
+                            try {
+                                userProfileViewModel.createCoupon(value)
+                                Toast.makeText(context, "Coupon creato con successo", Toast.LENGTH_SHORT).show()
+                                newCouponValue = ""
+                                errorMessage = ""
+                            } catch (e: Exception){
+                                Toast.makeText(context, "Errore durante la creazione del coupon", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        errorMessage = "Inserire un valore valido"
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+            ) {
+                Text("Crea Coupon", color = Color.White)
+            }
+
+            errorMessage?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, color = Color.Red)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Coupon Attivi:", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            coupons.forEachIndexed { index, coupon ->
+                coupon.valore?.let {
+                    coupon.codice?.let { it1 ->
+                        CouponItem(
+                            index = index + 1,
+                            value = it,
+                            code = it1
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CouponItem(
+    index: Int,
+    value: Double,
+    code: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .border(BorderStroke(1.dp, Color.Gray), shape = RoundedCornerShape(4.dp))
+            .padding(16.dp)
+    ) {
+        Text(text = "ID: $index", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(text = "Valore: €${String.format("%.2f", value)}", fontSize = 16.sp)
+        Text(text = "Codice: $code", fontSize = 16.sp)
+    }
+}

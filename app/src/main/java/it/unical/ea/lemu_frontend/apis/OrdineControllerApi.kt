@@ -20,8 +20,6 @@ import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
 
-import com.squareup.moshi.Json
-
 import org.openapitools.client.infrastructure.ApiClient
 import org.openapitools.client.infrastructure.ApiResponse
 import org.openapitools.client.infrastructure.ClientException
@@ -29,12 +27,10 @@ import org.openapitools.client.infrastructure.ClientError
 import org.openapitools.client.infrastructure.ServerException
 import org.openapitools.client.infrastructure.ServerError
 import org.openapitools.client.infrastructure.MultiValueMap
-import org.openapitools.client.infrastructure.PartConfig
 import org.openapitools.client.infrastructure.RequestConfig
 import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
-import org.openapitools.client.infrastructure.toMultiValue
 
 class OrdineControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {

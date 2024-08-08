@@ -156,7 +156,8 @@ class AuthViewModel (private val activity: Activity) {
         }
     }
 
-    suspend fun changePassword(password: String): Boolean{
+
+    suspend fun changePassword(password: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 api.updatePassword(password)
@@ -168,8 +169,7 @@ class AuthViewModel (private val activity: Activity) {
         }
     }
 
-
-    suspend fun updateAddress(address: Indirizzo): Boolean{
+    suspend fun updateAddress(address: Indirizzo): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 api.updateShippingAddress(address)
@@ -181,6 +181,9 @@ class AuthViewModel (private val activity: Activity) {
             }
         }
     }
+
+
+
 
     fun logout() {
         clearToken()

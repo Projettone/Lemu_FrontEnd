@@ -58,7 +58,10 @@ data class UtenteDto (
     val username: kotlin.String? = null,
 
     @Json(name = "email")
-    val email: kotlin.String? = null
+    val email: kotlin.String? = null,
+
+    @Json(name = "saldo")
+    val saldo: kotlin.Double? = null
 
 ) {
 
