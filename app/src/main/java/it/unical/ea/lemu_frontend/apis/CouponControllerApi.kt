@@ -34,6 +34,7 @@ import org.openapitools.client.infrastructure.RequestConfig
 import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
+import org.openapitools.client.models.PageCouponDto
 
 class CouponControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
@@ -262,6 +263,90 @@ class CouponControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         )
     }
 
+    /**
+     *
+     *
+     * @param page  (optional, default to 0)
+     * @param size  (optional, default to 10)
+     * @return PageCouponDto
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun getPagedCoupons(page: kotlin.Int? = 0, size: kotlin.Int? = 10) : PageCouponDto {
+        val localVarResponse = getPagedCouponsWithHttpInfo(page = page, size = size)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as PageCouponDto
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     *
+     *
+     * @param page  (optional, default to 0)
+     * @param size  (optional, default to 10)
+     * @return ApiResponse<PageCouponDto?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun getPagedCouponsWithHttpInfo(page: kotlin.Int?, size: kotlin.Int?) : ApiResponse<PageCouponDto?> {
+        val localVariableConfig = getPagedCouponsRequestConfig(page = page, size = size)
+
+        return request<Unit, PageCouponDto>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation getPagedCoupons
+     *
+     * @param page  (optional, default to 0)
+     * @param size  (optional, default to 10)
+     * @return RequestConfig
+     */
+    fun getPagedCouponsRequestConfig(page: kotlin.Int?, size: kotlin.Int?) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                if (page != null) {
+                    put("page", listOf(page.toString()))
+                }
+                if (size != null) {
+                    put("size", listOf(size.toString()))
+                }
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/coupon-api/paged-coupons",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
 
     private fun encodeURIComponent(uriComponent: kotlin.String): kotlin.String =
         HttpUrl.Builder().scheme("http").host("localhost").addPathSegment(uriComponent).build().encodedPathSegments[0]

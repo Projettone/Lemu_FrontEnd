@@ -138,9 +138,11 @@ fun RegistrationActivity(navController: NavController, authViewModel: AuthViewMo
                         try {
                             val response = authViewModel.register(name, surname, email, password)
                             withContext(Dispatchers.Main) {
-                                if (response == true) {
+                                if (response.success == true) {
                                     Toast.makeText(context, "Registrazione avvenuta con successo", Toast.LENGTH_SHORT).show()
                                      navController.navigate("profile")
+                                } else if (response.message == "403 FORBIDDEN") {
+                                    Toast.makeText(context, "Errore durante la registrazione, utente bannato", Toast.LENGTH_SHORT).show()
                                 } else {
                                     Toast.makeText(context, "Errore durante la registrazione, controlla le credenziali e riprova", Toast.LENGTH_SHORT).show()
                                 }

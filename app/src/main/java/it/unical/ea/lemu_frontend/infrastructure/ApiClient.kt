@@ -1,5 +1,6 @@
 package org.openapitools.client.infrastructure
 
+import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -28,8 +29,9 @@ import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.util.Locale
 import com.squareup.moshi.adapter
+import java.nio.Buffer
 
- val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
+val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
 
 open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClient) {
     companion object {
@@ -144,7 +146,9 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
                 if (bodyContent.isEmpty()) {
                     return null
                 }
-                Serializer.moshi.adapter<T>().fromJson(bodyContent)
+                val jsonReader = JsonReader.of(okio.Buffer().writeUtf8(bodyContent))
+                jsonReader.isLenient = true  // Abilita la modalità lenient
+                Serializer.moshi.adapter<T>().fromJson(jsonReader)
             }
             mediaType == OctetMediaType -> body.bytes() as? T
             else ->  throw UnsupportedOperationException("responseBody currently only supports JSON body.")

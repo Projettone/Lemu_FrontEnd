@@ -83,10 +83,13 @@ fun LoginActivity(navController: NavController, authViewModel: AuthViewModel, si
                     try{
                         val response = authViewModel.authenticate(email, password)
                         withContext(Dispatchers.Main) {
-                            if (response == true) {
+                            if (response.success == true) {
                                 navController.navigate("profile")
-                            } else {
+                            } else if (response.message == "403 FORBIDDEN"){
+                                Toast.makeText(context, "Errore, utente bannato", Toast.LENGTH_SHORT).show()
+                            } else{
                                 Toast.makeText(context, "Errore, controlla le credenziali e riprova", Toast.LENGTH_SHORT).show()
+
                             }
                         }
                     } catch (e: Exception) {
@@ -128,15 +131,19 @@ fun LoginActivity(navController: NavController, authViewModel: AuthViewModel, si
             Image(painter = painterResource(id = R.drawable.facebook),
                 contentDescription = "Facebook",
                 modifier = Modifier.size(60.dp).clickable {
-                    //Facebook clicked
-                }
+                    coroutineScope.launch {
+                        try{
+                            authViewModel.signInWithFacebook()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }                }
             )
 
 
             Image(painter = painterResource(id = R.drawable.google),
                 contentDescription = "Google",
                 modifier = Modifier.size(60.dp).clickable {
-
                     coroutineScope.launch {
                         try{
                             authViewModel.signInWithGoogle(signInLauncher)

@@ -1,5 +1,7 @@
 package it.unical.ea.lemu_frontend
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,12 +30,22 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.openapitools.client.models.CouponDto
 import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteDto
+
+import android.util.Base64
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.painterResource
+import coil.compose.rememberImagePainter
+import org.openapitools.client.models.RecensioneDto
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+
 
 @Composable
 fun UserProfileActivity(
@@ -148,7 +161,7 @@ fun UserProfileActivity(
                         userProfileViewModel.redeemCoupon(CouponCode)
                         Toast.makeText(
                             context,
-                            "Coupon riscattato con successo",
+                            "Richiesta coupon eseguita correttamente",
                             Toast.LENGTH_SHORT
                         ).show()
                     } catch (e: Exception){
@@ -179,7 +192,7 @@ fun ScrollableContent(
     userProfileViewModel: UserProfileViewModel
     ) {
     val context = LocalContext.current
-
+    val reviews by userProfileViewModel.recensioni.collectAsState()
 
 
     Column(
@@ -207,7 +220,8 @@ fun ScrollableContent(
         Spacer(modifier = Modifier.height(16.dp))
         RedeemCouponBox(onRedeemCoupon = onRedeemCoupon)
         Spacer(modifier = Modifier.height(24.dp))
-
+        UserReviewsManagement(reviews = reviews, userProfileViewModel = userProfileViewModel)
+        Spacer(modifier = Modifier.height(24.dp))
 
         user?.let {
             if (it.isAdmin == true) {
@@ -248,12 +262,32 @@ fun UserProfileHeader(user: UtenteDto?) {
             shape = CircleShape,
             color = Color.Gray
         ) {
-            user?.immagineProfilo?.let {
-                Image(
-                    painter = rememberAsyncImagePainter(it),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
-                )
+            user?.immagineProfilo?.let { immagineProfilo ->
+                if (immagineProfilo.startsWith("data:image/")) {
+                    // Se l'immagine è in base64
+                    val base64String = immagineProfilo.substringAfter("base64,")
+                    val imageBitmap = base64ToImageBitmap(base64String)
+                    if (imageBitmap != null) {
+                        Image(
+                            bitmap = imageBitmap,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.placeholder),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                } else {
+                    // Se l'immagine è un URL o altro tipo di dato supportato da AsyncImagePainter
+                    Image(
+                        painter = rememberAsyncImagePainter(immagineProfilo),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -722,6 +756,10 @@ fun AdminCouponManagement(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        userProfileViewModel.getPagedCoupons()
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -783,14 +821,34 @@ fun AdminCouponManagement(
             Spacer(modifier = Modifier.height(8.dp))
 
             coupons.forEachIndexed { index, coupon ->
-                coupon.valore?.let {
-                    coupon.codice?.let { it1 ->
+                coupon.valore?.let { value ->
+                    coupon.codice?.let { code ->
                         CouponItem(
-                            index = index + 1,
-                            value = it,
-                            code = it1
+                            index = userProfileViewModel.currentPageCoupon * userProfileViewModel.pageSize + index + 1,
+                            value = value,
+                            code = code
                         )
                     }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = { userProfileViewModel.loadPreviousPageCoupons() },
+                    enabled = userProfileViewModel.currentPageCoupon > 0
+                ) {
+                    Text("Precedente")
+                }
+
+                Button(
+                    onClick = { userProfileViewModel.loadNextPageCoupons() },
+                    enabled = userProfileViewModel.currentPageCoupon < userProfileViewModel.totalPagesCoupon - 1
+                ) {
+                    Text("Successivo")
                 }
             }
         }
@@ -813,5 +871,141 @@ fun CouponItem(
         Text(text = "ID: $index", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text(text = "Valore: €${String.format("%.2f", value)}", fontSize = 16.sp)
         Text(text = "Codice: $code", fontSize = 16.sp)
+    }
+}
+
+
+fun base64ToImageBitmap(base64String: String): ImageBitmap? {
+    val bitmap = base64ToBitmap(base64String)
+    return bitmap?.asImageBitmap()
+}
+
+fun base64ToBitmap(base64String: String): Bitmap? {
+    return try {
+        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+        BitmapFactory.decodeStream(ByteArrayInputStream(decodedBytes))
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+
+
+
+@Composable
+fun UserReviewsManagement(
+    reviews: List<RecensioneDto>,
+    userProfileViewModel: UserProfileViewModel
+) {
+
+    LaunchedEffect(Unit) {
+        userProfileViewModel.getPagedReviews()
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Le tue recensioni",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (reviews.isEmpty()) {
+                Text(
+                    text = "Nessuna recensione disponibile",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray
+                )
+            } else {
+                reviews.forEachIndexed { index, review ->
+                    ReviewItem(
+                        index = userProfileViewModel.currentPageRecensioni * userProfileViewModel.pageSize + index + 1,
+                        rating = review.rating,
+                        name = review.nomeProdotto,
+                        comment = review.commento
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = { userProfileViewModel.loadPreviousPageReviews() },
+                    enabled = userProfileViewModel.currentPageRecensioni > 0
+                ) {
+                    Text("Precedente")
+                }
+
+                Button(
+                    onClick = { userProfileViewModel.loadNextPageReviews() },
+                    enabled = userProfileViewModel.currentPageRecensioni < userProfileViewModel.totalPagesRecensioni - 1
+                ) {
+                    Text("Successivo")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ReviewItem(
+    index: Int,
+    rating: Float,
+    name: String,
+    comment: String?
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Recensione #$index",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Prodotto: $name",
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Rating: ${rating.toString()}",
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            comment?.let {
+                Text(
+                    text = "Commento: $it",
+                    fontSize = 14.sp
+                )
+            }
+        }
     }
 }
