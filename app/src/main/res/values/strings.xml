@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Lemu_FrontEnd</string>
     <string name="client_id">961928859450-dqhudkdvj0t5bd6kpb9i59l7uqqhvv56.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1231957411147440</string>
+    <string name="fb_login_protocol_scheme">fb1231957411147440</string>
+    <string name="facebook_client_token">fc0dcbf78b8a220f0f3e353ff920ec8c</string>
 
 </resources>

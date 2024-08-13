@@ -8,8 +8,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import com.google.android.gms.common.api.ApiException
 import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -21,7 +26,16 @@ import org.openapitools.client.apis.UtenteControllerApi
 import org.openapitools.client.models.UtenteDto
 import org.openapitools.client.models.UtenteRegistrazioneDto
 import com.google.gson.Gson
+import org.openapitools.client.models.ApiResponseString
 import org.openapitools.client.models.Indirizzo
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.GraphRequest
+import com.facebook.login.LoginBehavior
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 
 class AuthViewModel (private val activity: Activity) {
 
@@ -38,6 +52,8 @@ class AuthViewModel (private val activity: Activity) {
         loadUserData()
     }
 
+
+    private val callbackManager = CallbackManager.Factory.create()
 
 
     private val googleSignInClient: GoogleSignInClient = GoogleSignIn.getClient(
@@ -69,32 +85,18 @@ class AuthViewModel (private val activity: Activity) {
 
     private fun handleSignInResult(account: GoogleSignInAccount?): Boolean {
         account?.let {
-            val idToken = it.idToken
-            val email = it.email
-            val displayName = it.displayName
-            val givenName = it.givenName
-            val familyName = it.familyName
-            val photoUrl = it.photoUrl.toString()
-            Log.d("AuthViewModel", "ID Token: $idToken")
-            Log.d("AuthViewModel", "Email: $email")
-            Log.d("AuthViewModel", "Display Name: $displayName")
-            Log.d("AuthViewModel", "Given Name: $givenName")
-            Log.d("AuthViewModel", "Family Name: $familyName")
-            Log.d("AuthViewModel", "Photo URL: $photoUrl")
-
-            if (idToken != null) {
+            if (it.idToken != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val response = api.googleAuthentication(idToken)
-                    if (response.data != null){
+                    val response = api.googleAuthentication(it.idToken!!)
+                    if(response.message == "403"){
+                        response.success
+                    } else if (response.data != null){
                         saveToken(response.data)
                         isLoggedIn.value = true
                         withContext(Dispatchers.Main){
                             getUserData()
                         }
                     }
-                    println("SUCCESS: " + response.success)
-                    println("MESSAGE: " + response.message)
-                    println("DATA: " + response.data)
                     response.success
                 }
             }
@@ -110,51 +112,55 @@ class AuthViewModel (private val activity: Activity) {
 
     fun checkAuthentication(): Boolean {
         val token = getToken()
-        println("TOKEN: "+token)
         return token != null
     }
 
 
-    suspend fun register(name: String, surname: String, email: String, password: String): Boolean? {
-        val registrazioneDto = UtenteRegistrazioneDto(nome = name, cognome = surname, credenzialiEmail = email, credenzialiPassword = password)
+    suspend fun register(name: String, surname: String, email: String, password: String): ApiResponseString {
+        val registrazioneDto = UtenteRegistrazioneDto(
+            nome = name,
+            cognome = surname,
+            credenzialiEmail = email,
+            credenzialiPassword = password
+        )
         return try {
             val response = api.registerUser(registrazioneDto)
-            println("SUCCESS: " + response.success)
-            println("MESSAGE: " + response.message)
-            println("DATA: " + response.data)
-            response.data?.let { saveToken(it) }
-            isLoggedIn.value = true
-            withContext(Dispatchers.Main){
-                getUserData()
-            }
-            response.success
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-    }
 
-
-
-    suspend fun authenticate(email: String, password: String): Boolean? {
-        return try {
-            val response = api.authenticate(email, password)
-            println("SUCCESS: " + response.success)
-            println("MESSAGE: " + response.message)
-            println("DATA: " + response.data)
-            if (response.data != null){
-                saveToken(response.data)
+            if (response.success == true) {
+                response.data?.let { saveToken(it) }
                 isLoggedIn.value = true
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     getUserData()
                 }
             }
-            response.success
+            response
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            ApiResponseString(false, "500", "Internal server error")
         }
     }
+
+
+
+
+    suspend fun authenticate(email: String, password: String): ApiResponseString {
+        return try {
+            val response = api.authenticate(email, password)
+
+            if (response.success == true) {
+                response.data?.let { saveToken(it) }
+                isLoggedIn.value = true
+                withContext(Dispatchers.Main) {
+                    getUserData()
+                }
+            }
+            response
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ApiResponseString(false, "500", "Internal server error");
+        }
+    }
+
 
 
     suspend fun changePassword(password: String): Boolean {
@@ -238,6 +244,52 @@ class AuthViewModel (private val activity: Activity) {
         if (userDataJson != null) {
             user.value = gson.fromJson(userDataJson, UtenteDto::class.java)
         }
+    }
+
+
+
+    fun signInWithFacebook() {
+        //LoginManager.getInstance().logOut()
+        //LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_ONLY)
+        LoginManager.getInstance().logInWithReadPermissions(activity, listOf("email", "public_profile"))
+        LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                val accessToken = result.accessToken
+                handleFacebookAccessToken(accessToken)
+            }
+
+            override fun onCancel() {
+                Log.d("AuthViewModel", "Facebook login canceled")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.e("AuthViewModel", "Facebook login error", error)
+            }
+        })
+    }
+
+
+
+
+    private fun handleFacebookAccessToken(token: AccessToken?) {
+        token?.let {
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = api.facebookAuthentication(token.token)
+
+                if (response.data != null){
+                    saveToken(response.data)
+                    isLoggedIn.value = true
+                    withContext(Dispatchers.Main){
+                        getUserData()
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 
 

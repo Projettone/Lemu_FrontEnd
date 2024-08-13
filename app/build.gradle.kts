@@ -82,6 +82,7 @@ dependencies {
     implementation (libs.okhttp)
 
     implementation("com.google.android.gms:play-services-auth:20.4.0") // Google Sign-In API
+    implementation("com.facebook.android:facebook-login:latest.release")
 
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("io.coil-kt:coil-compose:2.1.0")

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.facebook.FacebookSdk
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
         }
+        FacebookSdk.sdkInitialize(applicationContext)
 
         setContent {
             Lemu_FrontEndTheme {
@@ -56,6 +58,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        authViewModel.handleActivityResult(requestCode, resultCode, data)
     }
 }
 
