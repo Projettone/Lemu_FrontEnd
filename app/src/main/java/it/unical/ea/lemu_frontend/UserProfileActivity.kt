@@ -936,7 +936,8 @@ fun UserReviewsManagement(
                         index = userProfileViewModel.currentPageRecensioni * userProfileViewModel.pageSize + index + 1,
                         rating = review.rating,
                         name = review.nomeProdotto,
-                        comment = review.commento
+                        comment = review.commento,
+                        onDeleteClick = { userProfileViewModel.deleteReview(review.id) }
                     )
                 }
             }
@@ -970,8 +971,43 @@ fun ReviewItem(
     index: Int,
     rating: Float,
     name: String,
-    comment: String?
+    comment: String?,
+    onDeleteClick: suspend () -> Unit
 ) {
+
+    var showDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Conferma cancellazione") },
+            text = { Text("Sei sicuro di voler cancellare questa recensione?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            onDeleteClick()
+                            showDialog = false
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Conferma", color = Color.White)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                ) {
+                    Text("Annulla", color = Color.White)
+                }
+            }
+        )
+    }
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -982,7 +1018,7 @@ fun ReviewItem(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             Text(
                 text = "Recensione #$index",
@@ -1005,6 +1041,18 @@ fun ReviewItem(
                     text = "Commento: $it",
                     fontSize = 14.sp
                 )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = { showDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text(text = "Elimina", color = Color.White)
+                }
             }
         }
     }

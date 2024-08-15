@@ -249,8 +249,6 @@ class AuthViewModel (private val activity: Activity) {
 
 
     fun signInWithFacebook() {
-        //LoginManager.getInstance().logOut()
-        //LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_ONLY)
         LoginManager.getInstance().logInWithReadPermissions(activity, listOf("email", "public_profile"))
         LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {

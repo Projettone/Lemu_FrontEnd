@@ -3,6 +3,7 @@ package it.unical.ea.lemu_frontend.viewmodels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -159,6 +160,12 @@ class UserProfileViewModel(private val authViewModel: AuthViewModel) {
                 currentPageRecensioni -= 1
                 getPagedReviews()
             }
+        }
+    }
+
+    suspend fun deleteReview(id: Long){
+        apiCall {
+            recensioniControllerApi.deleteReview(id)
         }
     }
 }
