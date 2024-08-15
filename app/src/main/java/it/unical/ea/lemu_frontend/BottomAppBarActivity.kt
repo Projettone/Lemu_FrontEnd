@@ -31,8 +31,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewModel) {
-    var selectedIconIndex by remember { mutableStateOf(1) }
+fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, authViewModel: AuthViewModel) {
+
     val colorDivider = Color(0xFF0077B6)
 
     NavigationBar(
@@ -43,7 +43,9 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 1,
             onClick = {
-                selectedIconIndex = 1
+                navController.navigate("home") {
+                    popUpTo("home") { inclusive = true }
+                }
             },
             icon = {
                 IconWithIndicator(
@@ -57,7 +59,9 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 2,
             onClick = {
-                selectedIconIndex = 2
+                navController.navigate("categories") {
+                    popUpTo("categories") { inclusive = true }
+                }
             },
             icon = {
                 IconWithIndicator(
@@ -71,10 +75,11 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 3,
             onClick = {
-                selectedIconIndex = 3
-                if (authViewModel.checkAuthentication()){
-                    navController.navigate("profile")
-                } else{
+                if (authViewModel.checkAuthentication()) {
+                    navController.navigate("profile") {
+                        popUpTo("profile") { inclusive = true }
+                    }
+                } else {
                     navController.navigate("login")
                 }
             },
@@ -90,7 +95,9 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 4,
             onClick = {
-                selectedIconIndex = 4
+                navController.navigate("checkout") {
+                    popUpTo("checkout") { inclusive = true }
+                }
             },
             icon = {
                 IconWithIndicator(
@@ -104,7 +111,9 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 5,
             onClick = {
-                selectedIconIndex = 5
+                navController.navigate("wishlist") {
+                    popUpTo("wishlist") { inclusive = true }
+                }
             },
             icon = {
                 IconWithIndicator(

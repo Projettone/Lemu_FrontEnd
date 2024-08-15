@@ -20,15 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.facebook.FacebookSdk
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
 import org.openapitools.client.models.Utente
 
@@ -36,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var authViewModel: AuthViewModel
     private lateinit var userProfileViewModel: UserProfileViewModel
+    private lateinit var paymentViewModel: PaymentViewModel
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
 
         authViewModel = AuthViewModel(this)
         userProfileViewModel = UserProfileViewModel(authViewModel)
+        paymentViewModel = PaymentViewModel(authViewModel)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
         }
@@ -54,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Start(authViewModel, userProfileViewModel, signInLauncher)
+                    Start(authViewModel, userProfileViewModel, signInLauncher, paymentViewModel)
                 }
             }
         }
@@ -69,12 +74,25 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Start( authViewModel: AuthViewModel,
            userProfileViewModel: UserProfileViewModel,
-           signInLauncher: ActivityResultLauncher<Intent>){
+           signInLauncher: ActivityResultLauncher<Intent>,
+           paymentViewModel: PaymentViewModel){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
     val isLoggedIn by authViewModel.isLoggedIn
+    var selectedIconIndex by remember { mutableStateOf(1) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    selectedIconIndex = when (currentRoute) {
+        "profile" -> 3
+        "checkout" -> 4
+        "home" -> 1
+        "categories" -> 2
+        "wishlist" -> 5
+        else -> 1
+    }
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -88,7 +106,7 @@ fun Start( authViewModel: AuthViewModel,
 
     Scaffold(
         bottomBar = {
-            BottomAppBarActivity(navController = navController, authViewModel = authViewModel)
+            BottomAppBarActivity(navController = navController, selectedIconIndex = selectedIconIndex, authViewModel = authViewModel)
         },
         topBar = {TopAppBarActivity(
             isLogoVisible = isLogoVisible,
@@ -114,6 +132,9 @@ fun Start( authViewModel: AuthViewModel,
             }
             composable("profile") {
                 UserProfileActivity(authViewModel = authViewModel, userProfileViewModel = userProfileViewModel, navController = navController)
+            }
+            composable("checkout") {
+                CheckoutActivity(authViewModel = authViewModel, navController = navController, paymentViewModel = paymentViewModel)
             }
         }
     }
