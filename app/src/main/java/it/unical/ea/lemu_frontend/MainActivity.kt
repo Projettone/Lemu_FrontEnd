@@ -81,24 +81,10 @@ fun Start( authViewModel: AuthViewModel,
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
     val isLoggedIn by authViewModel.isLoggedIn
-    var selectedIconIndex by remember { mutableStateOf(1) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    selectedIconIndex = when (currentRoute) {
-        "profile" -> 3
-        "checkout" -> 4
-        "home" -> 1
-        "categories" -> 2
-        "wishlist" -> 5
-        else -> 1
-    }
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            navController.navigate("profile") {
-                popUpTo("home") { inclusive = true }
-            }
+            navController.navigate("profile")
         }
     }
 
@@ -106,7 +92,7 @@ fun Start( authViewModel: AuthViewModel,
 
     Scaffold(
         bottomBar = {
-            BottomAppBarActivity(navController = navController, selectedIconIndex = selectedIconIndex, authViewModel = authViewModel)
+            BottomAppBarActivity(navController = navController, authViewModel = authViewModel)
         },
         topBar = {TopAppBarActivity(
             isLogoVisible = isLogoVisible,

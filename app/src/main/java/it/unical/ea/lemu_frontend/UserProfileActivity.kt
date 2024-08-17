@@ -73,7 +73,7 @@ fun UserProfileActivity(
         LaunchedEffect(Unit) {
             try {
                 authViewModel.logout()
-                navController.navigate("login") { popUpTo("home") { inclusive = true } }
+                navController.navigate("home")
             } catch (e: Exception) {
                 Toast.makeText(context, "Logout failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 isLoggingOut = false

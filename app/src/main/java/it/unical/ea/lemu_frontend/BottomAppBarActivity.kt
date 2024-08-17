@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +32,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, authViewModel: AuthViewModel) {
-
+fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewModel) {
     val colorDivider = Color(0xFF0077B6)
+    var selectedIconIndex by remember { mutableStateOf(1) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    selectedIconIndex = when (currentRoute) {
+        "profile" -> 3
+        "login" -> 3
+        "checkout" -> 4
+        "home" -> 1
+        "categories" -> 2
+        "wishlist" -> 5
+        else -> 1
+    }
 
     NavigationBar(
         modifier = Modifier
@@ -43,9 +56,7 @@ fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, a
         NavigationBarItem(
             selected = selectedIconIndex == 1,
             onClick = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                }
+                navController.navigate("home")
             },
             icon = {
                 IconWithIndicator(
@@ -59,9 +70,7 @@ fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, a
         NavigationBarItem(
             selected = selectedIconIndex == 2,
             onClick = {
-                navController.navigate("categories") {
-                    popUpTo("categories") { inclusive = true }
-                }
+                navController.navigate("categories")
             },
             icon = {
                 IconWithIndicator(
@@ -76,9 +85,7 @@ fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, a
             selected = selectedIconIndex == 3,
             onClick = {
                 if (authViewModel.checkAuthentication()) {
-                    navController.navigate("profile") {
-                        popUpTo("profile") { inclusive = true }
-                    }
+                    navController.navigate("profile")
                 } else {
                     navController.navigate("login")
                 }
@@ -95,9 +102,7 @@ fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, a
         NavigationBarItem(
             selected = selectedIconIndex == 4,
             onClick = {
-                navController.navigate("checkout") {
-                    popUpTo("checkout") { inclusive = true }
-                }
+                navController.navigate("checkout")
             },
             icon = {
                 IconWithIndicator(
@@ -111,9 +116,7 @@ fun BottomAppBarActivity(navController: NavController, selectedIconIndex: Int, a
         NavigationBarItem(
             selected = selectedIconIndex == 5,
             onClick = {
-                navController.navigate("wishlist") {
-                    popUpTo("wishlist") { inclusive = true }
-                }
+                navController.navigate("wishlist")
             },
             icon = {
                 IconWithIndicator(
