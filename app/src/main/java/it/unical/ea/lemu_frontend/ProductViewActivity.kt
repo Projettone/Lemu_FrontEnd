@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -45,6 +47,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +56,7 @@ import androidx.navigation.NavHostController
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
 import kotlinx.coroutines.launch
 import org.openapitools.client.models.ProdottoDto
+import org.openapitools.client.models.RecensioneDto
 
 @Composable
 fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel) {
@@ -66,7 +70,8 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     var loading by remember { mutableStateOf(true) } // Stato di caricamento
     val listaRecensioni by viewModel.listaRecensioni.collectAsState()
 
-
+    var reviewText by remember { mutableStateOf("") }
+    var rating by remember { mutableStateOf(0f) }
 
 
 
@@ -74,10 +79,7 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     LaunchedEffect(Unit) {
         launch {
             val products = viewModel.getProductById(productId)
-
-            println("id prodotto "+ productId)
             viewModel.findRecensioniByidProdotto(productId)
-            println("lgnhezza lista recensioni "+ listaRecensioni.size)
             if (products != null) {
                 product = products
             }
@@ -113,18 +115,17 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                 Row(
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (product != null) {
-                        Text(
-                            text = "V",
-                            style = TextStyle(fontSize = 13.sp)
-                        )
-                    }
-                    val myFloat = remember { mutableStateOf(0f) }
-
+                    val myFloat = rememberSaveable{ mutableStateOf(0f) }
                     for (recensione in listaRecensioni) {
                         // Somma il valore di rating a myFloat
                         myFloat.value += recensione.rating
                     }
+
+                    Text(
+                        text = myFloat.value.toString(),
+                        style = TextStyle(fontSize = 13.sp)
+                    )
+
 
                     val number = myFloat.value
                     val integerPart = number.toInt()
@@ -359,20 +360,67 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
             }
 
 //caricamento recensioni
-            /*
+
         items(listaRecensioni){recensioni ->
             RecensioniViewActivity(recensioni)
         }
 
-             */
+// Add new review section
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "Aggiungi una nuova recensione",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
+                Spacer(modifier = Modifier.height(10.dp))
 
+                OutlinedTextField(
+                    value = reviewText,
+                    onValueChange = { reviewText = it },
+                    label = { Text("Scrivi la tua recensione") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(text = "Valutazione: ")
+                    RatingBar(
+                        rating = rating,
+                        onRatingChanged = { newRating ->
+                            rating = newRating
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = {
+                        // Handle adding the new review here
+                        //viewModel.addReview(productId, reviewText, rating) //metodo per aggiungere la nuova recensione
+                        reviewText = "" // Clear the text field
+                        rating = 0f // Reset the rating
+                    },
+                    colors = ButtonDefaults.buttonColors(MyOrange),
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Text(text = "Invia recensione")
+                }
+            }
         }
     }
 }
 
-/*
+
+
 @Composable
 fun RecensioniViewActivity(recensioni: RecensioneDto) {
 
@@ -391,17 +439,20 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
-        Text(text = recensioni.userName)
+        Text(text = recensioni.nomeProdotto)
     }
     Row (
         modifier = Modifier.padding(start = 1.dp)
     ){
+        val number = recensioni.rating
+        val integerPart = number.toInt()
+        val decimalPart = number - integerPart
         repeat(5) { index ->
-            //val starColor = if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index )) {
-            //  MyYellow
-            //} else {
-            //  Color.Gray
-            //}
+            val starColor = if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index )) {
+              MyYellow
+            } else {
+              Color.Gray
+            }
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
@@ -413,15 +464,34 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
             Spacer(modifier = Modifier.width(4.dp))
         }
     }
-    Text(text = review.title)
-    Text(text = "Recensito il ${review.date}", color = Color.Gray)
-    Text(text = recensioni.commento!!)
+    Text(text = "ciaoo")
+    Text(text = "Recensito il ", color = Color.Gray)
+    Text(text = recensioni.commento)
 
     Spacer(modifier = Modifier.height(19.dp))
 
 }
 
 
- */
+@Composable
+fun RatingBar(rating: Float, onRatingChanged: (Float) -> Unit) {
+    Row {
+        repeat(5) { index ->
+            val starColor = if (index < rating) Color(0xFFFFBE00) else Color.Gray
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = null,
+                tint = starColor,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        onRatingChanged(index + 1f)
+                    }
+            )
+        }
+    }
+}
+
+
 
 

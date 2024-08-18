@@ -1,6 +1,9 @@
 package it.unical.ea.lemu_frontend
 
 import CameraCapture
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -282,30 +285,33 @@ fun ImagePickerButton(onImageSelected: (Uri) -> Unit) {
 
 // Funzione per convertire un'immagine in base64
 fun uriToBase64(uri: Uri, context: android.content.Context): String? {
-    var inputStream: InputStream? = null
     try {
-        inputStream = context.contentResolver.openInputStream(uri)
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        // Ruota l'immagine di 90 gradi a sinistra
+        val rotatedBitmap = rotateBitmapLeft(bitmap)
+
         val bytes = ByteArrayOutputStream()
-        val buffer = ByteArray(1024)
-        var bytesRead: Int
-        if (inputStream != null) {
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                bytes.write(buffer, 0, bytesRead)
-            }
-        }
+        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val base64 = Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT)
         bytes.close()
         return base64
     } catch (e: Exception) {
         e.printStackTrace()
-    } finally {
-        inputStream?.close()
     }
     return null
 }
+
 
 // Funzione per normalizzare il prezzo sostituendo la virgola con il pu
 // Funzione per normalizzare il prezzo sostituendo la virgola con il punto
 fun normalizePrice(price: String): String {
     return price.replace(",", ".")
+}
+
+fun rotateBitmapLeft(bitmap: Bitmap): Bitmap {
+    val matrix = Matrix().apply { postRotate(+90f) }
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
