@@ -43,8 +43,10 @@ fun TopAppBarActivity(
     isLogoVisible: Boolean,
     isArrowVisible: Boolean,
     navController: NavController,
-    isSearchBarVisible: Boolean, ) {
+    isSearchBarVisible: Boolean,
+    onSearch: (String) -> Unit, ) {
     var text by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) } // Controlla l'espansione del menu a tendina
     val startColor = Color(0xFF0077B6) // Celeste scuro
     val endColor = Color(0xFF83F5F9) // Celeste più chiaro
 
@@ -126,8 +128,8 @@ fun TopAppBarActivity(
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            // Action when search button is pressed on the keyboard
-                            // For example, trigger search functionality
+                            onSearch(text)
+                            expanded = false // Chiudi il menu quando si avvia la ricerca
                         }
                     ),
                     leadingIcon = {
