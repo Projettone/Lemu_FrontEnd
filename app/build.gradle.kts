@@ -90,7 +90,36 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("io.coil-kt:coil-compose:2.1.0")
 
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:1.4.0")
 
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation("androidx.camera:camera-view:1.2.3")
+
+    implementation("androidx.compose.ui:ui:1.6.7")
+
+    implementation("androidx.compose.foundation:foundation:1.0.5")
+    implementation("com.google.code.gson:gson:2.8.8")
+
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    // Lifecycle components
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+
+
+    // Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+
+    implementation("com.google.android.gms:play-services-auth:20.4.0") // Google Sign-In API
+    implementation("com.facebook.android:facebook-login:latest.release")
+
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("io.coil-kt:coil-compose:2.1.0")
 
 
 }
