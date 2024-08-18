@@ -16,6 +16,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,9 @@ class AuthViewModel (private val activity: Activity) {
     private val userSharedPreferences: SharedPreferences = activity.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     private val authSharedPreferences: SharedPreferences = activity.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
+
+    private val _isLoading = mutableStateOf(false)
+    val isLoading: State<Boolean> get() = _isLoading
 
 
     init {
@@ -117,6 +121,7 @@ class AuthViewModel (private val activity: Activity) {
 
 
     suspend fun register(name: String, surname: String, email: String, password: String): ApiResponseString {
+        _isLoading.value = true
         val registrazioneDto = UtenteRegistrazioneDto(
             nome = name,
             cognome = surname,
@@ -137,6 +142,8 @@ class AuthViewModel (private val activity: Activity) {
         } catch (e: Exception) {
             e.printStackTrace()
             ApiResponseString(false, "500", "Internal server error")
+        } finally {
+            _isLoading.value = false
         }
     }
 
@@ -144,6 +151,7 @@ class AuthViewModel (private val activity: Activity) {
 
 
     suspend fun authenticate(email: String, password: String): ApiResponseString {
+        _isLoading.value = true
         return try {
             val response = api.authenticate(email, password)
 
@@ -158,12 +166,15 @@ class AuthViewModel (private val activity: Activity) {
         } catch (e: Exception) {
             e.printStackTrace()
             ApiResponseString(false, "500", "Internal server error");
+        } finally {
+            _isLoading.value = false
         }
     }
 
 
 
     suspend fun changePassword(password: String): Boolean {
+        _isLoading.value = true
         return withContext(Dispatchers.IO) {
             try {
                 api.updatePassword(password)
@@ -171,6 +182,8 @@ class AuthViewModel (private val activity: Activity) {
             } catch (e: Exception) {
                 e.printStackTrace()
                 false
+            }finally {
+                _isLoading.value = false
             }
         }
     }
@@ -288,6 +301,20 @@ class AuthViewModel (private val activity: Activity) {
 
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         callbackManager.onActivityResult(requestCode, resultCode, data)
+    }
+
+
+    suspend fun sendPasswordResetEmail(email: String) {
+        _isLoading.value = true
+        return withContext(Dispatchers.IO) {
+            try {
+                api.sendPasswordResetEmail(email)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
 

@@ -37,6 +37,7 @@ import org.openapitools.client.infrastructure.RequestConfig
 import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
+import org.openapitools.client.models.UtenteDto
 
 class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
@@ -510,20 +511,26 @@ class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: ko
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
     fun registerUser(utenteRegistrazioneDto: UtenteRegistrazioneDto) : ApiResponseString {
-        val localVarResponse = registerUserWithHttpInfo(utenteRegistrazioneDto = utenteRegistrazioneDto)
+        val originalClient = this.client
+        try {
+            this.client = ApiClient.highTimeoutClient
+            val localVarResponse = registerUserWithHttpInfo(utenteRegistrazioneDto = utenteRegistrazioneDto)
 
-        return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as ApiResponseString
-            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
-            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
-            ResponseType.ClientError -> {
-                val localVarError = localVarResponse as ClientError<*>
-                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            return when (localVarResponse.responseType) {
+                ResponseType.Success -> (localVarResponse as Success<*>).data as ApiResponseString
+                ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+                ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+                ResponseType.ClientError -> {
+                    val localVarError = localVarResponse as ClientError<*>
+                    throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+                }
+                ResponseType.ServerError -> {
+                    val localVarError = localVarResponse as ServerError<*>
+                    throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+                }
             }
-            ResponseType.ServerError -> {
-                val localVarError = localVarResponse as ServerError<*>
-                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
-            }
+        } finally {
+            this.client = originalClient
         }
     }
 
@@ -637,6 +644,167 @@ class UtenteControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/utente-api/revoke-admin",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     *
+     *
+     * @param keyword
+     * @return kotlin.collections.List<UtenteDto>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun searchUsers(keyword: kotlin.String) : kotlin.collections.List<UtenteDto> {
+        val localVarResponse = searchUsersWithHttpInfo(keyword = keyword)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<UtenteDto>
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     *
+     *
+     * @param keyword
+     * @return ApiResponse<kotlin.collections.List<UtenteDto>?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun searchUsersWithHttpInfo(keyword: kotlin.String) : ApiResponse<kotlin.collections.List<UtenteDto>?> {
+        val localVariableConfig = searchUsersRequestConfig(keyword = keyword)
+
+        return request<Unit, kotlin.collections.List<UtenteDto>>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation searchUsers
+     *
+     * @param keyword
+     * @return RequestConfig
+     */
+    fun searchUsersRequestConfig(keyword: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("keyword", listOf(keyword.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/utente-api/search",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     *
+     *
+     * @param email
+     * @return kotlin.String
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun sendPasswordResetEmail(email: kotlin.String) : kotlin.String {
+        val originalClient = this.client
+        try {
+            this.client = ApiClient.highTimeoutClient
+            val localVarResponse = sendPasswordResetEmailWithHttpInfo(email = email)
+
+            return when (localVarResponse.responseType) {
+                ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
+                ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+                ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+                ResponseType.ClientError -> {
+                    val localVarError = localVarResponse as ClientError<*>
+                    throw ClientException(
+                        "Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}",
+                        localVarError.statusCode,
+                        localVarResponse
+                    )
+                }
+
+                ResponseType.ServerError -> {
+                    val localVarError = localVarResponse as ServerError<*>
+                    throw ServerException(
+                        "Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}",
+                        localVarError.statusCode,
+                        localVarResponse
+                    )
+                }
+            }
+        } finally {
+            this.client = originalClient
+        }
+    }
+
+    /**
+     *
+     *
+     * @param email
+     * @return ApiResponse<kotlin.String?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun sendPasswordResetEmailWithHttpInfo(email: kotlin.String) : ApiResponse<kotlin.String?> {
+        val localVariableConfig = sendPasswordResetEmailRequestConfig(email = email)
+
+        return request<Unit, kotlin.String>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation sendPasswordResetEmail
+     *
+     * @param email
+     * @return RequestConfig
+     */
+    fun sendPasswordResetEmailRequestConfig(email: kotlin.String) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("email", listOf(email.toString()))
+            }
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        return RequestConfig(
+            method = RequestMethod.POST,
+            path = "/utente-api/password-recovery",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

@@ -32,6 +32,7 @@ import com.facebook.FacebookSdk
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
+import it.unical.ea.lemu_frontend.viewmodels.SearchedUserViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
 import org.openapitools.client.models.Utente
 
@@ -81,6 +82,7 @@ fun Start( authViewModel: AuthViewModel,
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
     val isLoggedIn by authViewModel.isLoggedIn
+    val searchedUserViewModel = SearchedUserViewModel(authViewModel)
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -113,14 +115,32 @@ fun Start( authViewModel: AuthViewModel,
                     signInLauncher = signInLauncher)
             }
             composable("registration") {
+                isLogoVisible = true
+                isArrowVisible = true
                 RegistrationActivity(navController = navController,
                     authViewModel = authViewModel)
             }
             composable("profile") {
+                isLogoVisible = true
+                isArrowVisible = true
                 UserProfileActivity(authViewModel = authViewModel, userProfileViewModel = userProfileViewModel, navController = navController)
             }
             composable("checkout") {
                 CheckoutActivity(authViewModel = authViewModel, navController = navController, paymentViewModel = paymentViewModel)
+            }
+            composable("searchedUser") {
+                SearchedUserProfileActivity(navController = navController, searchedUserViewModel = searchedUserViewModel,
+                    userId = 1
+                )
+            }
+            composable("wishlistDetail/{wishlistId}") { backStackEntry ->
+                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLong() ?: return@composable
+                isLogoVisible = true
+                isArrowVisible = true
+                WishlistDetailScreen(
+                    wishlistId = wishlistId,
+                    searchedUserViewModel = searchedUserViewModel
+                )
             }
         }
     }

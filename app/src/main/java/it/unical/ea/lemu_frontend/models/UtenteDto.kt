@@ -31,6 +31,7 @@ import com.squareup.moshi.JsonClass
  * @param indirizzo 
  * @param username 
  * @param email 
+ * @param saldo 
  */
 
 

@@ -61,6 +61,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material:material:1.5.1")
     implementation(libs.suggestions)
     implementation(libs.common)
     implementation(libs.androidx.appcompat)
@@ -74,7 +78,6 @@ dependencies {
 
     //navController
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
-    implementation("androidx.compose.material:material:1.0.5")
 
     implementation (libs.moshi)
     implementation (libs.moshi.adapters)

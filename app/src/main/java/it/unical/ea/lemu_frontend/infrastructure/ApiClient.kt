@@ -30,10 +30,11 @@ import java.time.OffsetTime
 import java.util.Locale
 import com.squareup.moshi.adapter
 import java.nio.Buffer
+import java.util.concurrent.TimeUnit
 
 val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
 
-open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClient) {
+open class ApiClient(val baseUrl: String, var client: OkHttpClient = defaultClient) {
     companion object {
         protected const val ContentType = "Content-Type"
         protected const val Accept = "Accept"
@@ -54,6 +55,15 @@ open class ApiClient(val baseUrl: String, val client: OkHttpClient = defaultClie
         @JvmStatic
         val defaultClient: OkHttpClient by lazy {
             builder.build()
+        }
+
+        @JvmStatic
+        val highTimeoutClient: OkHttpClient by lazy {
+            OkHttpClient.Builder()
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100, TimeUnit.SECONDS)
+                .build()
         }
 
         @JvmStatic
