@@ -31,7 +31,9 @@ import androidx.navigation.compose.rememberNavController
 import com.facebook.FacebookSdk
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.OrdineViewModel
 import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
+import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
 import it.unical.ea.lemu_frontend.viewmodels.SearchedUserViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
 import org.openapitools.client.models.Utente
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var userProfileViewModel: UserProfileViewModel
     private lateinit var paymentViewModel: PaymentViewModel
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+    private lateinit var prodottoViewModel: ProdottoViewModel
+    private lateinit var ordineViewModel: OrdineViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,8 @@ class MainActivity : ComponentActivity() {
         authViewModel = AuthViewModel(this)
         userProfileViewModel = UserProfileViewModel(authViewModel)
         paymentViewModel = PaymentViewModel(authViewModel)
+        prodottoViewModel = ProdottoViewModel(authViewModel)
+        ordineViewModel = OrdineViewModel(authViewModel)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
         }
@@ -60,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Start(authViewModel, userProfileViewModel, signInLauncher, paymentViewModel)
+                    Start(authViewModel, userProfileViewModel, signInLauncher, paymentViewModel, prodottoViewModel, ordineViewModel)
                 }
             }
         }
@@ -76,13 +83,16 @@ class MainActivity : ComponentActivity() {
 fun Start( authViewModel: AuthViewModel,
            userProfileViewModel: UserProfileViewModel,
            signInLauncher: ActivityResultLauncher<Intent>,
-           paymentViewModel: PaymentViewModel){
+           paymentViewModel: PaymentViewModel,
+           prodottoViewModel: ProdottoViewModel,
+           ordineViewModel: OrdineViewModel){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
     val isLoggedIn by authViewModel.isLoggedIn
     val searchedUserViewModel = SearchedUserViewModel(authViewModel)
+    var searchKeyword by remember { mutableStateOf("") }
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -100,12 +110,39 @@ fun Start( authViewModel: AuthViewModel,
             isLogoVisible = isLogoVisible,
             isArrowVisible = isArrowVisible,
             isSearchBarVisible= isSearchBarVisible,
-            navController = navController
+            navController = navController,
+            onSearch = { keyword ->
+                searchKeyword = keyword
+                navController.navigate("homeSearch")
+            }
         )}
     ) { innerPadding ->
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
-                //HomePageActivity(navController = navController, productList = null )
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel,isRicerca = false, keyword = "*")
+            }
+            composable("homeSearch"){
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel, isRicerca = true, keyword = searchKeyword)
+            }
+            composable("addProduct"){
+                AddProductActivity(navController = navController, prodottoViewModel = prodottoViewModel)
+            }
+            composable("prodotto/{productId}") { backStackEntry ->
+                val productIdString = backStackEntry.arguments?.getString("productId")
+
+                if (productIdString != null) {
+                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = ProdottoViewModel(authViewModel))
+                }
+            }
+            composable("ordini"){
+                OrdiniActivity(navController = navController, viewModel = ordineViewModel)
+            }
+            composable("dettagliOrdine/{id}") {backStackEntry ->
+                val ordineIdString = backStackEntry.arguments?.getString("id")
+
+                if (ordineIdString != null) {
+                    DettagliOrdineActivity(idOrdine = ordineIdString, viewModelProduct = prodottoViewModel, viewModelOrder = ordineViewModel)
+                }
             }
             composable("login"){
                 isLogoVisible = true
