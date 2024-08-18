@@ -39,6 +39,9 @@ import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteDto
 
 import android.util.Base64
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import coil.compose.rememberImagePainter
@@ -937,7 +940,7 @@ fun UserReviewsManagement(
                         rating = review.rating,
                         name = review.nomeProdotto,
                         comment = review.commento,
-                        onDeleteClick = { userProfileViewModel.deleteReview(review.id) }
+                        onDeleteClick = { review.id?.let { userProfileViewModel.deleteReview(it) } }
                     )
                 }
             }
@@ -1031,10 +1034,24 @@ fun ReviewItem(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Rating: ${rating.toString()}",
-                fontSize = 14.sp
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Rating: ${rating.toString()}",
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = "Star Icon",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             comment?.let {
                 Text(
