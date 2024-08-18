@@ -131,7 +131,7 @@ fun Start( authViewModel: AuthViewModel,
                 val productIdString = backStackEntry.arguments?.getString("productId")
 
                 if (productIdString != null) {
-                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = ProdottoViewModel(authViewModel))
+                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel)
                 }
             }
             composable("ordini"){
