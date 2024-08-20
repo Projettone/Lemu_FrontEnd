@@ -1,29 +1,38 @@
-package it.unical.ea.lemu_frontend.viewmodels
-
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import it.unical.ea.lemu_frontend.Product
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.State
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.openapitools.client.apis.ProdottoControllerApi
+import org.openapitools.client.models.ProdottoDto
 
-class CategoryViewModel : ViewModel() {
-    // Stato che tiene traccia della categoria selezionata
-    val selectedCategory = mutableStateOf<String?>(null)
+class ProductsViewModel : ViewModel() {
 
-    // Metodo per selezionare una categoria
-    fun selectCategory(categoryName: String) {
-        selectedCategory.value = categoryName
-    }
+    private val prodottoControllerApi = ProdottoControllerApi()  // Instantiate the API controller
 
-    /*
-    // Metodo per ottenere i prodotti per la categoria selezionata
-    fun getProductsForSelectedCategory(): List<Product> {
-        val category = selectedCategory.value
-        return if (category != null) {
-            // Filtro i prodotti per categoria
-            products.filter { it.category == category }
-        } else {
-            emptyList()
+    private val _products = mutableStateOf<List<ProdottoDto>>(emptyList())
+    val products: State<List<ProdottoDto>> = _products
+
+    fun fetchProductsByCategory(category: String?) {
+        println("sono dentro")
+        println(category)
+        viewModelScope.launch {
+            try {
+                val productList = withContext(Dispatchers.IO) {
+                    // Usa la funzione di rete sincrona qui
+                    prodottoControllerApi.getProdutCategory(category ?: "")
+                }
+                _products.value = productList
+                println("Numero di prodotti: ${productList.size}")
+            } catch (e: Exception) {
+                _products.value = emptyList()
+                println("Numero di prodotti: 0 (nessun prodotto trovato o errore)")
+                e.printStackTrace()
+            }
         }
     }
 
-     */
+
 }

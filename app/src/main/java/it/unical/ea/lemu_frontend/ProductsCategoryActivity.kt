@@ -1,5 +1,9 @@
 package it.unical.ea.lemu_frontend
 
+import ProductsViewModel
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,25 +21,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import org.openapitools.client.models.ProdottoDto
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun ProductsCategory(category: String?) {
+    val viewModel: ProductsViewModel = viewModel()
+    val products by viewModel.products
     // Filtra i prodotti in base alla categoria selezionata, se applicabile
-    val products = listOf(
-        Product(R.drawable.cart_logo, "Prodotto 1", 100, 4.5, 50, 10.00, "Categoria1"),
-        Product(R.drawable.cart_logo, "Prodotto 2", 80, 4.0, 30, 20.00, "Categoria2"),
-        Product(R.drawable.cart_logo, "Prodotto 3", 120, 4.2, 60, 15.00, "Categoria1"),
-        Product(R.drawable.cart_logo, "Prodotto 4", 100, 4.5, 50, 10.00, "Categoria2"),
-        Product(R.drawable.cart_logo, "Prodotto 5", 80, 4.0, 30, 20.00, "Categoria1"),
-        Product(R.drawable.cart_logo, "Prodotto 6", 120, 4.2, 60, 15.00, "Categoria2"),
-        // Aggiungi altri prodotti qui...
-    ).filter { it.category == category}
+    LaunchedEffect(category) {
+        viewModel.fetchProductsByCategory(category)
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -45,8 +49,8 @@ fun ProductsCategory(category: String?) {
             columns = GridCells.Fixed(2),
             modifier = Modifier.padding(16.dp)
         ) {
-            items(products) { product ->
-                ProductCard(product) {
+            items(products) { ProdottoDto ->
+                ProductCard(ProdottoDto) {
                     scope.launch {
                         snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
                     }
@@ -106,8 +110,14 @@ fun CustomSnackbar(data: SnackbarData) {
     }
 }
 
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
-fun ProductCard(product: Product, onAddToCartClick: () -> Unit) {
+fun ProductCard(prodottoDto: ProdottoDto, onAddToCartClick: () -> Unit) {
+    // Decodifica l'immagine Base64 in un Bitmap
+    val imageBitmap = remember(prodottoDto.immagineProdotto) {
+        decodeBase64Image(prodottoDto.immagineProdotto)
+    }
+
     Card(
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.LightGray),
@@ -118,61 +128,84 @@ fun ProductCard(product: Product, onAddToCartClick: () -> Unit) {
         Column(
             modifier = Modifier.background(color = Color.White)
         ) {
-            Image(
-                painter = painterResource(id = product.imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
+            imageBitmap?.let { bitmap ->
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(150.dp)
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            prodottoDto.nome?.let {
+                Text(
+                    text = it,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
             Text(
-                text = product.name,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(8.dp)
-            )
-            Text(
-                text = "${product.sold} Venduti | ★${product.rating}(${product.reviews})",
+                text = "${prodottoDto.venduti} Venduti",
                 fontSize = 14.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp)
             )
+
             Text(
-                text = "${product.price}€",
+                text = "${prodottoDto.prezzo}€",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
             )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End // Allinea gli elementi alla destra della Row
+                horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
                     onClick = { onAddToCartClick() },
-                    modifier = Modifier.size(24.dp) // Riduci la dimensione dell'IconButton
+                    modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
                         contentDescription = "Add to Cart",
                         tint = Color.Black,
-                        modifier = Modifier.size(24.dp) // Riduci la dimensione dell'Icon
+                        modifier = Modifier.size(24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp)) // Aggiungi uno spazio tra le icone
+                Spacer(modifier = Modifier.width(8.dp))
                 IconButton(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier.size(24.dp) // Riduci la dimensione dell'IconButton
+                    modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Share",
                         tint = Color.Black,
-                        modifier = Modifier.size(24.dp) // Riduci la dimensione dell'Icon
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalEncodingApi::class)
+fun decodeBase64Image(base64Str: String?): Bitmap? {
+    return try {
+        if (base64Str.isNullOrEmpty()) {
+            null
+        } else {
+            val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        }
+    } catch (e: IllegalArgumentException) {
+        e.printStackTrace()
+        null
     }
 }
 

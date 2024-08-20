@@ -1,5 +1,6 @@
 package it.unical.ea.lemu_frontend
 
+import CarrelloActivity
 import LoginActivity
 import RegistrationActivity
 import android.content.Intent
@@ -36,6 +37,8 @@ import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
 import it.unical.ea.lemu_frontend.viewmodels.SearchedUserViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
+import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 import org.openapitools.client.models.Utente
 
 class MainActivity : ComponentActivity() {
@@ -93,6 +96,22 @@ fun Start( authViewModel: AuthViewModel,
     val isLoggedIn by authViewModel.isLoggedIn
     val searchedUserViewModel = SearchedUserViewModel(authViewModel)
     var searchKeyword by remember { mutableStateOf("") }
+    var selectedIconIndex by remember { mutableStateOf(1) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    selectedIconIndex = when (currentRoute) {
+        "profile" -> 3
+        "checkout" -> 4
+        "home" -> 1
+        "categorie" -> 2
+        "productCategory/{category}" -> 2
+        "ProductsWishlist/{wishlistId}" ->5
+
+        else -> 1
+    }
+    val carrelloViewModel = remember { CarrelloViewModel(authViewModel = authViewModel)}
+    val wishlistViewModel = remember { WishlistViewModel(authViewModel)}
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -144,6 +163,13 @@ fun Start( authViewModel: AuthViewModel,
                     DettagliOrdineActivity(idOrdine = ordineIdString, viewModelProduct = prodottoViewModel, viewModelOrder = ordineViewModel)
                 }
             }
+            composable("categorie"){
+                CategoryActivity(navController = navController)
+            }
+            composable("ProductCategory/{category}") { backStackEntry ->
+                val category = backStackEntry.arguments?.getString("category")
+                ProductsCategory(category = category)
+            }
             composable("login"){
                 isLogoVisible = true
                 isArrowVisible = true
@@ -170,14 +196,17 @@ fun Start( authViewModel: AuthViewModel,
                     userId = 1
                 )
             }
-            composable("wishlistDetail/{wishlistId}") { backStackEntry ->
-                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLong() ?: return@composable
-                isLogoVisible = true
-                isArrowVisible = true
-                WishlistDetailScreen(
-                    wishlistId = wishlistId,
-                    searchedUserViewModel = searchedUserViewModel
-                )
+            composable("wishlist") {
+               MainScreen1(navController = navController, viewModel = wishlistViewModel)
+            }
+            composable("ProductsWishlist/{wishlistId}") {
+                backStackEntry ->
+                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLongOrNull()?:0
+                println("errore nell'id della" + wishlistId)
+                MainScreen2(wishlistId, wishlistViewModel = wishlistViewModel)
+            }
+            composable("carrello"){
+                CarrelloActivity(carrelloViewModel = carrelloViewModel)
             }
         }
     }

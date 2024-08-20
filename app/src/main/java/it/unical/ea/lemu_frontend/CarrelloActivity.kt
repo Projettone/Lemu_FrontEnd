@@ -30,9 +30,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import it.unical.ea.lemu_frontend.R
 import it.unical.ea.lemu_frontend.ui.theme.CartItem
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+
 
 @Composable
 fun CarrelloActivity(carrelloViewModel: CarrelloViewModel) {
@@ -87,6 +95,12 @@ fun CartItemCard(
     carrelloViewModel: CarrelloViewModel,
     cartItem: CartItem
 ) {
+    val imageBitmap = remember(cartItem.imageRes) {
+        val decodedBytes = Base64.decode(cartItem.imageRes, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        bitmap?.asImageBitmap()
+    }
+
     Card(
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.LightGray),
@@ -95,15 +109,16 @@ fun CartItemCard(
             .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                //problema immagine da risolvere
-                painter = painterResource(id = cartItem.quantity),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(120.dp)
-                    .padding(8.dp),
-                contentScale = ContentScale.Crop
-            )
+            imageBitmap?.let {
+                Image(
+                    bitmap = it,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .padding(8.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = cartItem.name,

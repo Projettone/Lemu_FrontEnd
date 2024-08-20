@@ -46,6 +46,7 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         "categories" -> 2
         "wishlist" -> 5
         "dettagliOrdine/{id}" -> 4
+        "carrello" -> 4
         else -> 1
     }
 
@@ -71,7 +72,7 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 2,
             onClick = {
-                navController.navigate("categories")
+                navController.navigate("Categorie")
             },
             icon = {
                 IconWithIndicator(
@@ -103,7 +104,7 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 4,
             onClick = {
-                navController.navigate("ordini")
+                navController.navigate("Carrello")
             },
             icon = {
                 IconWithIndicator(
@@ -117,7 +118,7 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 5,
             onClick = {
-                navController.navigate("addProduct")
+                navController.navigate("Wishlist")
             },
             icon = {
                 IconWithIndicator(
