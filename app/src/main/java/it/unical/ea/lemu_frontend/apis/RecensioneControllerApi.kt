@@ -43,7 +43,7 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.91:8080")
         }
     }
 
@@ -199,9 +199,9 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
 
 
     /**
-     * 
-     * 
-     * @param id 
+     *
+     *
+     * @param id
      * @return kotlin.collections.List<RecensioneDto>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -230,9 +230,9 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
     }
 
     /**
-     * 
-     * 
-     * @param id 
+     *
+     *
+     * @param id
      * @return ApiResponse<kotlin.collections.List<RecensioneDto>?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -250,14 +250,14 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
     /**
      * To obtain the request config of the operation getRecensioniByProdottoId
      *
-     * @param id 
+     * @param id
      * @return RequestConfig
      */
     fun getRecensioniByProdottoIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/recensione-api/getByIdProdotto/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
@@ -269,8 +269,8 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param page  (optional, default to 0)
      * @param size  (optional, default to 10)
      * @return PageRecensioneDto
@@ -301,8 +301,8 @@ class RecensioneControllerApi(private val authViewModel: AuthViewModel, basePath
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param page  (optional, default to 0)
      * @param size  (optional, default to 10)
      * @return ApiResponse<PageRecensioneDto?>

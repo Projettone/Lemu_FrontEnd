@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.util.Base64
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -82,6 +83,16 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(16.dp)
     ) {
+        item {
+            Text(
+                text = "Aggiungi un nuovo prodotto",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+        }
+
         item {
             OutlinedTextField(
                 value = productName,
@@ -190,21 +201,22 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
                                 idutente = 1L
                             )
                             coroutineScope.launch {
-                                prodottoViewModel.addProduct(prodotto)
-                                isBannerVisible = true // Mostra il banner
-                                delay(4000L) // 4 secondi
-                                isBannerVisible = false // Nascondi il banner
-                                // Resetta i campi e l'immagine
-                                productName = ""
-                                productDescription = ""
-                                productCategory = ""
-                                price = ""
-                                disponibilità = ""
-                                capturedImageUri = null
-                                base64Image = null
+                                try {
+                                    prodottoViewModel.addProduct(prodotto)
+                                    isBannerVisible = true
+                                    delay(2000L)
+                                    isBannerVisible = false
+                                    productName = ""
+                                    productDescription = ""
+                                    productCategory = ""
+                                    price = ""
+                                    disponibilità = ""
+                                    capturedImageUri = null
+                                    base64Image = null
+                                } catch (e: Exception) {
+                                    Log.e("AddProductError", "Errore nell'aggiunta del prodotto", e)
+                                }
                             }
-
-
                         } else {
                             errorMessage = "Tutti i campi devono essere compilati"
                         }
@@ -214,15 +226,15 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
                         .height(70.dp)
                         .padding(top = 10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Green, // Colore di sfondo del bottone
-                        contentColor = Color.White // Colore del testo e del contenuto del bottone
+                        backgroundColor = Color.Green,
+                        contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(5.dp)
                 ) {
                     Text("Aggiungi prodotto",
-                        color = Color.Black, // Colore del testo
-                        fontSize = 17.sp, // Dimensione del carattere
-                        fontWeight = FontWeight.Bold, // Peso del carattere (grassetto)
+                        color = Color.Black,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center )
                 }
 
@@ -247,8 +259,6 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
                     }
                 }
             }
-
-
         }
     }
 }
@@ -262,7 +272,6 @@ fun ImagePickerButton(onImageSelected: (Uri) -> Unit) {
 
     Button(
         onClick = {
-            // Chiedi all'utente di scegliere un'immagine dalla galleria
             getContent.launch("image/*")
         },
         modifier = Modifier
@@ -270,20 +279,19 @@ fun ImagePickerButton(onImageSelected: (Uri) -> Unit) {
             .height(70.dp)
             .padding(top = 10.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Cyan, // Colore di sfondo del bottone
-            contentColor = Color.White // Colore del testo e del contenuto del bottone
+            backgroundColor = Color.Cyan,
+            contentColor = Color.White
         ),
-        shape = RoundedCornerShape(5.dp) // Angoli arrotondati con raggio di 10 dp
+        shape = RoundedCornerShape(5.dp)
     ) {
         Text("Seleziona immagine",
-            color = Color.Black, // Colore del testo
-            fontSize = 17.sp, // Dimensione del carattere
-            fontWeight = FontWeight.Bold, // Peso del carattere (grassetto)
+            color = Color.Black,
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center )
     }
 }
 
-// Funzione per convertire un'immagine in base64
 fun uriToBase64(uri: Uri, context: android.content.Context): String? {
     try {
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -305,8 +313,6 @@ fun uriToBase64(uri: Uri, context: android.content.Context): String? {
 }
 
 
-// Funzione per normalizzare il prezzo sostituendo la virgola con il pu
-// Funzione per normalizzare il prezzo sostituendo la virgola con il punto
 fun normalizePrice(price: String): String {
     return price.replace(",", ".")
 }

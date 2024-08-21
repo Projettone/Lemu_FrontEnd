@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,38 +57,29 @@ import kotlinx.coroutines.launch
 fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
-
     val orders by viewModel.ordini.collectAsState()
-
-
     var text by remember { mutableStateOf("") }
-    val MyYellow = Color(0xFFFFBE00)
 
-    val filtroOrdine by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch(Dispatchers.IO) {
-            viewModel.GetOrderbyIdUente(1L)//qui va inserito l'utente che ha fatto l'accesso
+            viewModel.GetOrderbyIdUente(1L)
 
         }
     }
 
-
-    /*
     fun fintOrderByData(data: String){
-        println("ciao")
         coroutineScope.launch(Dispatchers.IO) {
-            println("ciao 2")
-            viewModel.filtraOrdiniPerData(data)//qui va inserito l'utente che ha fatto l'accesso
-            println("lunghezza ordini "+ orders.size)
+            if(data != ""){
+                viewModel.filtraOrdiniPerData(data)
+            }else{
+                viewModel.GetOrderbyIdUente(1L)
+            }
+
         }
     }
 
-     */
-
-
-    Column (
-    ){
+    Column{
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(text = "I miei ordini", style = TextStyle(fontSize = 25.sp),
@@ -113,9 +105,7 @@ fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel)
                     )
                 },
                 onValueChange = { newText -> text = newText
-                    println("DIO $text")
-                                //fintOrderByData(text)
-                    println("lunghezza ordini "+ orders.size)
+                                fintOrderByData(text)
                 },
                 leadingIcon = {
                     Icon(
@@ -132,49 +122,11 @@ fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel)
                 ),
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxHeight()  // Assicurati che il TextField riempia l'altezza della Row
+                    .fillMaxHeight()
 
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            // Linea verticale
-            Divider(
-                color = Color.Gray,
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(0.5.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-/*
-            // Estrai solo l'anno da ogni OrdineInfo
-            val anni = orders.map { order ->
-                order.dataAcquisto.substring(order.dataAcquisto.lastIndexOf('/') + 1).toInt()
-            }
-            */
-
-
-
-
-            /*
-            Text(text = "Filtra", Modifier.clickable {
-                navController.navigate("filtriOrdine/${acquirente.idAcquirente}")
-            })
-
-             */
-            // Icona con freccia verso destra
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Arrow Forward",
-                tint = Color.Black,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .size(20.dp)
-            )
-
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-
-
 
         LazyColumn {
             items(orders) { order ->
@@ -204,11 +156,13 @@ fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel)
                         Text(text = "Data di acquisto: ${order.dataAcquisto}")
                         Spacer(modifier = Modifier.weight(1f))
 
+
                         Divider(
                             color = Color.Gray,
                             modifier = Modifier
                                 .height(25.dp)
                                 .width(0.6.dp)
+                                .absoluteOffset(0.dp,-7.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
 
@@ -231,7 +185,6 @@ fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel)
 
 
                     }
-                    //Text(text = "Articoli: ${order.numeroArticoli}")
                     Divider(
                         color = Color.Gray,
                         modifier = Modifier

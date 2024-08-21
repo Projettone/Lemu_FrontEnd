@@ -43,7 +43,7 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.91:8080")
         }
     }
 
@@ -383,6 +383,7 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/getDettagliOrdini{idOrder}".replace("{"+"idOrder"+"}", encodeURIComponent(idOrder.toString())),
@@ -453,13 +454,9 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
 
-/*
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
-
- */
-
 
         
         return RequestConfig(

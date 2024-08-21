@@ -27,6 +27,13 @@ class SearchedUserViewModel(private val authViewModel: AuthViewModel) {
     private val _searchedUsers = MutableStateFlow<List<UtenteDto>>(emptyList())
     val searchedUsers: StateFlow<List<UtenteDto>> get() = _searchedUsers
 
+    private val _showOverlay = MutableStateFlow(false)
+    val showOverlay: StateFlow<Boolean> get() = _showOverlay
+
+    fun showOverlayfalse () {
+        _showOverlay.value = false
+    }
+
     init {
         loadStaticWishlists()
     }

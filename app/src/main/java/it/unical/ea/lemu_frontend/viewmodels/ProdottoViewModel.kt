@@ -14,7 +14,7 @@ import java.io.IOException
 import java.util.concurrent.TimeoutException
 
 class ProdottoViewModel (private val authViewModel: AuthViewModel){
-    private val api: ProdottoControllerApi = ProdottoControllerApi()
+    private val api: ProdottoControllerApi = ProdottoControllerApi(authViewModel)
     private val apiRecensioni: RecensioneControllerApi = RecensioneControllerApi(authViewModel)
 
     private val viewModelJob = Job()
@@ -38,6 +38,27 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
 
     private var _listaRecensioni = MutableStateFlow<List<RecensioneDto>>(emptyList())
     val listaRecensioni: StateFlow<List<RecensioneDto>> = _listaRecensioni
+
+
+    suspend fun addRecensione(rating: Float,reviewText: String, idProduct: Long?,prodottoDto: ProdottoDto) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val recensioneDto = RecensioneDto(
+                    rating = rating,
+                    commento = reviewText,
+                    nomeProdotto = prodottoDto.nome!!,
+                    prodottoId = idProduct!!,
+                    credenzialiEmailAutore = authViewModel.user.value?.email!!,
+                    id = null,
+                    immagineProfiloAutore = null
+                )
+                apiRecensioni.addRecensione(recensioneDto)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
 
 
     //prendi le recensioni in base all'id del prodotto
@@ -94,7 +115,6 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
                 val fetchedProducts = api.searchProdotti(keyword)
 
                 _listaRicercheCompleta.value = fetchedProducts ?: emptyList()
-                println("Dimensione ricerca lista " + _listaRicercheCompleta.value.size)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -124,7 +144,7 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
 
     // Aggiungi un prodotto
     suspend fun addProduct(prodottoDto: ProdottoDto) {
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
                 api.add(prodottoDto)
             } catch (e: IOException) {

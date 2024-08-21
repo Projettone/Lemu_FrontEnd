@@ -58,11 +58,10 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
     LaunchedEffect(Unit) {
         coroutineScope.launch(Dispatchers.IO) {
             viewModelOrder.GetDettagliOrdine(idOrdine)
+
             if (idOrdine != null) {
                 viewModelOrder.GetOrderbyId(idOrdine)
             }
-
-            println("CIOAAOOOO SONO DETTAGLI ORDINE " + dettagliOrdine.size)
 
 
             dettagliOrdine.forEachIndexed { index, dettaglio ->
@@ -123,8 +122,6 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
 
         items(dettagliOrdine.size) { index ->
             val ordini = dettagliOrdine[index]
-            println("ciao")
-
             val prodotto = prodotti[index]
 
             Row(

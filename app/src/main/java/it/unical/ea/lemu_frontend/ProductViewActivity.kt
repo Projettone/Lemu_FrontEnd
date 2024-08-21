@@ -1,9 +1,13 @@
 package it.unical.ea.lemu_frontend
 
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +29,9 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,15 +51,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.openapitools.client.models.ProdottoDto
 import org.openapitools.client.models.RecensioneDto
 
@@ -69,10 +77,13 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     val productId = productIdString.toLongOrNull()
     var loading by remember { mutableStateOf(true) } // Stato di caricamento
     val listaRecensioni by viewModel.listaRecensioni.collectAsState()
+    var isBannerVisible by remember { mutableStateOf(false) }
 
     var reviewText by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(0f) }
 
+    val coroutineScope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
 
 
 
@@ -84,6 +95,12 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                 product = products
             }
             loading = false
+        }
+    }
+
+    fun loadRecensioni(){
+        coroutineScope.launch(Dispatchers.IO) {
+            viewModel.findRecensioniByidProdotto(productId)
         }
     }
 
@@ -115,25 +132,26 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                 Row(
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    val myFloat = rememberSaveable{ mutableStateOf(0f) }
-                    for (recensione in listaRecensioni) {
-                        // Somma il valore di rating a myFloat
-                        myFloat.value += recensione.rating
+                    val averageRating = remember(listaRecensioni) {
+                        listaRecensioni
+                            .map { it.rating }
+                            .average()
+                            .toFloat()
                     }
-
+                    val formattedNumber = remember(averageRating) {
+                        String.format("%.1f", averageRating)
+                    }
                     Text(
-                        text = myFloat.value.toString(),
+                        text = formattedNumber,
                         style = TextStyle(fontSize = 13.sp)
                     )
 
-
-                    val number = myFloat.value
-                    val integerPart = number.toInt()
-                    val decimalPart = number - integerPart
+                    val integerPart = averageRating.toInt()
+                    val decimalPart = averageRating - integerPart
 
                     repeat(5) { index ->
                         val starColor =
-                            if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index)) {
+                            if (index < integerPart || (decimalPart > 0.5 && integerPart == index)) {
                                 MyYellow
                             } else {
                                 Color.Gray
@@ -196,17 +214,16 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Heart Icon",
-                            //qui passimao il prodotto alla wishlist del database per vedere se è nei preferiti e quindi mettere il cuore rosso oppure no
                             tint = if (isFavorite) Color.Red else Color.Black,
                             modifier = Modifier
-                                .size(50.dp) // Dimensione dell'icona
-                                .align(Alignment.BottomStart) // Posiziona l'icona in basso a sinistra
-                                .padding(8.dp) // Padding per distanziare l'icona dai bordi
+                                .size(50.dp)
+                                .align(Alignment.BottomStart)
+                                .padding(8.dp)
                                 .clickable {
                                     isFavorite = !isFavorite
                                 }
                         )
-
+/*
                         val context = LocalContext.current
                         Icon(
                             imageVector = Icons.Filled.Share,
@@ -232,11 +249,10 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                     )
                                 }
                         )
+                        */
                     }
                 }
 
-
-                println("ciaoooo"+ listaRecensioni.size)
 
                 Text(text = "${product.prezzo}",style = TextStyle(fontSize = 30.sp))
                 Text(text = "Resi GRATUITI", color = MyBlue)
@@ -404,19 +420,58 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
                 Button(
                     onClick = {
-                        // Handle adding the new review here
-                        //viewModel.addReview(productId, reviewText, rating) //metodo per aggiungere la nuova recensione
-                        reviewText = "" // Clear the text field
-                        rating = 0f // Reset the rating
+
+                        coroutineScope.launch(Dispatchers.IO){
+                            try {
+                                viewModel.addRecensione(rating, reviewText, productId, product)
+                                reviewText = ""
+                                rating = 0f
+
+                                isBannerVisible = true
+                                loadRecensioni()
+                                delay(2000L)
+                                isBannerVisible = false
+
+
+                            } catch (e: Exception) {
+                                Log.e("Errore nell'aggiunta della recensione", e.toString())
+                            }
+
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(MyOrange),
-                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Text(text = "Invia recensione")
                 }
             }
         }
     }
+    Box(){
+        AnimatedVisibility(
+            visible = isBannerVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Red)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                androidx.compose.material3.Text(
+                    text = "Recensione aggiunta con successo",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+
 }
 
 
@@ -431,14 +486,35 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
     Row (
         verticalAlignment = Alignment.CenterVertically
     ){
-        Image(
-            modifier = Modifier
-                .width(30.dp)
-                .height(30.dp),
-            painter = painterResource(id = R.drawable.user_logo),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds
-        )
+
+        recensioni.immagineProfiloAutore?.let { immagineProfilo ->
+            if (immagineProfilo.startsWith("data:image/")) {
+                val base64String = immagineProfilo.substringAfter("base64,")
+                val imageBitmap = base64ToImageBitmap(base64String)
+                if (imageBitmap != null) {
+                    Image(
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp),
+                        bitmap = imageBitmap,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds
+
+                    )
+                } else {
+                    Image(
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp),
+                        painter = painterResource(id = R.drawable.placeholder),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds
+
+                    )
+                }
+            }
+        }
+
         Text(text = recensioni.nomeProdotto)
     }
     Row (
@@ -448,17 +524,18 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
         val integerPart = number.toInt()
         val decimalPart = number - integerPart
         repeat(5) { index ->
-            val starColor = if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index )) {
-              MyYellow
-            } else {
-              Color.Gray
-            }
+            val starColor =
+                if (index < integerPart || (decimalPart > 0.5 && integerPart == index)) {
+                    MyYellow
+                } else {
+                    Color.Gray
+                }
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
-                tint = MyYellow,
+                tint = starColor,
                 modifier = Modifier
-                    .width(18.dp)
+                    .size(13.dp)
                     .absoluteOffset(0.dp, 2.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))

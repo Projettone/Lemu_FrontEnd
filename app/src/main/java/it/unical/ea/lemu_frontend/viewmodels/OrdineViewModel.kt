@@ -26,19 +26,14 @@ class OrdineViewModel(private val authViewModel: AuthViewModel) {
 
 
     fun filtraOrdiniPerData(criterio: String) {
-        println("Chiamata a filtraOrdiniPerData con criterio: $criterio")
         try {
             _ordini.value = _ordini.value.filter { ordine ->
                 val dataAcquistoString = ordine.dataAcquisto?.toString() ?: ""
-                println("Filtrando ordine con data: $dataAcquistoString")
 
-                // Verifica se il criterio è contenuto nella data di acquisto
                 val dataAcquistoMatch = dataAcquistoString.contains(criterio, ignoreCase = true)
-                println("Data Acquisto Match: $dataAcquistoMatch")
 
                 dataAcquistoMatch
             }
-            println("Filtro completato")
         } catch (e: Exception) {
             println("Errore durante il filtro: ${e.message}")
         }
@@ -88,9 +83,6 @@ class OrdineViewModel(private val authViewModel: AuthViewModel) {
         return withContext(Dispatchers.IO) {
             try {
                 val fetchedProducts = idOrder?.let { api.getDettagliOrdineByIdOrder(it) }
-                if (fetchedProducts != null) {
-                    println("porcone maledetto "+ fetchedProducts.size)
-                }
                 _dettagliOrdine.value = fetchedProducts ?: emptyList()
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var ordineViewModel: OrdineViewModel
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -130,6 +131,7 @@ fun Start( authViewModel: AuthViewModel,
             isArrowVisible = isArrowVisible,
             isSearchBarVisible= isSearchBarVisible,
             navController = navController,
+            searchedUserViewModel = searchedUserViewModel,
             onSearch = { keyword ->
                 searchKeyword = keyword
                 navController.navigate("homeSearch")
@@ -207,6 +209,9 @@ fun Start( authViewModel: AuthViewModel,
             }
             composable("carrello"){
                 CarrelloActivity(carrelloViewModel = carrelloViewModel)
+            }
+            composable("ricercaUtente"){
+                SearchedUser(searchedUserViewModel = searchedUserViewModel, navController = navController )
             }
         }
     }

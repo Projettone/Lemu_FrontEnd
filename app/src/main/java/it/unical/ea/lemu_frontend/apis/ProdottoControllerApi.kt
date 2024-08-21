@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
 import com.squareup.moshi.Json
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 import org.openapitools.client.infrastructure.ApiClient
 import org.openapitools.client.infrastructure.ApiResponse
@@ -36,11 +37,11 @@ import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 import org.openapitools.client.models.ProdottoDto
 
-class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.91:8080")
         }
     }
 
@@ -102,7 +103,11 @@ class ProdottoControllerApi(basePath: kotlin.String = defaultBasePath, client: O
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/prodottocontroller-api/add",

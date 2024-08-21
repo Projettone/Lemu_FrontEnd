@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import it.unical.ea.lemu_frontend.viewmodels.SearchedUserViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.openapitools.client.models.UtenteDto
 
 @Composable
 fun TopAppBarActivity(
@@ -30,14 +36,32 @@ fun TopAppBarActivity(
     isArrowVisible: Boolean,
     navController: NavController,
     isSearchBarVisible: Boolean,
+    searchedUserViewModel: SearchedUserViewModel,
     onSearch: (String) -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
-    var showOverlay by remember { mutableStateOf(false) }
+    //var showOverlay by rememberSaveable { mutableStateOf(false) }
     var overlayText by remember { mutableStateOf("") }
+
+    val showOverlay by searchedUserViewModel.showOverlay.collectAsState()
 
     val startColor = Color(0xFF0077B6) // Celeste scuro
     val endColor = Color(0xFF83F5F9) // Celeste più chiaro
+    val coroutineScope = rememberCoroutineScope()
+    val listaUtentiCercati by searchedUserViewModel.searchedUsers.collectAsState()
+
+    DisposableEffect(Unit) {
+
+        onDispose {
+            searchedUserViewModel.showOverlayfalse()
+        }
+    }
+
+    fun ricercaUtenti() {
+        coroutineScope.launch(Dispatchers.IO) {
+            searchedUserViewModel.searchUsers(overlayText)
+        }
+    }
 
     Column {
         if (isLogoVisible) {
@@ -74,7 +98,11 @@ fun TopAppBarActivity(
                         modifier = Modifier
                             .height(55.dp)
                             .fillMaxWidth()
-                            .padding(top = 5.dp, end = 16.dp)
+                            .padding(top = 4.dp)
+                            .clickable {
+                                navController.navigate("home")
+                            }
+
                     )
                 }
             }
@@ -107,9 +135,9 @@ fun TopAppBarActivity(
                 }
                 Spacer(modifier = Modifier.width(5.dp)) // Aggiungi uno spazio tra l'icona e il TextField
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween // Spazia gli elementi
+
                 ) {
                     TextField(
                         modifier = Modifier
@@ -147,37 +175,37 @@ fun TopAppBarActivity(
                             )
                         }
                     )
+                    Spacer(modifier = Modifier.width(9.dp))
 
 
                     Image(
-                        painter = painterResource(id = R.drawable.user_logo),
+                        painter = painterResource(id = R.drawable.ricercautente),
                         contentDescription = "Logo",
                         modifier = Modifier
-                            .size(40.dp) // Imposta la dimensione dell'icona
-                            .clickable { showOverlay = true } // Rendi l'icona cliccabile per mostrare l'overlay
+                            .size(35.dp)
+                            .clickable { navController.navigate("ricercaUtente") } // Rendi l'icona cliccabile per mostrare l'overlay
                     )
                 }
             }
         }
 
         if (showOverlay) {
-            // Overlay composable
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.1f)) // Semi-transparent background
                     .wrapContentSize(align = Alignment.Center)
+                    .padding(bottom = 30.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .background(Color.White, RoundedCornerShape(16.dp))
-                        .padding(16.dp)
-                        .fillMaxWidth(0.9f) // Slightly less than full width
-                        .wrapContentHeight()
-                        .align(Alignment.Center)
+                        .fillMaxWidth(0.9f)
+                        .height(600.dp)
+                        .padding(20.dp)
                 ) {
                     Text(
-                        text = "Ciao bello",
+                        text = "Cerca Utente",
                         color = Color.Black,
                         style = MaterialTheme.typography.h6,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -208,26 +236,59 @@ fun TopAppBarActivity(
                         ),
                         keyboardActions = KeyboardActions(
                             onSearch = {
-                                // Action when search button is pressed on the keyboard
-                                onSearch(overlayText)
+                                ricercaUtenti()
+
                             }
                         )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Risultati ricerca
-                    LazyColumn {
-                        items(10) { user ->
-                            UserListItem(user)
+                    // Box to contain the scrollable content
+                    Box(
+                        modifier = Modifier
+                            .weight(1f) // Takes up remaining space
+                            .fillMaxWidth()
+                    ) {
+                        LazyColumn {
+                            items(listaUtentiCercati) { user ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                        .clickable {
+                                            searchedUserViewModel._userProfile.value = user
+                                            searchedUserViewModel.showOverlayfalse()
+                                            navController.navigate("searchedUser")
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.user_logo), // Replace with actual user image resource
+                                        contentDescription = "User Image",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(RoundedCornerShape(50))
+                                            .background(Color.Gray)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = user.email!!,
+                                        style = MaterialTheme.typography.body1
+                                    )
+                                }
+                            }
                         }
+
                     }
+                    Spacer(modifier = Modifier.height(50.dp))
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
+                    // The Close button is positioned outside the scrollable content
                     Button(
-                        onClick = { showOverlay = false },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        onClick = { searchedUserViewModel.showOverlayfalse()},
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 16.dp) // Add bottom padding to avoid overlap
                     ) {
                         Text("Chiudi")
                     }
@@ -237,13 +298,20 @@ fun TopAppBarActivity(
     }
 }
 
+
+
 @Composable
-fun UserListItem(user: Int) {
+fun UserListItem(user: UtenteDto, searchedUserViewModel: SearchedUserViewModel, navController: NavController) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { /* Handle user click here */ },
+            .clickable {
+                searchedUserViewModel._userProfile.value = user
+                searchedUserViewModel.showOverlayfalse()
+                navController.navigate("searchedUser")
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -256,7 +324,7 @@ fun UserListItem(user: Int) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "nome utente",
+            text = user.email!!,
             style = MaterialTheme.typography.body1
         )
     }
