@@ -96,7 +96,6 @@ fun LoginActivity(navController: NavController, authViewModel: AuthViewModel, si
                         Toast.makeText(context, "Inserisci password valida", Toast.LENGTH_SHORT).show()
                     } else {
                         keyboardController?.hide()
-                        println("Credenziali: $email $password")
                         coroutineScope.launch {
                             try {
                                 val response = authViewModel.authenticate(email, password)

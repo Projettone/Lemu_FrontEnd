@@ -26,7 +26,7 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
     val totalPrice: StateFlow<Double> = _totalPrice
 
     private val carrelloControllerApi = CarrelloControllerApi(authViewModel)
-    private val prodottoControllerApi = ProdottoControllerApi()
+    private val prodottoControllerApi = ProdottoControllerApi(authViewModel)
 
     init {
         loadCartItems()
@@ -221,10 +221,5 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                 Log.e("CarrelloViewModel", "Errore nell'aggiunta del prodotto al carrello", e)
             }
         }
-    }
-
-
-    fun checkout() {
-        // da implementare
     }
 }

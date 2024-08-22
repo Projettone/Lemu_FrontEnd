@@ -30,24 +30,19 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.openapitools.client.models.CouponDto
 import org.openapitools.client.models.Indirizzo
 import org.openapitools.client.models.UtenteDto
-
 import android.util.Base64
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
-import coil.compose.rememberImagePainter
 import org.openapitools.client.models.RecensioneDto
 import java.io.ByteArrayInputStream
-import java.io.InputStream
 
 
 @Composable
@@ -193,7 +188,7 @@ fun ScrollableContent(
     onLogoutClick: () -> Unit,
     onRedeemCoupon: (String) -> Unit,
     userProfileViewModel: UserProfileViewModel
-    ) {
+) {
     val context = LocalContext.current
     val reviews by userProfileViewModel.recensioni.collectAsState()
 
@@ -223,7 +218,7 @@ fun ScrollableContent(
         Spacer(modifier = Modifier.height(16.dp))
         RedeemCouponBox(onRedeemCoupon = onRedeemCoupon)
         Spacer(modifier = Modifier.height(24.dp))
-        UserReviewsManagement(reviews = reviews, userProfileViewModel = userProfileViewModel)
+        UserReviewsManagement(userProfileViewModel = userProfileViewModel)
         Spacer(modifier = Modifier.height(24.dp))
 
         user?.let {
@@ -898,9 +893,10 @@ fun base64ToBitmap(base64String: String): Bitmap? {
 
 @Composable
 fun UserReviewsManagement(
-    reviews: List<RecensioneDto>,
     userProfileViewModel: UserProfileViewModel
 ) {
+    val reviews by userProfileViewModel.recensioni.collectAsState()
+
 
     LaunchedEffect(Unit) {
         userProfileViewModel.getPagedReviews()
@@ -940,6 +936,7 @@ fun UserReviewsManagement(
                         rating = review.rating,
                         name = review.nomeProdotto,
                         comment = review.commento,
+                        true,
                         onDeleteClick = { review.id?.let { userProfileViewModel.deleteReview(it) } }
                     )
                 }
@@ -975,9 +972,9 @@ fun ReviewItem(
     rating: Float,
     name: String,
     comment: String?,
+    isOwner: Boolean,
     onDeleteClick: suspend () -> Unit
 ) {
-
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -1010,7 +1007,6 @@ fun ReviewItem(
         )
     }
 
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -1021,7 +1017,7 @@ fun ReviewItem(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         ) {
             Text(
                 text = "Recensione #$index",
@@ -1036,21 +1032,15 @@ fun ReviewItem(
             Spacer(modifier = Modifier.height(4.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(8.dp)
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Rating: ${rating.toString()}",
+                    text = "Valutazione: ",
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Star Icon",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(18.dp)
-                        .align(Alignment.CenterVertically)
-                )
+                StarRating(rating)
             }
             Spacer(modifier = Modifier.height(4.dp))
             comment?.let {
@@ -1060,17 +1050,37 @@ fun ReviewItem(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = { showDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            if (isOwner) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Elimina", color = Color.White)
+                    Button(
+                        onClick = { showDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text(text = "Elimina", color = Color.White)
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun StarRating(rating: Float) {
+    val roundedRating = rating.toInt()
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(roundedRating) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = "Star Icon",
+                tint = Color.Black,
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }

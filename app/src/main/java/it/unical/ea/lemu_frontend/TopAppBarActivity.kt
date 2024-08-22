@@ -257,7 +257,7 @@ fun TopAppBarActivity(
                                         .fillMaxWidth()
                                         .padding(vertical = 8.dp)
                                         .clickable {
-                                            searchedUserViewModel._userProfile.value = user
+                                            searchedUserViewModel.userProfile.value = user
                                             searchedUserViewModel.showOverlayfalse()
                                             navController.navigate("searchedUser")
                                         },
@@ -308,7 +308,7 @@ fun UserListItem(user: UtenteDto, searchedUserViewModel: SearchedUserViewModel, 
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                searchedUserViewModel._userProfile.value = user
+                searchedUserViewModel.userProfile.value = user
                 searchedUserViewModel.showOverlayfalse()
                 navController.navigate("searchedUser")
             },

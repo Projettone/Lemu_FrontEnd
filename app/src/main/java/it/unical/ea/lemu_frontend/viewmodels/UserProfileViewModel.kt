@@ -140,7 +140,6 @@ class UserProfileViewModel(private val authViewModel: AuthViewModel) {
             val response = recensioniControllerApi.getRecensioniByUtente(currentPageRecensioni,pageSize)
             _recensioni.value = response.content!!
             totalPagesRecensioni = response.totalPages!!
-            println(_recensioni.value)
         }
     }
 
@@ -167,5 +166,6 @@ class UserProfileViewModel(private val authViewModel: AuthViewModel) {
         apiCall {
             recensioniControllerApi.deleteReview(id)
         }
+        getPagedReviews()
     }
 }

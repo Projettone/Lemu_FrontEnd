@@ -133,9 +133,9 @@ fun SearchedUser(
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
                                 .clickable {
-                                    searchedUserViewModel._userProfile.value = user
+                                    searchedUserViewModel.userProfile.value = user
                                     searchedUserViewModel.showOverlayfalse()
-                                    navController.navigate("ricercaUtente")
+                                    navController.navigate("searchedUser")
                                 },
                             verticalAlignment = Alignment.CenterVertically
                         ) {

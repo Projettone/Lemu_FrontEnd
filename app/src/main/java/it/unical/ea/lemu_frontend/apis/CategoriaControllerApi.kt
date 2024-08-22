@@ -37,7 +37,7 @@ class CategoriaControllerApi(basePath: kotlin.String = defaultBasePath, client: 
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.43.107:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
         }
     }
 

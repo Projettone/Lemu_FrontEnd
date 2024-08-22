@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +37,7 @@ private const val CVC_ERROR_MESSAGE = "CVC non valido. Deve essere composto da 3
 @Composable
 fun CheckoutActivity(
     authViewModel: AuthViewModel,
+    carrelloViewModel: CarrelloViewModel,
     navController: NavController,
     paymentViewModel: PaymentViewModel
 ) {
@@ -47,10 +49,7 @@ fun CheckoutActivity(
     var cardNumberError by remember { mutableStateOf("") }
     var expiryDateError by remember { mutableStateOf("") }
     var cvcError by remember { mutableStateOf("") }
-
-    // variabile statica da leggere dal carrello
-    val totalAmount = 99.99
-
+    val totalAmount by carrelloViewModel.totalPrice.collectAsState()
     val user by authViewModel.user
 
     Column(

@@ -32,12 +32,12 @@ import androidx.navigation.compose.rememberNavController
 import com.facebook.FacebookSdk
 import it.unical.ea.lemu_frontend.ui.theme.Lemu_FrontEndTheme
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 import it.unical.ea.lemu_frontend.viewmodels.OrdineViewModel
 import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
 import it.unical.ea.lemu_frontend.viewmodels.SearchedUserViewModel
 import it.unical.ea.lemu_frontend.viewmodels.UserProfileViewModel
-import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 import org.openapitools.client.models.Utente
 
@@ -49,6 +49,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
     private lateinit var prodottoViewModel: ProdottoViewModel
     private lateinit var ordineViewModel: OrdineViewModel
+    private lateinit var carrelloViewModel: CarrelloViewModel
+    private lateinit var searchedUserViewModel: SearchedUserViewModel
+
 
 
 
@@ -60,6 +63,8 @@ class MainActivity : ComponentActivity() {
         paymentViewModel = PaymentViewModel(authViewModel)
         prodottoViewModel = ProdottoViewModel(authViewModel)
         ordineViewModel = OrdineViewModel(authViewModel)
+        carrelloViewModel = CarrelloViewModel(authViewModel)
+        searchedUserViewModel = SearchedUserViewModel(authViewModel)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
         }
@@ -71,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Start(authViewModel, userProfileViewModel, signInLauncher, paymentViewModel, prodottoViewModel, ordineViewModel)
+                    Start(authViewModel, userProfileViewModel, signInLauncher, paymentViewModel, prodottoViewModel, ordineViewModel, carrelloViewModel, searchedUserViewModel)
                 }
             }
         }
@@ -89,13 +94,14 @@ fun Start( authViewModel: AuthViewModel,
            signInLauncher: ActivityResultLauncher<Intent>,
            paymentViewModel: PaymentViewModel,
            prodottoViewModel: ProdottoViewModel,
-           ordineViewModel: OrdineViewModel){
+           ordineViewModel: OrdineViewModel,
+           carrelloViewModel: CarrelloViewModel,
+           searchedUserViewModel: SearchedUserViewModel){
     val navController = rememberNavController()
     var isLogoVisible by rememberSaveable { mutableStateOf(true) }
     var isArrowVisible by rememberSaveable { mutableStateOf(false) }
     var isSearchBarVisible by rememberSaveable { mutableStateOf(true) }
     val isLoggedIn by authViewModel.isLoggedIn
-    val searchedUserViewModel = SearchedUserViewModel(authViewModel)
     var searchKeyword by remember { mutableStateOf("") }
     var selectedIconIndex by remember { mutableStateOf(1) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -191,11 +197,10 @@ fun Start( authViewModel: AuthViewModel,
                 UserProfileActivity(authViewModel = authViewModel, userProfileViewModel = userProfileViewModel, navController = navController)
             }
             composable("checkout") {
-                CheckoutActivity(authViewModel = authViewModel, navController = navController, paymentViewModel = paymentViewModel)
+                CheckoutActivity(authViewModel = authViewModel, carrelloViewModel = carrelloViewModel, navController = navController, paymentViewModel = paymentViewModel)
             }
             composable("searchedUser") {
-                SearchedUserProfileActivity(navController = navController, searchedUserViewModel = searchedUserViewModel,
-                    userId = 1
+                SearchedUserProfileActivity(navController = navController, searchedUserViewModel = searchedUserViewModel
                 )
             }
             composable("wishlist") {
@@ -207,8 +212,21 @@ fun Start( authViewModel: AuthViewModel,
                 println("errore nell'id della" + wishlistId)
                 MainScreen2(wishlistId, wishlistViewModel = wishlistViewModel)
             }
-            composable("carrello"){
-                CarrelloActivity(carrelloViewModel = carrelloViewModel)
+            composable("carrello") {
+                CarrelloActivity(carrelloViewModel = carrelloViewModel, navController = navController)
+            }
+            composable("wishlistDetail/{wishlistId}") { backStackEntry ->
+                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLong() ?: return@composable
+                isLogoVisible = true
+                isArrowVisible = true
+                WishlistDetailScreen(
+                    wishlistId = wishlistId,
+                    searchedUserViewModel = searchedUserViewModel,
+                    navController = navController
+                )
+            }
+            composable("carrello") {
+                CarrelloActivity(navController = navController, carrelloViewModel = carrelloViewModel)
             }
             composable("ricercaUtente"){
                 SearchedUser(searchedUserViewModel = searchedUserViewModel, navController = navController )

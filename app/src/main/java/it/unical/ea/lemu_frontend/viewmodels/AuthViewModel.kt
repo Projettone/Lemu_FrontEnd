@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -91,17 +92,25 @@ class AuthViewModel (private val activity: Activity) {
         account?.let {
             if (it.idToken != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val response = api.googleAuthentication(it.idToken!!)
-                    if(response.message == "403"){
+                    _isLoading.value = true
+                    try {
+                        val response = api.googleAuthentication(it.idToken!!)
+                        if(response.message == "403"){
+                            response.success
+                        } else if (response.data != null){
+                            saveToken(response.data)
+                            isLoggedIn.value = true
+                            withContext(Dispatchers.Main){
+                                getUserData()
+                            }
+                        }
                         response.success
-                    } else if (response.data != null){
-                        saveToken(response.data)
-                        isLoggedIn.value = true
-                        withContext(Dispatchers.Main){
-                            getUserData()
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(activity, "Errore di connessione al server. Riprova più tardi.", Toast.LENGTH_LONG).show()
                         }
                     }
-                    response.success
+                    _isLoading.value = false
                 }
             }
 
@@ -285,15 +294,22 @@ class AuthViewModel (private val activity: Activity) {
     private fun handleFacebookAccessToken(token: AccessToken?) {
         token?.let {
             CoroutineScope(Dispatchers.IO).launch {
-                val response = api.facebookAuthentication(token.token)
-
-                if (response.data != null){
-                    saveToken(response.data)
-                    isLoggedIn.value = true
-                    withContext(Dispatchers.Main){
-                        getUserData()
+                _isLoading.value = true
+                try {
+                    val response = api.facebookAuthentication(token.token)
+                    if (response.data != null) {
+                        saveToken(response.data)
+                        isLoggedIn.value = true
+                        withContext(Dispatchers.Main) {
+                            getUserData()
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(activity, "Errore di connessione al server. Riprova più tardi.", Toast.LENGTH_LONG).show()
                     }
                 }
+                _isLoading.value = false
             }
         }
     }

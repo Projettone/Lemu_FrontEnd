@@ -1,3 +1,4 @@
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -25,12 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+
+import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.R
 import it.unical.ea.lemu_frontend.ui.theme.CartItem
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
@@ -43,9 +46,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 
 
 @Composable
-fun CarrelloActivity(carrelloViewModel: CarrelloViewModel) {
+fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloViewModel) {
     val cartItems by carrelloViewModel.cartItems.collectAsState()
     val prezzoTotale by carrelloViewModel.totalPrice.collectAsState()  // Ottieni il totale dal ViewModel
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -82,7 +86,9 @@ fun CarrelloActivity(carrelloViewModel: CarrelloViewModel) {
             if (cartItems.isNotEmpty()) {
                 CheckoutSection(
                     totalPrice = prezzoTotale,
-                    onCheckout = { carrelloViewModel.checkout() }
+                    onCheckout = {
+                        navController.navigate("checkout")
+                    }
                 )
             }
         }
@@ -245,7 +251,7 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
             )
         }
         Button(
-            onClick = onCheckout,
+            onClick = {onCheckout},
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = "Procedi all'acquisto")

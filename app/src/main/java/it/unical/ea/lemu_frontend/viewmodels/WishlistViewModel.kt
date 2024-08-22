@@ -25,7 +25,7 @@ class WishlistViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
 
     private val wishlistControllerApi = WishlistControllerApi(authViewModel)
 
-    private val prodottoControllerApi = ProdottoControllerApi()
+    private val prodottoControllerApi = ProdottoControllerApi(authViewModel)
 
     init {
         loadWishlists()
