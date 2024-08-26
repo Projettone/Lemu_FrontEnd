@@ -50,6 +50,7 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,9 +59,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 
 import androidx.compose.runtime.saveable.rememberSaveable
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 
 @Composable
-fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel, isRicerca: Boolean, keyword: String) {
+fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel, isRicerca: Boolean, keyword: String,carrelloViewModel: CarrelloViewModel) {
     val customColor = Color(0xFFF8F3F3)
     val customColor1 = Color(0xFFFFF3E7)
     val LightGrayColor = Color(0xFFECECEC)
@@ -78,7 +80,8 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
     var visibile by rememberSaveable { mutableStateOf(false) }
     var pagineRaggiunte by rememberSaveable { mutableStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
-
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
 
     val images = listOf(
@@ -87,6 +90,14 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
         R.drawable.giardinaggio,
         R.drawable.informatica,
         R.drawable.abbigliamento
+    )
+    val stringList = listOf(
+        "trucchi",
+        "sport",
+        "giardinaggio",
+        "informatica",
+        "abbigliamento",
+
     )
     val images2 = listOf(
         R.drawable.trucchi
@@ -156,7 +167,6 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
             ) {
                 item {
                     Box {
-                        //barra superiore Info spedizione consegna
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -245,6 +255,10 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                 Box(
                                     modifier = Modifier
                                         .fillParentMaxWidth()
+                                        .clickable {
+                                            println(stringList[index])
+                                            navController.navigate("ProductCategory/${stringList[index]}")
+                                        }
                                         .aspectRatio(16 / 9f),
                                     contentAlignment = Alignment.Center
 
@@ -275,204 +289,158 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                     }//FINE BOX
                 }//FINE ITEM
 
-                //selezionati per te
-                if (isLogged) {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .background(customColor)
-                                .clip(RoundedCornerShape(8.dp))
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(top = 5.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Selezionati per te..",
-                                    modifier = Modifier.padding(start = 6.dp),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(9.dp))
-                            LaunchedEffect(Unit) {
-                                while (true) {
-                                    lazyListState2.animateScrollBy(20.dp.value) // Scorrimento di 20dp
-                                    delay(1000)
-                                }
-                            }
-                            LazyRow(
-                                state = lazyListState2,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
-                            ) {
-                                items(images2) { imageRes ->
-                                    Box(
-                                        modifier = Modifier
-                                            .border(
-                                                0.5.dp,
-                                                LightGrayColor,
-                                                RoundedCornerShape(9.dp)
-                                            )
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = Color.White)
-                                            .padding(20.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = imageRes),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(100.dp)
-                                                .aspectRatio(1f),
-                                            contentScale = ContentScale.Fit
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                }
-                            }
-                        }
-                    }
-                }//fine selezionati per te
 
                 //visualizzazione prodotti
                 val productList = if (!isRicerca) paginatedProductList else paginatedProductListSearh
                 items(productList) { productInfo ->
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .padding(start = 5.dp)
-                            .padding(end = 5.dp)
-                            .weight(1f)
-                            .clickable {
-                                navController.navigate("prodotto/${productInfo.id}") // Interpola l'ID del prodotto nel percorso di navigazione
-                            }
-                            .border(
-                                width = 0.5.dp,
-                                color = LightGrayColor,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                    ) {
-                        Column(
+                    Box(){
+                        Row(
                             modifier = Modifier
-                                .width(150.dp) // Dimensione del Box (più grande dell'immagine)
-                                .height(270.dp)
-                                .border(2.dp, Color.Transparent, RoundedCornerShape(9.dp))
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 8.dp,
-                                        bottomStart = 8.dp,
-                                        topEnd = 0.dp,
-                                        bottomEnd = 0.dp
-                                    )
+                                .padding(top = 10.dp)
+                                .padding(start = 5.dp)
+                                .padding(end = 5.dp)
+                                //.weight(1f)
+                                .clickable {
+                                    navController.navigate("prodotto/${productInfo.id}") // Interpola l'ID del prodotto nel percorso di navigazione
+                                }
+                                .border(
+                                    width = 0.5.dp,
+                                    color = LightGrayColor,
+                                    shape = RoundedCornerShape(8.dp)
                                 )
-                                .background(LightGrayColor) // Sfondo del Box
-                            ,
-                            horizontalAlignment = Alignment.CenterHorizontally, // Allinea la colonna orizzontalmente al centro
-                            verticalArrangement = Arrangement.Center
                         ) {
-                            val base64WithoutPrefix = productInfo.immagineProdotto?.removePrefix("data:image/png;base64,")
-                            val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
-                            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                            val imageBitmap = bitmap.asImageBitmap()
-
-                            Image(
-                                painter = BitmapPainter(imageBitmap),
-                                contentDescription = productInfo.descrizione,
+                            Column(
                                 modifier = Modifier
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.padding(8.dp) // Rimuovi il padding interno alla colonna
-                        ) {
-                            productInfo.descrizione?.let {
+                                    .width(150.dp) // Dimensione del Box (più grande dell'immagine)
+                                    .height(270.dp)
+                                    .border(2.dp, Color.Transparent, RoundedCornerShape(9.dp))
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 8.dp,
+                                            bottomStart = 8.dp,
+                                            topEnd = 0.dp,
+                                            bottomEnd = 0.dp
+                                        )
+                                    )
+                                    .background(LightGrayColor) // Sfondo del Box
+                                ,
+                                horizontalAlignment = Alignment.CenterHorizontally, // Allinea la colonna orizzontalmente al centro
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                val base64WithoutPrefix = productInfo.immagineProdotto?.removePrefix("data:image/png;base64,")
+                                val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
+                                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                                val imageBitmap = bitmap.asImageBitmap()
+
+                                Image(
+                                    painter = BitmapPainter(imageBitmap),
+                                    contentDescription = productInfo.descrizione,
+                                    modifier = Modifier
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.padding(8.dp) // Rimuovi il padding interno alla colonna
+                            ) {
+                                productInfo.descrizione?.let {
+                                    Text(
+                                        modifier = Modifier.padding(top = 23.dp),
+                                        text = it,
+                                        style = TextStyle(fontSize = 15.sp),
+                                        maxLines = 3, // Limita il testo a un massimo di tre righe
+                                        overflow = TextOverflow.Ellipsis // Aggiungi puntini sospensivi se il testo è troppo lungo
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                //vanno implementate le recensioni
+                                /*
+                                val number = productInfo?.valutazione
+                                val integerPart = number?.toInt()
+                                val decimalPart = integerPart?.let { number.minus(it) }
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (productInfo != null) {
+                                        Text(
+                                            text = productInfo.valutazione.toString(),
+                                            style = TextStyle(fontSize = 13.sp),
+                                            color = MyBlue
+                                        )
+                                    }
+                                    repeat(5) { index ->
+                                        val starColor =
+                                            if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index)) {
+                                                MyYellow
+                                            } else {
+                                                Color.Gray
+                                            }
+                                        Icon(
+                                            imageVector = Icons.Filled.Star,
+                                            contentDescription = null,
+                                            tint = starColor,
+                                            modifier = Modifier
+                                                //.width(10.dp)
+                                                .size(15.dp)
+                                            //.absoluteOffset(0.dp, 2.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                    }
+                                    if (productInfo != null) {
+                                        Text(
+                                            text = "(${productInfo.numeroRecensioni})",
+                                            style = TextStyle(fontSize = 12.sp),
+                                            color = Color.Gray
+                                        )
+                                    }
+                                }
+
+                                 */
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    modifier = Modifier.padding(top = 23.dp),
-                                    text = it,
-                                    style = TextStyle(fontSize = 15.sp),
-                                    maxLines = 3, // Limita il testo a un massimo di tre righe
-                                    overflow = TextOverflow.Ellipsis // Aggiungi puntini sospensivi se il testo è troppo lungo
+                                    text = "${productInfo.venduti} + acquistati",
+                                    style = TextStyle(fontSize = 13.sp),
+                                    color = Color.Gray
                                 )
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
-                            //vanno implementate le recensioni
-                            /*
-                            val number = productInfo?.valutazione
-                            val integerPart = number?.toInt()
-                            val decimalPart = integerPart?.let { number.minus(it) }
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (productInfo != null) {
-                                    Text(
-                                        text = productInfo.valutazione.toString(),
-                                        style = TextStyle(fontSize = 13.sp),
-                                        color = MyBlue
-                                    )
-                                }
-                                repeat(5) { index ->
-                                    val starColor =
-                                        if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index)) {
-                                            MyYellow
-                                        } else {
-                                            Color.Gray
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                Text(
+                                    text = "${productInfo.prezzo}€",
+                                    style = TextStyle(fontSize = 20.sp)
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                Text(
+                                    text = "Disponibilità: ${productInfo.disponibilita}",
+                                    style = TextStyle(fontSize = 10.sp)
+                                )
+                                Spacer(modifier = Modifier.height(15.dp))
+
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            carrelloViewModel.addProductToCart(productInfo, 1)
+                                            snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
                                         }
-                                    Icon(
-                                        imageVector = Icons.Filled.Star,
-                                        contentDescription = null,
-                                        tint = starColor,
-                                        modifier = Modifier
-                                            //.width(10.dp)
-                                            .size(15.dp)
-                                        //.absoluteOffset(0.dp, 2.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp, end = 5.dp),
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = MyYellow),
+                                    shape = RoundedCornerShape(10.dp) // Arrotonda i bordi con un raggio di 8dp
+                                ) {
+                                    Text(text = "Aggiungi al carrello")
                                 }
-                                if (productInfo != null) {
-                                    Text(
-                                        text = "(${productInfo.numeroRecensioni})",
-                                        style = TextStyle(fontSize = 12.sp),
-                                        color = Color.Gray
-                                    )
-                                }
-                            }
 
-                             */
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "${productInfo.venduti} + acquistati",
-                                style = TextStyle(fontSize = 13.sp),
-                                color = Color.Gray
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
 
-                            Text(
-                                text = productInfo.prezzo.toString(),
-                                style = TextStyle(fontSize = 20.sp)
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            Text(
-                                text = "Disponibilità: 45",
-                                style = TextStyle(fontSize = 10.sp)
-                            )
-                            Spacer(modifier = Modifier.height(15.dp))
-
-                            Button(
-                                onClick = { /* Azione da eseguire al clic del pulsante */ },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp, end = 5.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = MyYellow),
-                                shape = RoundedCornerShape(10.dp) // Arrotonda i bordi con un raggio di 8dp
-                            ) {
-                                Text(text = "Aggiungi al carrello")
                             }
 
                         }
+                        CustomSnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        )
                     }
+
                     Spacer(modifier = Modifier.height(10.dp))
                 }
 
@@ -484,7 +452,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(customColor)
+                                .background(color = Color.White)
                                 .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {

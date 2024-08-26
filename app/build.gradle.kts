@@ -121,5 +121,10 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("io.coil-kt:coil-compose:2.1.0")
 
+    implementation ("androidx.compose.material3:material3:1.2.0")
+    implementation ("androidx.compose.material:material:1.5.0") // Per DropdownMenuItem
+
+
+
 
 }

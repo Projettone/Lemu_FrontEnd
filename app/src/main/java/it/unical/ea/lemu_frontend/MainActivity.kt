@@ -62,8 +62,8 @@ class MainActivity : ComponentActivity() {
         userProfileViewModel = UserProfileViewModel(authViewModel)
         paymentViewModel = PaymentViewModel(authViewModel)
         prodottoViewModel = ProdottoViewModel(authViewModel)
-        ordineViewModel = OrdineViewModel(authViewModel)
         carrelloViewModel = CarrelloViewModel(authViewModel)
+        ordineViewModel = OrdineViewModel(authViewModel,carrelloViewModel)
         searchedUserViewModel = SearchedUserViewModel(authViewModel)
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             authViewModel.handleSignInResult(result.data)
@@ -107,6 +107,7 @@ fun Start( authViewModel: AuthViewModel,
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+
     selectedIconIndex = when (currentRoute) {
         "profile" -> 3
         "checkout" -> 4
@@ -146,19 +147,19 @@ fun Start( authViewModel: AuthViewModel,
     ) { innerPadding ->
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
-                HomePageActivity(navController = navController, viewModel = prodottoViewModel,isRicerca = false, keyword = "*")
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel,isRicerca = false, keyword = "*", carrelloViewModel = carrelloViewModel)
             }
             composable("homeSearch"){
-                HomePageActivity(navController = navController, viewModel = prodottoViewModel, isRicerca = true, keyword = searchKeyword)
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel, isRicerca = true, keyword = searchKeyword, carrelloViewModel = carrelloViewModel)
             }
             composable("addProduct"){
-                AddProductActivity(navController = navController, prodottoViewModel = prodottoViewModel)
+                AddProductActivity(authViewModel = authViewModel, navController = navController, prodottoViewModel = prodottoViewModel)
             }
             composable("prodotto/{productId}") { backStackEntry ->
                 val productIdString = backStackEntry.arguments?.getString("productId")
 
                 if (productIdString != null) {
-                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel)
+                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel, carrelloViewModel = carrelloViewModel, wishlistViewModel =  wishlistViewModel)
                 }
             }
             composable("ordini"){
@@ -168,7 +169,7 @@ fun Start( authViewModel: AuthViewModel,
                 val ordineIdString = backStackEntry.arguments?.getString("id")
 
                 if (ordineIdString != null) {
-                    DettagliOrdineActivity(idOrdine = ordineIdString, viewModelProduct = prodottoViewModel, viewModelOrder = ordineViewModel)
+                    DettagliOrdineActivity(idOrdine = ordineIdString, viewModelProduct = prodottoViewModel, viewModelOrder = ordineViewModel, navController = navController)
                 }
             }
             composable("categorie"){
@@ -230,6 +231,9 @@ fun Start( authViewModel: AuthViewModel,
             }
             composable("ricercaUtente"){
                 SearchedUser(searchedUserViewModel = searchedUserViewModel, navController = navController )
+            }
+            composable("productUser"){
+                ProductUserActivity(authViewModel = authViewModel, viewModel = prodottoViewModel, navController = navController)
             }
         }
     }
