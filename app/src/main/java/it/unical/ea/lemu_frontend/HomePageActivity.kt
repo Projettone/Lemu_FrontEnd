@@ -206,7 +206,6 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                 }
                             }
                             Spacer(modifier = Modifier.weight(1f))
-                            // Divider verticale
                             Box(
                                 modifier = Modifier
                                     .width(1.dp)
@@ -299,9 +298,8 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                 .padding(top = 10.dp)
                                 .padding(start = 5.dp)
                                 .padding(end = 5.dp)
-                                //.weight(1f)
                                 .clickable {
-                                    navController.navigate("prodotto/${productInfo.id}") // Interpola l'ID del prodotto nel percorso di navigazione
+                                    navController.navigate("prodotto/${productInfo.id}")
                                 }
                                 .border(
                                     width = 0.5.dp,
@@ -311,7 +309,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .width(150.dp) // Dimensione del Box (più grande dell'immagine)
+                                    .width(150.dp)
                                     .height(270.dp)
                                     .border(2.dp, Color.Transparent, RoundedCornerShape(9.dp))
                                     .clip(
@@ -322,9 +320,9 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                             bottomEnd = 0.dp
                                         )
                                     )
-                                    .background(LightGrayColor) // Sfondo del Box
+                                    .background(LightGrayColor)
                                 ,
-                                horizontalAlignment = Alignment.CenterHorizontally, // Allinea la colonna orizzontalmente al centro
+                                horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 val base64WithoutPrefix = productInfo.immagineProdotto?.removePrefix("data:image/png;base64,")
@@ -339,62 +337,19 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                 )
                             }
                             Column(
-                                modifier = Modifier.padding(8.dp) // Rimuovi il padding interno alla colonna
+                                modifier = Modifier.padding(8.dp)
                             ) {
                                 productInfo.descrizione?.let {
                                     Text(
                                         modifier = Modifier.padding(top = 23.dp),
                                         text = it,
                                         style = TextStyle(fontSize = 15.sp),
-                                        maxLines = 3, // Limita il testo a un massimo di tre righe
-                                        overflow = TextOverflow.Ellipsis // Aggiungi puntini sospensivi se il testo è troppo lungo
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(20.dp))
-                                //vanno implementate le recensioni
-                                /*
-                                val number = productInfo?.valutazione
-                                val integerPart = number?.toInt()
-                                val decimalPart = integerPart?.let { number.minus(it) }
-                                Row(
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (productInfo != null) {
-                                        Text(
-                                            text = productInfo.valutazione.toString(),
-                                            style = TextStyle(fontSize = 13.sp),
-                                            color = MyBlue
-                                        )
-                                    }
-                                    repeat(5) { index ->
-                                        val starColor =
-                                            if (index < integerPart!! || (decimalPart!! > 0.5 && integerPart == index)) {
-                                                MyYellow
-                                            } else {
-                                                Color.Gray
-                                            }
-                                        Icon(
-                                            imageVector = Icons.Filled.Star,
-                                            contentDescription = null,
-                                            tint = starColor,
-                                            modifier = Modifier
-                                                //.width(10.dp)
-                                                .size(15.dp)
-                                            //.absoluteOffset(0.dp, 2.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                    }
-                                    if (productInfo != null) {
-                                        Text(
-                                            text = "(${productInfo.numeroRecensioni})",
-                                            style = TextStyle(fontSize = 12.sp),
-                                            color = Color.Gray
-                                        )
-                                    }
-                                }
 
-                                 */
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = "${productInfo.venduti} + acquistati",
@@ -426,7 +381,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                         .fillMaxWidth()
                                         .padding(start = 5.dp, end = 5.dp),
                                     colors = ButtonDefaults.buttonColors(backgroundColor = MyYellow),
-                                    shape = RoundedCornerShape(10.dp) // Arrotonda i bordi con un raggio di 8dp
+                                    shape = RoundedCornerShape(10.dp)
                                 ) {
                                     Text(text = "Aggiungi al carrello")
                                 }
@@ -463,10 +418,10 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                                 Text(
                                     text = "Caricamento prodotti",
                                     color = MyBlue,
-                                    fontSize = 16.sp, // Imposta la dimensione del font come preferisci
+                                    fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Spacer(modifier = Modifier.height(8.dp)) // Spazio tra il testo e l'indicatore
+                                Spacer(modifier = Modifier.height(8.dp))
                                 CircularProgressIndicator(
                                     color = MyBlue,
                                     strokeWidth = 4.dp
@@ -474,7 +429,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                             }
                         }
 
-                    }// barra di caricamento circolare
+                    }
 
                 }
                 if(!visibile) {
