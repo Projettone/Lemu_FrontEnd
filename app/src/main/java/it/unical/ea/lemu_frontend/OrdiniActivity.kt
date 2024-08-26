@@ -129,70 +129,87 @@ fun OrdiniActivity(navController: NavHostController, viewModel: OrdineViewModel)
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
-            items(orders) { order ->
+            if(orders.isNotEmpty()){
+                items(orders) { order ->
 
-                Column(
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .background(color = Color.White)
-                        .padding(start = 10.dp, end = 10.dp)
-                        //.border(0.1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
-                        .padding(5.dp)
-                        .fillMaxWidth()
-
-                ) {
-                    Divider(
-                        color = Color.Gray,
+                    Column(
                         modifier = Modifier
-                            .height(0.4.dp)
+                            .padding(bottom = 10.dp)
+                            .background(color = Color.White)
+                            .padding(start = 10.dp, end = 10.dp)
+                            //.border(0.1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
+                            .padding(5.dp)
                             .fillMaxWidth()
-                    )
-                    Text(text = "Numero ordine: ${order.id}",
-                        color = Color.Gray
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+
                     ) {
-                        Text(text = "Data di acquisto: ${order.dataAcquisto}")
-                        Spacer(modifier = Modifier.weight(1f))
-
-
                         Divider(
                             color = Color.Gray,
                             modifier = Modifier
-                                .height(25.dp)
-                                .width(0.6.dp)
-                                .absoluteOffset(0.dp,-7.dp)
+                                .height(0.4.dp)
+                                .fillMaxWidth()
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-
-
+                        Text(text = "Numero ordine: ${order.id}",
+                            color = Color.Gray
+                        )
                         Row(
-                            Modifier.clickable {
-                                navController.navigate("dettagliOrdine/${order.id}")
-                            }
-                        ){
-                            Text(text = "Dettagli ordine")
-                            Icon(
-                                imageVector = Icons.Default.ArrowForward,
-                                contentDescription = "Arrow Forward",
-                                tint = Color.Black,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Data di acquisto: ${order.dataAcquisto}")
+                            Spacer(modifier = Modifier.weight(1f))
+
+
+                            Divider(
+                                color = Color.Gray,
                                 modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .size(20.dp)
+                                    .height(25.dp)
+                                    .width(0.6.dp)
+                                    .absoluteOffset(0.dp, -7.dp)
                             )
+                            Spacer(modifier = Modifier.weight(1f))
+
+
+                            Row(
+                                Modifier.clickable {
+                                    navController.navigate("dettagliOrdine/${order.id}")
+                                }
+                            ){
+                                Text(text = "Dettagli ordine")
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "Arrow Forward",
+                                    tint = Color.Black,
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .size(20.dp)
+                                )
+                            }
+
+
                         }
-
-
+                        Divider(
+                            color = Color.Gray,
+                            modifier = Modifier
+                                .height(0.4.dp)
+                                .fillMaxWidth()
+                        )
                     }
-                    Divider(
-                        color = Color.Gray,
-                        modifier = Modifier
-                            .height(0.4.dp)
-                            .fillMaxWidth()
-                    )
                 }
+            }else{
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "Non hai ancora nessun ordine",
+                            fontSize = 24.sp,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
+
             }
+
         }
     }
 }

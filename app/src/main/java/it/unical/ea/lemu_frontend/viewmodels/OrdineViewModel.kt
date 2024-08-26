@@ -7,8 +7,9 @@ import kotlinx.coroutines.withContext
 import org.openapitools.client.apis.OrdineControllerApi
 import org.openapitools.client.models.OrdineDto
 import org.openapitools.client.models.OrdineProdottoDto
+import java.time.LocalDateTime
 
-class OrdineViewModel(private val authViewModel: AuthViewModel) {
+class OrdineViewModel(private val authViewModel: AuthViewModel, private val carrelloViewModel: CarrelloViewModel) {
     private val api: OrdineControllerApi = OrdineControllerApi(authViewModel)
 
 
@@ -19,6 +20,12 @@ class OrdineViewModel(private val authViewModel: AuthViewModel) {
 
     private var _ordine = MutableStateFlow<OrdineDto?>(null)
     val ordine: MutableStateFlow<OrdineDto?> = _ordine
+
+    private var _prodottoQuantitaList = MutableStateFlow<List<Pair<Long, Int>>>(emptyList())
+    val prodottoQuantitaList: StateFlow<List<Pair<Long, Int>>> = _prodottoQuantitaList
+
+    private var _prezzoTotaleOrdine = MutableStateFlow(0.0)
+    val prezzoTotaleOrdine: StateFlow<Double> = _prezzoTotaleOrdine
 
 
     private var _dettagliOrdine = MutableStateFlow<List<OrdineProdottoDto>>(emptyList())
@@ -92,21 +99,28 @@ class OrdineViewModel(private val authViewModel: AuthViewModel) {
     }
 
 
-    //metodo per creare un nuovo ordine
-    fun createAndSendOrder(
-        idUtente: Long,
-        prezzoTotaleOrdine: Double,
-        prodottoQuantitaList: List<Pair<Long, Int>>
-    ) {
+    fun createAndSendOrder() {
+        val dataAcquistoAttuale = LocalDateTime.now().toLocalDate()
+
+        val cartItems = carrelloViewModel.cartItems.value
+
+        val prodottoQuantita = cartItems.map { cartItem ->
+            Pair(cartItem.prodottoId, cartItem.quantity)
+        }
+
+        _prodottoQuantitaList.value = prodottoQuantita
+        _prezzoTotaleOrdine.value = carrelloViewModel.totalPrice.value
+
         val ordineDto = OrdineDto(
             id = null,
-            indirizzo = null,
-            idutente = idUtente,
-            dataAcquisto = null,
-            prezzoTotaleOrdine = prezzoTotaleOrdine,
+            indirizzo = authViewModel.user.value?.indirizzo.toString(),
+            idutente = null,
+            dataAcquisto = dataAcquistoAttuale,
+            prezzoTotaleOrdine = _prezzoTotaleOrdine.value,
             ordineProdotti = null
         )
-        val ordineProdotti = prodottoQuantitaList.mapIndexed { index, pair ->
+
+        val ordineProdotti = prodottoQuantitaList.value.map { pair ->
             OrdineProdottoDto(
                 id = null,
                 ordineId = ordineDto.id,
@@ -115,7 +129,7 @@ class OrdineViewModel(private val authViewModel: AuthViewModel) {
             )
         }
         ordineDto.ordineProdotti = ordineProdotti
-        // Invia l'ordine tramite l'API
         api.add1(ordineDto)
     }
+
 }

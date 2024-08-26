@@ -105,7 +105,11 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/ordinecontroller-api/add",
@@ -175,7 +179,11 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/all/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
@@ -312,7 +320,10 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/ordine/{orderId}".replace("{"+"orderId"+"}", encodeURIComponent(orderId.toString())),
@@ -382,7 +393,10 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
 
         return RequestConfig(
             method = RequestMethod.GET,
