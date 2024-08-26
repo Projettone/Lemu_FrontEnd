@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,7 +60,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
+import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -67,7 +71,7 @@ import org.openapitools.client.models.ProdottoDto
 import org.openapitools.client.models.RecensioneDto
 
 @Composable
-fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel) {
+fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel, carrelloViewModel: CarrelloViewModel, wishlistViewModel: WishlistViewModel) {
     val MyYellow = Color(0xFFFFBE00)
     val MyBlue = Color(0xFF047FC6)
     val MyOrange = Color(0xFFFB8201)
@@ -77,15 +81,24 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     val productId = productIdString.toLongOrNull()
     var loading by remember { mutableStateOf(true) } // Stato di caricamento
     val listaRecensioni by viewModel.listaRecensioni.collectAsState()
+    val listaWishlist by viewModel.wishlists.collectAsState()
     var isBannerVisible by remember { mutableStateOf(false) }
+    var currentPage by remember { mutableStateOf(0) }
 
     var reviewText by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(0f) }
+    val productsPerPage = 2
+
+    var showDialog by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-
+    val paginatedListaRecensioni = remember(currentPage,listaRecensioni) {
+        listaRecensioni.chunked(productsPerPage).getOrElse(currentPage) { emptyList() } ?: emptyList()
+    }
 
     LaunchedEffect(Unit) {
         launch {
@@ -220,129 +233,138 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                 .align(Alignment.BottomStart)
                                 .padding(8.dp)
                                 .clickable {
-                                    isFavorite = !isFavorite
-                                }
-                        )
-/*
-                        val context = LocalContext.current
-                        Icon(
-                            imageVector = Icons.Filled.Share,
-                            contentDescription = "Share Icon",
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .size(50.dp)
-                                .align(Alignment.TopEnd)
-                                .padding(8.dp)
-                                .clickable {
-                                    val content =
-                                        "**Your content to be shared**" // Replace with your actual content (text, link, etc.)
-                                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                        type = "text/plain" // Adjust based on content type
-                                        putExtra(Intent.EXTRA_TEXT, content)
+                                    coroutineScope.launch(Dispatchers.IO) {
+                                        viewModel.findWishlistByIdUtente()
+                                        showDialog = true // Mostra il dialog quando cliccato
+
                                     }
-                                    // Launch the activity chooser to select the sharing app
-                                    context.startActivity(
-                                        Intent.createChooser(
-                                            shareIntent,
-                                            "Condividi con"
-                                        )
-                                    )
+
+
                                 }
                         )
-                        */
+
                     }
                 }
 
+                // Mostra il popup se showDialog è true
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = {
+                            Text(text = "Your Wishlist")
+                        },
+                        text = {
+                            // Controllo se la lista è vuota
+                            if (listaWishlist.isEmpty()) {
+                                Text(text = "No items in your wishlist.")
+                            } else {
+                                LazyColumn {
+                                    items(listaWishlist) { item ->
+                                        item.nome?.let { Text(text = it) } // Mostra il nome di ogni elemento
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = { showDialog = false }) {
+                                Text("Close")
+                            }
+                        }
+                    )
+                }
 
-                Text(text = "${product.prezzo}",style = TextStyle(fontSize = 30.sp))
+
+                Text(text = "${product.prezzo}€",style = TextStyle(fontSize = 30.sp))
                 Text(text = "Resi GRATUITI", color = MyBlue)
                 Text(text = "I prezzi degli articoli in vendita su Lemu includono l'IVA.")
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = "234 disponibili", color = MyBlue)
+                Text(text = "${product.disponibilita} disponibili", color = MyBlue)
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Absolute.Center,
-                        modifier = Modifier
-                            .border(
-                                1.5.dp,
-                                Color.LightGray,
-                                shape = RoundedCornerShape(30.dp)
-                            )
-                            .height(35.dp)
-                            .padding(start = 10.dp, end = 10.dp)
-                        //.widthIn(max = 198.dp)  // Imposta una larghezza massima alla riga
-
-
+                Box {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Absolute.Center,
+                            modifier = Modifier
+                                .border(
+                                    1.5.dp,
+                                    Color.LightGray,
+                                    shape = RoundedCornerShape(30.dp)
+                                )
+                                .height(35.dp)
+                                .padding(start = 10.dp, end = 10.dp)
+                            //.widthIn(max = 198.dp)  // Imposta una larghezza massima alla riga
+
+
+                        ) {
+                            Button(
+                                modifier = Modifier.padding(end = 12.dp),
+                                onClick = {
+                                    if (quantity > 1) quantity--
+                                },
+                                colors = ButtonDefaults.buttonColors(Color.White),
+                                //border = BorderStroke(1.dp, Color.Black)
+                            ) {
+                                Text(text = "-", color = Color.Black)
+                            }
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.width(30.dp)  // Imposta una larghezza fissa per il contenitore del testo della quantità
+                            ) {
+                                Text(
+                                    text = "${quantity.coerceIn(1, 99)}",
+                                    fontSize = 19.sp,
+                                    color = Color.Black,
+                                )
+
+                            }
+                            Button(
+                                modifier = Modifier.padding(start = 12.dp),
+
+                                onClick = {
+                                    if (quantity < 99) quantity++
+                                },
+                                colors = ButtonDefaults.buttonColors(Color.White),
+                            ) {
+                                Text(text = "+", color = Color.Black)
+                            }
+
+                        }
+                        Spacer(modifier = Modifier.height(5.dp))
+
                         Button(
-                            modifier = Modifier.padding(end = 12.dp),
                             onClick = {
-                                if (quantity > 1) quantity--
+                                scope.launch {
+                                    carrelloViewModel.addProductToCart(product, quantity)
+                                    snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                }
+
+
                             },
-                            colors = ButtonDefaults.buttonColors(Color.White),
-                            //border = BorderStroke(1.dp, Color.Black)
-                        ) {
-                            Text(text = "-", color = Color.Black)
-                        }
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.width(30.dp)  // Imposta una larghezza fissa per il contenitore del testo della quantità
-                        ) {
-                            Text(
-                                text = "${quantity.coerceIn(1, 99)}",
-                                fontSize = 19.sp,
-                                color = Color.Black,
-                            )
-                        }
-                        Button(
-                            modifier = Modifier.padding(start = 12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp),
+                            colors = ButtonDefaults.buttonColors(MyYellow)
 
-                            onClick = {
-                                if (quantity < 99) quantity++
-                            },
-                            colors = ButtonDefaults.buttonColors(Color.White),
                         ) {
-                            Text(text = "+", color = Color.Black)
+                            Text(text = "Aggiungi al carrello")
                         }
 
+
                     }
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    Button(
-                        onClick = {
-                            navController.navigate("addProduct")
-
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp),
-                        colors = ButtonDefaults.buttonColors(MyYellow)
-
-                    ) {
-                        Text(text = "Aggiungi al carrello")
-                    }
-
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp),
-                        colors = ButtonDefaults.buttonColors(MyOrange)
-
-                    ) {
-                        Text(text = "Aquista ora")
-                    }
+                    CustomSnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
                 }
+
 
                 Row {
                     Text(text = "Spedizione", color = Color.Gray)
-                    Spacer(modifier = Modifier.width(23.dp))
+                    Spacer(modifier = Modifier.width(24.dp))
                     Text(text = "Lemu")
                 }
                 Row {
@@ -354,7 +376,7 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                 }
                 Row {
                     Text(text = "Resi", color = Color.Gray)
-                    Spacer(modifier = Modifier.width(74.dp))
+                    Spacer(modifier = Modifier.width(65.dp))
                     Text(text = "Restituibile, entro 14 giorni dalla consegna", color = MyBlue)
                 }
                 Row {
@@ -377,9 +399,51 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
 //caricamento recensioni
 
-        items(listaRecensioni){recensioni ->
+        items(paginatedListaRecensioni){recensioni ->
             RecensioniViewActivity(recensioni)
         }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    androidx.compose.material.Button(
+                        onClick = {
+                            if (currentPage > 0) {
+                                currentPage--
+                            }
+                        },
+                        enabled = currentPage > 0,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .width(150.dp)
+                            .height(50.dp)
+                    ) {
+                        Text(text = "Pagina Precedente", fontSize = 16.sp)
+                    }
+
+                    val lista = listaRecensioni
+
+                    androidx.compose.material.Button(
+                        onClick = {
+                            if (currentPage < (lista.size / productsPerPage)) {
+                                currentPage++
+                            }
+                        },
+                        enabled = currentPage < (lista.size / productsPerPage),
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .width(150.dp)
+                            .height(50.dp)
+                    ) {
+                        Text(text = "Pagina Successiva", fontSize = 16.sp) 
+                    }
+                }
+            }
+
 
 // Add new review section
             item {
@@ -515,7 +579,7 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
             }
         }
 
-        Text(text = recensioni.nomeProdotto)
+        Text(text = recensioni.credenzialiEmailAutore)
     }
     Row (
         modifier = Modifier.padding(start = 1.dp)
@@ -541,8 +605,8 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
             Spacer(modifier = Modifier.width(4.dp))
         }
     }
-    Text(text = "ciaoo")
-    Text(text = "Recensito il ", color = Color.Gray)
+    //Text(text = "ciaoo")
+    //Text(text = "Recensito il ", color = Color.Gray)
     Text(text = recensioni.commento)
 
     Spacer(modifier = Modifier.height(19.dp))

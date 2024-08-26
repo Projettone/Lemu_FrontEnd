@@ -36,16 +36,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddProductActivity(navController: NavHostController, prodottoViewModel: ProdottoViewModel) {
+fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostController, prodottoViewModel: ProdottoViewModel) {
     var productName by remember { mutableStateOf("") }
     var productDescription by remember { mutableStateOf("") }
     var productCategory by remember { mutableStateOf("") }
@@ -55,6 +64,11 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
     var base64Image by remember { mutableStateOf<String?>(null) }
     val coroutineScope = CoroutineScope(Dispatchers.IO)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("Seleziona Categoria") }
+    val categories = listOf("Informatica", "Giardinaggio", "Moda", "Sport", "Illuminazione", "Gioielli","Scarpe")
 
     val disponibilitàInt = disponibilità.toIntOrNull() ?: 0
 
@@ -113,15 +127,40 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
             )
         }
 
+
         item {
-            OutlinedTextField(
-                value = productCategory,
-                onValueChange = { productCategory = it },
-                label = { Text("Categoria Prodotto") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            )
+            Spacer(modifier = Modifier.height(15.dp))
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedCategory,
+                    onValueChange = { selectedCategory = it },
+                    label = { Text("Categoria Prodotto") },
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+                    }
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    categories.forEach { category ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedCategory = category
+                                expanded = false
+                            }
+                        ) {
+                            Text(text = category)
+                        }
+                    }
+                }
+            }
         }
 
         item {
@@ -187,18 +226,18 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
             Box(){
                 Button(
                     onClick = {
-                        if (productName.isNotEmpty() && productDescription.isNotEmpty() && productCategory.isNotEmpty() && base64Image != null && price.isNotEmpty()) {
+                        if (productName.isNotEmpty() && productDescription.isNotEmpty() && selectedCategory.isNotEmpty() && base64Image != null && price.isNotEmpty()) {
                             val normalizedPrice = normalizePrice(price)
                             val prodotto = ProdottoDto(
                                 nome = productName,
                                 descrizione = productDescription,
                                 prezzo = normalizedPrice,
                                 venduti = 0,
-                                categoria = productCategory,
+                                categoria = selectedCategory,
                                 disponibilita = disponibilitàInt,
                                 immagineProdotto = base64Image,
                                 idrecensioni = null,
-                                idutente = 1L
+                                idutente = authViewModel.user.value?.id
                             )
                             coroutineScope.launch {
                                 try {
@@ -218,7 +257,10 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
                                 }
                             }
                         } else {
-                            errorMessage = "Tutti i campi devono essere compilati"
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Tutti i campi devono essere compilati!")
+                            }
+
                         }
                     },
                     modifier = Modifier
@@ -258,10 +300,18 @@ fun AddProductActivity(navController: NavHostController, prodottoViewModel: Prod
                         )
                     }
                 }
+                CustomSnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.align(Alignment.BottomCenter)
+
+                )
             }
         }
     }
 }
+
+
+
 
 
 @Composable
@@ -321,3 +371,4 @@ fun rotateBitmapLeft(bitmap: Bitmap): Bitmap {
     val matrix = Matrix().apply { postRotate(+90f) }
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
+

@@ -19,6 +19,8 @@ import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
 
+import org.openapitools.client.models.ProdottoDto
+
 import com.squareup.moshi.Json
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
@@ -35,7 +37,6 @@ import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
-import org.openapitools.client.models.ProdottoDto
 
 class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
@@ -108,9 +109,83 @@ class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: 
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
 
+
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/prodottocontroller-api/add",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @return void
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun deleteById(id: kotlin.Long) : Unit {
+        val localVarResponse = deleteByIdWithHttpInfo(id = id)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> Unit
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @return ApiResponse<Unit?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Throws(IllegalStateException::class, IOException::class)
+    fun deleteByIdWithHttpInfo(id: kotlin.Long) : ApiResponse<Unit?> {
+        val localVariableConfig = deleteByIdRequestConfig(id = id)
+
+        return request<Unit, Unit>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation deleteById
+     *
+     * @param id 
+     * @return RequestConfig
+     */
+    fun deleteByIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+
+        return RequestConfig(
+            method = RequestMethod.DELETE,
+            path = "/prodottocontroller-api/delete/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -258,6 +333,80 @@ class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: 
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/prodottocontroller-api/get/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @return kotlin.collections.List<ProdottoDto>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun getByUserId(id: kotlin.Long) : kotlin.collections.List<ProdottoDto> {
+        val localVarResponse = getByUserIdWithHttpInfo(id = id)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.collections.List<ProdottoDto>
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @return ApiResponse<kotlin.collections.List<ProdottoDto>?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun getByUserIdWithHttpInfo(id: kotlin.Long) : ApiResponse<kotlin.collections.List<ProdottoDto>?> {
+        val localVariableConfig = getByUserIdRequestConfig(id = id)
+
+        return request<Unit, kotlin.collections.List<ProdottoDto>>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation getByUserId
+     *
+     * @param id 
+     * @return RequestConfig
+     */
+    fun getByUserIdRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.GET,
+            path = "/prodottocontroller-api/get-by-userId{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

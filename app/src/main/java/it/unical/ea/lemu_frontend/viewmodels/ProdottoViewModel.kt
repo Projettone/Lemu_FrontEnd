@@ -1,5 +1,6 @@
 package it.unical.ea.lemu_frontend.viewmodels
 
+import it.unical.ea.lemu_frontend.Wishlist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -8,13 +9,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.openapitools.client.apis.ProdottoControllerApi
 import org.openapitools.client.apis.RecensioneControllerApi
+import org.openapitools.client.apis.WishlistControllerApi
 import org.openapitools.client.models.ProdottoDto
 import org.openapitools.client.models.RecensioneDto
+import org.openapitools.client.models.WishlistDto
 import java.io.IOException
 import java.util.concurrent.TimeoutException
 
 class ProdottoViewModel (private val authViewModel: AuthViewModel){
     private val api: ProdottoControllerApi = ProdottoControllerApi(authViewModel)
+    private val apiWishlist: WishlistControllerApi = WishlistControllerApi(authViewModel)
     private val apiRecensioni: RecensioneControllerApi = RecensioneControllerApi(authViewModel)
 
     private val viewModelJob = Job()
@@ -25,6 +29,9 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
 
     private var _listaProdotti = MutableStateFlow<List<ProdottoDto>>(emptyList())
     val listaProdotti: StateFlow<List<ProdottoDto>> = _listaProdotti
+
+    private var _listaProdottiUser = MutableStateFlow<List<ProdottoDto>>(emptyList())
+    val listaProdottiUser: StateFlow<List<ProdottoDto>> = _listaProdottiUser
 
     private var _prodotto = MutableStateFlow<List<ProdottoDto>>(emptyList())
     val prodotto: StateFlow<List<ProdottoDto>> = _prodotto
@@ -38,6 +45,21 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
 
     private var _listaRecensioni = MutableStateFlow<List<RecensioneDto>>(emptyList())
     val listaRecensioni: StateFlow<List<RecensioneDto>> = _listaRecensioni
+
+    private val _wishlists = MutableStateFlow<List<WishlistDto>>(emptyList())
+    val wishlists: StateFlow<List<WishlistDto>> = _wishlists
+
+    suspend fun findWishlistByIdUtente() {
+        return withContext(Dispatchers.IO) {
+            try {
+                val fetchedProducts = apiWishlist.getAllWishlistByUtenteId(authViewModel.user.value?.id!!)
+                _wishlists.value = fetchedProducts ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
 
 
     suspend fun addRecensione(rating: Float,reviewText: String, idProduct: Long?,prodottoDto: ProdottoDto) {
@@ -171,6 +193,30 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
                 null
             } catch (e: Exception) {
                 println("Errore generico durante la chiamata API: ${e.javaClass.simpleName}: ${e.message}")
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun getProductByIdUser(idUser: Long){
+        return withContext(Dispatchers.IO) {
+            try {
+                val fetchedProducts = api.getByUserId(idUser)
+                _listaProdottiUser.value = fetchedProducts ?: emptyList()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun deleteProduct(idProduct: Long){
+        return withContext(Dispatchers.IO) {
+            try {
+                api.deleteById(idProduct)
+            } catch (e: Exception) {
                 e.printStackTrace()
                 null
             }
