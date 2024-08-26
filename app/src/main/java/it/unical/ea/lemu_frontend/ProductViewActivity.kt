@@ -45,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.autoSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 import it.unical.ea.lemu_frontend.viewmodels.ProdottoViewModel
 import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
@@ -71,7 +73,7 @@ import org.openapitools.client.models.ProdottoDto
 import org.openapitools.client.models.RecensioneDto
 
 @Composable
-fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel, carrelloViewModel: CarrelloViewModel, wishlistViewModel: WishlistViewModel) {
+fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel, carrelloViewModel: CarrelloViewModel, authViewModel: AuthViewModel) {
     val MyYellow = Color(0xFFFFBE00)
     val MyBlue = Color(0xFF047FC6)
     val MyOrange = Color(0xFFFB8201)
@@ -79,7 +81,7 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     var isFavorite by rememberSaveable { mutableStateOf(false) }
     var product by remember { mutableStateOf(ProdottoDto(null)) }
     val productId = productIdString.toLongOrNull()
-    var loading by remember { mutableStateOf(true) } // Stato di caricamento
+    var loading by remember { mutableStateOf(true) }
     val listaRecensioni by viewModel.listaRecensioni.collectAsState()
     val listaWishlist by viewModel.wishlists.collectAsState()
     var isBannerVisible by remember { mutableStateOf(false) }
@@ -120,12 +122,11 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
 
     if (loading) {
-        // Mostra una schermata di caricamento
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator() // Indica che i dati stanno venendo caricati
+            CircularProgressIndicator()
         }
     } else{
         LazyColumn(
@@ -174,7 +175,6 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                             contentDescription = null,
                             tint = starColor,
                             modifier = Modifier
-                                //.width(10.dp)
                                 .size(13.dp)
                                 .absoluteOffset(0.dp, 2.dp)
                         )
@@ -234,19 +234,24 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                 .padding(8.dp)
                                 .clickable {
                                     coroutineScope.launch(Dispatchers.IO) {
-                                        viewModel.findWishlistByIdUtente()
-                                        showDialog = true // Mostra il dialog quando cliccato
+                                        if(authViewModel.isLoggedIn.value){
+                                            viewModel.findWishlistByIdUtente()
+                                            showDialog = true
+                                        }else{
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar("Devi fare l'accesso per aggiungere ai preferiti!")
+                                            }
+                                        }
+
 
                                     }
 
 
                                 }
                         )
-
                     }
                 }
 
-                // Mostra il popup se showDialog è true
                 if (showDialog) {
                     AlertDialog(
                         onDismissRequest = { showDialog = false },
@@ -254,13 +259,12 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                             Text(text = "Your Wishlist")
                         },
                         text = {
-                            // Controllo se la lista è vuota
                             if (listaWishlist.isEmpty()) {
                                 Text(text = "No items in your wishlist.")
                             } else {
                                 LazyColumn {
                                     items(listaWishlist) { item ->
-                                        item.nome?.let { Text(text = it) } // Mostra il nome di ogni elemento
+                                        item.nome?.let { Text(text = it) }
                                     }
                                 }
                             }
@@ -296,7 +300,6 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                 )
                                 .height(35.dp)
                                 .padding(start = 10.dp, end = 10.dp)
-                            //.widthIn(max = 198.dp)  // Imposta una larghezza massima alla riga
 
 
                         ) {
@@ -306,13 +309,12 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                     if (quantity > 1) quantity--
                                 },
                                 colors = ButtonDefaults.buttonColors(Color.White),
-                                //border = BorderStroke(1.dp, Color.Black)
                             ) {
                                 Text(text = "-", color = Color.Black)
                             }
                             Box(
                                 contentAlignment = Alignment.Center,
-                                modifier = Modifier.width(30.dp)  // Imposta una larghezza fissa per il contenitore del testo della quantità
+                                modifier = Modifier.width(30.dp)
                             ) {
                                 Text(
                                     text = "${quantity.coerceIn(1, 99)}",
@@ -444,8 +446,6 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                 }
             }
 
-
-// Add new review section
             item {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -605,8 +605,6 @@ fun RecensioniViewActivity(recensioni: RecensioneDto) {
             Spacer(modifier = Modifier.width(4.dp))
         }
     }
-    //Text(text = "ciaoo")
-    //Text(text = "Recensito il ", color = Color.Gray)
     Text(text = recensioni.commento)
 
     Spacer(modifier = Modifier.height(19.dp))

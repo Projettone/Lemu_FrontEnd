@@ -54,7 +54,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostController, prodottoViewModel: ProdottoViewModel) {
+fun AddProductActivity(authViewModel: AuthViewModel, navController: NavHostController, prodottoViewModel: ProdottoViewModel) {
     var productName by remember { mutableStateOf("") }
     var productDescription by remember { mutableStateOf("") }
     var productCategory by remember { mutableStateOf("") }
@@ -63,21 +63,17 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
     var isBannerVisible by remember { mutableStateOf(false) }
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
     var base64Image by remember { mutableStateOf<String?>(null) }
+    var isCameraImage by remember { mutableStateOf(false) }
     val coroutineScope = CoroutineScope(Dispatchers.IO)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var expanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("Seleziona Categoria") }
-    val categories = listOf("Informatica", "Giardinaggio", "Moda", "Sport", "Illuminazione", "Gioielli","Scarpe")
-
+    val categories = listOf("Informatica", "Giardinaggio", "Moda", "Sport", "Illuminazione", "Gioielli", "Scarpe")
     val disponibilitàInt = disponibilità.toIntOrNull() ?: 0
-
     val context = LocalContext.current
-
-    // Stato per l'AlertDialog
     var showDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
-
 
     if (showDialog) {
         AlertDialog(
@@ -98,13 +94,37 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
         contentPadding = PaddingValues(16.dp)
     ) {
         item {
+            Box {
+                Button(
+                    onClick = {
+                        navController.navigate("productUser")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .padding(top = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Green,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(5.dp)
+                ) {
+                    Text("Visualizza i tuoi prodotti!",
+                        color = Color.Black,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center)
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+        item {
             Text(
                 text = "Aggiungi un nuovo prodotto",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(10.dp))
-
         }
 
         item {
@@ -126,7 +146,6 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
                     .padding(top = 16.dp)
             )
         }
-
 
         item {
             Spacer(modifier = Modifier.height(15.dp))
@@ -187,16 +206,18 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
         item {
             ImagePickerButton(onImageSelected = { uri ->
                 capturedImageUri = uri
+                isCameraImage = false
                 if (uri != null) {
-                    base64Image = uriToBase64(uri, context)
+                    base64Image = uriToBase64(uri, context, isCameraImage)
                 }
             })
         }
         item {
             CameraCapture(onImageCaptured = { uri ->
                 capturedImageUri = uri
+                isCameraImage = true
                 if (uri != null) {
-                    base64Image = uriToBase64(uri, context)
+                    base64Image = uriToBase64(uri, context, isCameraImage)
                 }
             })
         }
@@ -218,12 +239,11 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
                             .size(200.dp)
                     )
                 }
-
             }
         }
 
         item {
-            Box(){
+            Box {
                 Button(
                     onClick = {
                         if (productName.isNotEmpty() && productDescription.isNotEmpty() && selectedCategory.isNotEmpty() && base64Image != null && price.isNotEmpty()) {
@@ -260,7 +280,6 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
                             scope.launch {
                                 snackbarHostState.showSnackbar("Tutti i campi devono essere compilati!")
                             }
-
                         }
                     },
                     modifier = Modifier
@@ -277,7 +296,7 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
                         color = Color.Black,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center )
+                        textAlign = TextAlign.Center)
                 }
 
                 AnimatedVisibility(
@@ -303,16 +322,11 @@ fun AddProductActivity(authViewModel: AuthViewModel,navController: NavHostContro
                 CustomSnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier.align(Alignment.BottomCenter)
-
                 )
             }
         }
     }
 }
-
-
-
-
 
 @Composable
 fun ImagePickerButton(onImageSelected: (Uri) -> Unit) {
@@ -338,21 +352,20 @@ fun ImagePickerButton(onImageSelected: (Uri) -> Unit) {
             color = Color.Black,
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center )
+            textAlign = TextAlign.Center)
     }
 }
 
-fun uriToBase64(uri: Uri, context: android.content.Context): String? {
+fun uriToBase64(uri: Uri, context: android.content.Context, isCameraImage: Boolean): String? {
     try {
         val inputStream = context.contentResolver.openInputStream(uri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
         inputStream?.close()
 
-        // Ruota l'immagine di 90 gradi a sinistra
-        val rotatedBitmap = rotateBitmapLeft(bitmap)
+        val processedBitmap = if (isCameraImage) rotateBitmapLeft(bitmap) else bitmap
 
         val bytes = ByteArrayOutputStream()
-        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        processedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val base64 = Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT)
         bytes.close()
         return base64
@@ -362,7 +375,6 @@ fun uriToBase64(uri: Uri, context: android.content.Context): String? {
     return null
 }
 
-
 fun normalizePrice(price: String): String {
     return price.replace(",", ".")
 }
@@ -371,4 +383,3 @@ fun rotateBitmapLeft(bitmap: Bitmap): Bitmap {
     val matrix = Matrix().apply { postRotate(+90f) }
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
-
