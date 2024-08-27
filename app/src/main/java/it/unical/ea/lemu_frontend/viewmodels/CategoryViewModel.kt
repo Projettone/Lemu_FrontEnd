@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import org.openapitools.client.apis.ProdottoControllerApi
 import org.openapitools.client.models.ProdottoDto
 
-class ProductsViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
+class CategoryViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
 
     private val prodottoControllerApi = ProdottoControllerApi(authViewModel)  // Instantiate the API controller
 

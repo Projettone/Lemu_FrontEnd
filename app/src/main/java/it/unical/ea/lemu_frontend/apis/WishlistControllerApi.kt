@@ -107,6 +107,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.POST,
@@ -178,6 +182,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.POST,
@@ -246,6 +254,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.DELETE,
@@ -260,7 +272,8 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
     /**
      * 
      * 
-     * @param id 
+     * @param wishlistId 
+     * @param prodottoId 
      * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -269,8 +282,8 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun deleteWishlistProdotti(id: kotlin.Long) : Unit {
-        val localVarResponse = deleteWishlistProdottiWithHttpInfo(id = id)
+    fun deleteWishlistProdotti(wishlistId: kotlin.Long, prodottoId: kotlin.Long) : Unit {
+        val localVarResponse = deleteWishlistProdottiWithHttpInfo(wishlistId = wishlistId, prodottoId = prodottoId)
 
         return when (localVarResponse.responseType) {
             ResponseType.Success -> Unit
@@ -290,14 +303,15 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
     /**
      * 
      * 
-     * @param id 
+     * @param wishlistId 
+     * @param prodottoId 
      * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    fun deleteWishlistProdottiWithHttpInfo(id: kotlin.Long) : ApiResponse<Unit?> {
-        val localVariableConfig = deleteWishlistProdottiRequestConfig(id = id)
+    fun deleteWishlistProdottiWithHttpInfo(wishlistId: kotlin.Long, prodottoId: kotlin.Long) : ApiResponse<Unit?> {
+        val localVariableConfig = deleteWishlistProdottiRequestConfig(wishlistId = wishlistId, prodottoId = prodottoId)
 
         return request<Unit, Unit>(
             localVariableConfig
@@ -307,17 +321,26 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
     /**
      * To obtain the request config of the operation deleteWishlistProdotti
      *
-     * @param id 
+     * @param wishlistId 
+     * @param prodottoId 
      * @return RequestConfig
      */
-    fun deleteWishlistProdottiRequestConfig(id: kotlin.Long) : RequestConfig<Unit> {
+    fun deleteWishlistProdottiRequestConfig(wishlistId: kotlin.Long, prodottoId: kotlin.Long) : RequestConfig<Unit> {
         val localVariableBody = null
-        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
+            .apply {
+                put("wishlistId", listOf(wishlistId.toString()))
+                put("prodottoId", listOf(prodottoId.toString()))
+            }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.DELETE,
-            path = "/wishlist-api/prodotti/delete/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
+            path = "/wishlist-api/prodotti/delete",
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -384,6 +407,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -454,6 +481,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -524,6 +555,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -594,6 +629,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -664,6 +703,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -738,6 +781,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.PUT,
@@ -812,6 +859,10 @@ class WishlistControllerApi(private val authViewModel: AuthViewModel, basePath: 
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.PUT,

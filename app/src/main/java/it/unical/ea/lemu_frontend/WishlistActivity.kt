@@ -69,9 +69,9 @@ fun MainScreen1(navController: NavController, viewModel: WishlistViewModel) {
     var showDialog by remember { mutableStateOf(false) }
 
     // Funzione per gestire il click sulla wishlist
-    val onWishlistClick: (Long) -> Unit = { wishlistId ->
+    val onWishlistClick: (Long, String) -> Unit = { wishlistId, tipo ->
         viewModel.getAllWishlistProdotti(wishlistId) // Richiama il metodo nel ViewModel
-        navController.navigate("ProductsWishlist/$wishlistId")
+        navController.navigate("ProductsWishlist/$wishlistId/$tipo")
     }
 
     // Updated onAddWishlist to use ViewModel
@@ -121,7 +121,7 @@ fun WishlistActivity(
     wishlists: List<Wishlist>,
     onRemoveWishlist: (Wishlist) -> Unit,
     onAddWishlist: () -> Unit,
-    onWishlistClick: (Long) -> Unit,
+    onWishlistClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -152,7 +152,7 @@ fun WishlistActivity(
                 WishlistCard(
                     wishlist = wishlist,
                     onRemoveWishlist = { onRemoveWishlist(wishlist) },
-                    onWishlistClick = { onWishlistClick(wishlist.id) }
+                    onWishlistClick = { onWishlistClick(wishlist.id, wishlist.tipo) }
                 )
             }
         }
@@ -175,7 +175,7 @@ fun WishlistCard(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.cart_logo),
+                painter = painterResource(id = R.drawable.default_wishlist_image),
                 contentDescription = "Immagine Wishlist",
                 modifier = Modifier.size(56.dp),
                 contentScale = ContentScale.Crop
@@ -194,10 +194,6 @@ fun WishlistCard(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Prodotti: ${wishlist.id}",
-                    fontSize = 14.sp
                 )
                 Text(
                     text = "Tipo: ${wishlist.tipo}",

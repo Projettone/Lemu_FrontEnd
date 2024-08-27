@@ -1,10 +1,10 @@
 package it.unical.ea.lemu_frontend
 
-
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,43 +52,55 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 
 @Composable
-fun MainScreen2(wishlistId: Long,  wishlistViewModel: WishlistViewModel) {
+fun MainScreen2(
+    wishlistId: Long,
+    wishlistType: String,
+    wishlistViewModel: WishlistViewModel,
+    navController: NavController
+) {
     println(wishlistId)
     val wishlistItems by wishlistViewModel.wishlistItems.collectAsState()
+    val emails by wishlistViewModel.sharedEmails.collectAsState()
 
-    // Usa ViewModel per recuperare i dati dei prodotti basati su wishlistId
+    // Usa ViewModel per recuperare i dati dei prodotti e le email basati su wishlistId
     LaunchedEffect(wishlistId) {
         wishlistViewModel.getAllWishlistProdotti(wishlistId)
+        wishlistViewModel.getSharedEmails(wishlistId)
     }
 
-    val emails = remember { mutableStateListOf<String>() }
     var showEmailDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
             Button(
-                onClick = { /* Implement add product logic here */ },
+                onClick = { navController.navigate("categorie") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Product"
+                    contentDescription = "Aggiungi Prodotto"
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text("Aggiungi Prodotto")
             }
         }
     ) { paddingValues ->
-        WishlistActivity(
+        ProductsWishlistActivity(
+            wishlistId = wishlistId,
             wishlistItems = wishlistItems[wishlistId] ?: emptyList(),
-            onRemoveItem = { item -> /* Handle remove item */ },
+            wishlistType = wishlistType,
+            onRemoveItem = { item ->
+                wishlistViewModel.removeItem(wishlistId, item)
+            },
             onViewUsers = { showEmailDialog = true },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            navController = navController
         )
 
         if (showEmailDialog) {
@@ -97,8 +109,13 @@ fun MainScreen2(wishlistId: Long,  wishlistViewModel: WishlistViewModel) {
                 onDismiss = { showEmailDialog = false },
                 onAddEmail = { email ->
                     if (isValidEmail(email)) {
-                        emails.add(email)
+                        wishlistViewModel.addEmailToWishlist(wishlistId, email)
+                        wishlistViewModel.getSharedEmails(wishlistId) // Refresh the email list
                     }
+                },
+                onRemoveEmail = { email ->
+                    wishlistViewModel.removeEmailFromWishlist(wishlistId, email)
+                    wishlistViewModel.getSharedEmails(wishlistId) // Refresh the email list
                 }
             )
         }
@@ -107,11 +124,14 @@ fun MainScreen2(wishlistId: Long,  wishlistViewModel: WishlistViewModel) {
 
 
 @Composable
-fun WishlistActivity(
+fun ProductsWishlistActivity(
+    wishlistId: Long,
     wishlistItems: List<WishlistItem>,
+    wishlistType: String, // Aggiungi questo parametro
     onRemoveItem: (WishlistItem) -> Unit,
-    onViewUsers: () -> Unit, // Added to handle the user icon click
-    modifier: Modifier = Modifier
+    onViewUsers: () -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -126,11 +146,14 @@ fun WishlistActivity(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
             )
-            IconButton(onClick = onViewUsers) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "View Users"
-                )
+            // Mostra l'icona utente solo se la wishlist è di tipo "condivisa"
+            if (wishlistType == "condivisa") {
+                IconButton(onClick = onViewUsers) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "View Users"
+                    )
+                }
             }
         }
 
@@ -140,7 +163,8 @@ fun WishlistActivity(
             items(wishlistItems) { wishlistItem ->
                 WishlistItemCard(
                     wishlistItem = wishlistItem,
-                    onRemoveItem = { onRemoveItem(wishlistItem) }
+                    onRemoveItem = onRemoveItem,
+                    navController = navController
                 )
             }
         }
@@ -150,7 +174,8 @@ fun WishlistActivity(
 @Composable
 fun WishlistItemCard(
     wishlistItem: WishlistItem,
-    onRemoveItem: () -> Unit
+    onRemoveItem: (WishlistItem) -> Unit,
+    navController: NavController
 ) {
     val imageBitmap = remember(wishlistItem.imageRes) {
         val decodedBytes = Base64.decode(wishlistItem.imageRes, Base64.DEFAULT)
@@ -164,6 +189,9 @@ fun WishlistItemCard(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
+            .clickable {
+                navController.navigate("prodotto/${wishlistItem.id}")
+            }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             imageBitmap?.let {
@@ -220,14 +248,7 @@ fun WishlistItemCard(
                 }
             }
             Column() {
-                IconButton(onClick = { /* Implement share logic here */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = Color.Black
-                    )
-                }
-                IconButton(onClick = onRemoveItem) {
+                IconButton(onClick = { onRemoveItem(wishlistItem) } ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Remove",
@@ -243,7 +264,8 @@ fun WishlistItemCard(
 fun EmailDialog(
     emails: List<String>,
     onDismiss: () -> Unit,
-    onAddEmail: (String) -> Unit
+    onAddEmail: (String) -> Unit,
+    onRemoveEmail: (String) -> Unit // Nuovo parametro per rimuovere un'email
 ) {
     var emailInput by remember { mutableStateOf("") }
 
@@ -255,7 +277,23 @@ fun EmailDialog(
                 Text("Lista Email:")
                 LazyColumn {
                     items(emails) { email ->
-                        Text(email, fontSize = 14.sp, modifier = Modifier.padding(2.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth().padding(2.dp)
+                        ) {
+                            Text(
+                                email,
+                                fontSize = 14.sp,
+                                modifier = Modifier.weight(1f).padding(end = 8.dp)
+                            )
+                            IconButton(onClick = { onRemoveEmail(email) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Remove Email",
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.size(8.dp))
@@ -288,12 +326,15 @@ fun EmailDialog(
     )
 }
 
+
+
 fun isValidEmail(email: String): Boolean {
     return email.contains("@") && email.contains(".")
 }
 
 data class WishlistItem(
+    val id: Long,
     val imageRes: String,
     val name: String,
-    val price: Float,
+    val price: Float
 )

@@ -1,30 +1,22 @@
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -32,18 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.R
 import it.unical.ea.lemu_frontend.ui.theme.CartItem
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
-import android.graphics.BitmapFactory
-import android.util.Base64
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-
 
 @Composable
 fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloViewModel) {
@@ -59,9 +43,7 @@ fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloVi
             modifier = Modifier.padding(16.dp)
         )
 
-        // Verifica se il carrello è vuoto
         if (cartItems.isEmpty()) {
-            // Mostra un'immagine quando il carrello è vuoto
             Image(
                 painter = painterResource(id = R.drawable.cart_logo),
                 contentDescription = "Carrello Vuoto",
@@ -77,12 +59,12 @@ fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloVi
                 items(cartItems) { cartItem ->
                     CartItemCard(
                         cartItem = cartItem,
-                        carrelloViewModel = carrelloViewModel
+                        carrelloViewModel = carrelloViewModel,
+                        navController = navController
                     )
                 }
             }
 
-            // Sezione di checkout se ci sono articoli nel carrello
             if (cartItems.isNotEmpty()) {
                 CheckoutSection(
                     totalPrice = prezzoTotale,
@@ -95,11 +77,11 @@ fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloVi
     }
 }
 
-
 @Composable
 fun CartItemCard(
     carrelloViewModel: CarrelloViewModel,
-    cartItem: CartItem
+    cartItem: CartItem,
+    navController: NavController
 ) {
     val imageBitmap = remember(cartItem.imageRes) {
         val decodedBytes = Base64.decode(cartItem.imageRes, Base64.DEFAULT)
@@ -113,6 +95,9 @@ fun CartItemCard(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
+            .clickable {
+                navController.navigate("prodotto/${cartItem.prodottoId}")
+            }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             imageBitmap?.let {
@@ -145,7 +130,7 @@ fun CartItemCard(
                         fontSize = 12.5.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    TextButton(onClick = {carrelloViewModel.decrementQuantity(cartItem = cartItem)}, modifier = Modifier.size(40.dp)) {
+                    TextButton(onClick = { carrelloViewModel.decrementQuantity(cartItem = cartItem) }, modifier = Modifier.size(40.dp)) {
                         Text(
                             text = "-",
                             fontSize = 17.sp
@@ -162,7 +147,7 @@ fun CartItemCard(
                         )
                     }
                 }
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
@@ -175,7 +160,7 @@ fun CartItemCard(
                         color = Color(0xFF228B22)
                     )
                 }
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
@@ -190,17 +175,12 @@ fun CartItemCard(
                 }
             }
             Column {
-                IconButton(onClick = { carrelloViewModel.removeItem(cartItem = cartItem)}) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = Color.Black
-                    )
-                }
-                IconButton(onClick = { carrelloViewModel.removeItem(cartItem = cartItem) }) {
+                IconButton(onClick = {
+                    carrelloViewModel.removeItem(cartItem = cartItem)
+                }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Remove",
+                        contentDescription = "Rimuovi",
                         tint = Color.Red
                     )
                 }
@@ -224,7 +204,7 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
@@ -237,7 +217,7 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
                 color = Color(0xFF228B22)
             )
         }
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = null,
@@ -258,5 +238,3 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
         }
     }
 }
-
-

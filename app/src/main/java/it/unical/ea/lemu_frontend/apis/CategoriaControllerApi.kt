@@ -15,6 +15,7 @@
 
 package org.openapitools.client.apis
 
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
@@ -33,11 +34,11 @@ import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 
-class CategoriaControllerApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
+class CategoriaControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.43.107:8080")
         }
     }
 
@@ -97,6 +98,10 @@ class CategoriaControllerApi(basePath: kotlin.String = defaultBasePath, client: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -167,6 +172,10 @@ class CategoriaControllerApi(basePath: kotlin.String = defaultBasePath, client: 
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,

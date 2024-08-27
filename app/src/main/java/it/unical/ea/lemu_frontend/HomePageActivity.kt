@@ -85,7 +85,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
 
 
     val images = listOf(
-        R.drawable.trucchi,
+        R.drawable.bellezza,
         R.drawable.sport,
         R.drawable.giardinaggio,
         R.drawable.informatica,
@@ -100,7 +100,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
 
     )
     val images2 = listOf(
-        R.drawable.trucchi
+        R.drawable.bellezza
     )
 
     fun loadProductsForPage() {

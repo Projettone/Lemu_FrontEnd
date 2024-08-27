@@ -107,6 +107,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.POST,
@@ -175,6 +179,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.DELETE,
@@ -242,6 +250,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -312,6 +324,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -382,6 +398,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -459,6 +479,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
                 put("email", listOf(email.toString()))
             }
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.GET,
@@ -533,6 +557,10 @@ class WishlistCondivisioneControllerApi(private val authViewModel: AuthViewModel
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
         
         return RequestConfig(
             method = RequestMethod.PUT,

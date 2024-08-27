@@ -1,12 +1,13 @@
 package it.unical.ea.lemu_frontend
 
-import ProductsViewModel
+import CategoryViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,17 +26,27 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import kotlinx.coroutines.launch
 import org.openapitools.client.models.ProdottoDto
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
-fun ProductsCategory(category: String?) {
-    val viewModel: ProductsViewModel = viewModel()
+fun ProductsCategory(
+    category: String?,
+    navController: NavController,
+    authViewModel: AuthViewModel
+) {
+    val viewModel: CategoryViewModel = remember {
+        CategoryViewModel(authViewModel)
+    }
     val products by viewModel.products
+
     // Filtra i prodotti in base alla categoria selezionata, se applicabile
     LaunchedEffect(category) {
         viewModel.fetchProductsByCategory(category)
@@ -49,12 +60,16 @@ fun ProductsCategory(category: String?) {
             columns = GridCells.Fixed(2),
             modifier = Modifier.padding(16.dp)
         ) {
-            items(products) { ProdottoDto ->
-                ProductCard(ProdottoDto) {
-                    scope.launch {
-                        snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+            items(products) { prodottoDto ->
+                ProductCard(
+                    prodottoDto = prodottoDto,
+                    navController = navController,
+                    onAddToCartClick = {
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                        }
                     }
-                }
+                )
             }
         }
         CustomSnackbarHost(
@@ -63,6 +78,7 @@ fun ProductsCategory(category: String?) {
         )
     }
 }
+
 
 @Composable
 fun CustomSnackbarHost(
@@ -112,8 +128,11 @@ fun CustomSnackbar(data: SnackbarData) {
 
 @OptIn(ExperimentalEncodingApi::class)
 @Composable
-fun ProductCard(prodottoDto: ProdottoDto, onAddToCartClick: () -> Unit) {
-    // Decodifica l'immagine Base64 in un Bitmap
+fun ProductCard(
+    prodottoDto: ProdottoDto,
+    navController: NavController,
+    onAddToCartClick: () -> Unit // Funzione di callback per l'aggiunta al carrello
+) {
     val imageBitmap = remember(prodottoDto.immagineProdotto) {
         decodeBase64Image(prodottoDto.immagineProdotto)
     }
@@ -124,6 +143,9 @@ fun ProductCard(prodottoDto: ProdottoDto, onAddToCartClick: () -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
+            .clickable {
+                navController.navigate("prodotto/${prodottoDto.id}")
+            }
     ) {
         Column(
             modifier = Modifier.background(color = Color.White)
@@ -143,7 +165,9 @@ fun ProductCard(prodottoDto: ProdottoDto, onAddToCartClick: () -> Unit) {
                 Text(
                     text = it,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -161,38 +185,17 @@ fun ProductCard(prodottoDto: ProdottoDto, onAddToCartClick: () -> Unit) {
                 modifier = Modifier.padding(8.dp)
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = { onAddToCartClick() },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Add to Cart",
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                        tint = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+            Text(
+                text = "Disponibilità: ${prodottoDto.disponibilita}",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+            )
         }
     }
 }
+
+
 
 @OptIn(ExperimentalEncodingApi::class)
 fun decodeBase64Image(base64Str: String?): Bitmap? {
@@ -208,14 +211,4 @@ fun decodeBase64Image(base64Str: String?): Bitmap? {
         null
     }
 }
-
-data class Product(
-    val imageRes: Int,
-    val name: String,
-    val sold: Int,
-    val rating: Double,
-    val reviews: Int,
-    val price: Double,
-    val category: String // Aggiungi il campo categoria
-)
 

@@ -32,7 +32,7 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
         loadCartItems()
     }
 
-    private fun loadCartItems() {
+    fun loadCartItems() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val utenteId = authViewModel.user.value?.id ?: throw IllegalStateException("ID dell' Utente non trovato")

@@ -26,13 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
+import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewModel) {
+fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewModel, carrelloViewModel: CarrelloViewModel, wishlistViewModel: WishlistViewModel) {
     val colorDivider = Color(0xFF0077B6)
     var selectedIconIndex by remember { mutableStateOf(1) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -43,10 +45,12 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         "login" -> 3
         "ordini" -> 4
         "home" -> 1
-        "categories" -> 2
+        "categorie" -> 2
         "wishlist" -> 5
         "dettagliOrdine/{id}" -> 4
         "carrello" -> 4
+        "ProductCategory/{category}" -> 2
+        "ProductsWishlist/{wishlistId}/{wishlistType}" -> 5
         else -> 1
     }
 
@@ -103,8 +107,13 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         )
         NavigationBarItem(
             selected = selectedIconIndex == 4,
-            onClick = {
-                navController.navigate("Carrello")
+             onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.IO) {
+                        carrelloViewModel.loadCartItems()
+                    }
+                    navController.navigate("carrello")
+                }
             },
             icon = {
                 IconWithIndicator(
@@ -118,7 +127,12 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         NavigationBarItem(
             selected = selectedIconIndex == 5,
             onClick = {
-                navController.navigate("Wishlist")
+                CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.IO) {
+                        wishlistViewModel.loadWishlists()
+                    }
+                    navController.navigate("wishlist")
+                }
             },
             icon = {
                 IconWithIndicator(

@@ -113,8 +113,7 @@ fun Start( authViewModel: AuthViewModel,
         "checkout" -> 4
         "home" -> 1
         "categorie" -> 2
-        "productCategory/{category}" -> 2
-        "ProductsWishlist/{wishlistId}" ->5
+        "ProductsWishlist/{wishlistId}/{wishlistType}" -> 5
 
         else -> 1
     }
@@ -131,7 +130,7 @@ fun Start( authViewModel: AuthViewModel,
 
     Scaffold(
         bottomBar = {
-            BottomAppBarActivity(navController = navController, authViewModel = authViewModel)
+            BottomAppBarActivity(navController = navController, authViewModel = authViewModel, carrelloViewModel = carrelloViewModel, wishlistViewModel = wishlistViewModel)
         },
         topBar = {TopAppBarActivity(
             isLogoVisible = isLogoVisible,
@@ -173,11 +172,11 @@ fun Start( authViewModel: AuthViewModel,
                 }
             }
             composable("categorie"){
-                CategoryActivity(navController = navController)
+                CategoryActivity(navController = navController, authViewModel = authViewModel)
             }
             composable("ProductCategory/{category}") { backStackEntry ->
                 val category = backStackEntry.arguments?.getString("category")
-                ProductsCategory(category = category)
+                ProductsCategory(category = category, navController = navController, authViewModel = authViewModel)
             }
             composable("login"){
                 isLogoVisible = true
@@ -207,14 +206,10 @@ fun Start( authViewModel: AuthViewModel,
             composable("wishlist") {
                MainScreen1(navController = navController, viewModel = wishlistViewModel)
             }
-            composable("ProductsWishlist/{wishlistId}") {
-                backStackEntry ->
-                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLongOrNull()?:0
-                println("errore nell'id della" + wishlistId)
-                MainScreen2(wishlistId, wishlistViewModel = wishlistViewModel)
-            }
-            composable("carrello") {
-                CarrelloActivity(carrelloViewModel = carrelloViewModel, navController = navController)
+            composable("ProductsWishlist/{wishlistId}/{wishlistType}") { backStackEntry ->
+                val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLongOrNull() ?: 0
+                val wishlistType = backStackEntry.arguments?.getString("wishlistType") ?: "default"
+                MainScreen2(wishlistId, wishlistType, wishlistViewModel, navController)
             }
             composable("wishlistDetail/{wishlistId}") { backStackEntry ->
                 val wishlistId = backStackEntry.arguments?.getString("wishlistId")?.toLong() ?: return@composable

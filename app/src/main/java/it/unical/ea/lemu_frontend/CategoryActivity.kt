@@ -20,16 +20,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 
 @Composable
-fun CategoryActivity(navController: NavController) {
+fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel) {
     // Usa rememberSaveable per memorizzare la categoria selezionata
     var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Se una categoria è stata selezionata, mostra la schermata dei prodotti
     if (selectedCategory != null) {
-        ProductsCategory(category = selectedCategory)
+        ProductsCategory(category = selectedCategory, navController = navController, authViewModel = authViewModel)
     } else {
         // Altrimenti, mostra la schermata delle categorie
         val numberOfRows = 6 // Numero di righe per colonna
@@ -39,19 +42,19 @@ fun CategoryActivity(navController: NavController) {
         // Lista di risorse delle immagini
         val imageList = listOf(
             R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
+            R.drawable.autoemoto,
+            R.drawable.bellezza,
+            R.drawable.borse,
+            R.drawable.cancelleria,
+            R.drawable.casa,
+            R.drawable.elettronica,
+            R.drawable.faidate,
             R.drawable.giardinaggio,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
-            R.drawable.abbigliamento,
+            R.drawable.giochi,
+            R.drawable.gioielli,
+            R.drawable.illuminazione,
             R.drawable.informatica,
-            R.drawable.abbigliamento,
+            R.drawable.scarpe,
             R.drawable.sport
             // Aggiungi altre risorse delle immagini qui...
         )
