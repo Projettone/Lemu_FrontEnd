@@ -229,7 +229,7 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
             )
         }
         Button(
-            onClick = {onCheckout},
+            onClick = onCheckout,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = "Procedi all'acquisto")

@@ -15,6 +15,7 @@
 
 package org.openapitools.client.apis
 
+import it.unical.ea.lemu_frontend.apis.IpConfig
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
@@ -38,7 +39,7 @@ class PaymentControllerApi(private val authViewModel: AuthViewModel, basePath: k
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, IpConfig.serverIP)
         }
     }
 
@@ -55,11 +56,12 @@ class PaymentControllerApi(private val authViewModel: AuthViewModel, basePath: k
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun processPayment(amount: kotlin.Double) : kotlin.Any {
+    fun processPayment(amount: kotlin.Double) : Boolean {
         val localVarResponse = processPaymentWithHttpInfo(amount = amount)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Any
+            ResponseType.Success -> {val data = (localVarResponse as Success<*>).data as String
+            data == "Pagamento_effettuato_con_successo"}
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {

@@ -13,8 +13,7 @@ class PaymentViewModel(private val authViewModel: AuthViewModel) {
             val response = withContext(Dispatchers.IO) {
                 api.processPayment(total)
             }
-            println("RISPOSTA: $response")
-            response == "Pagamento_effettuato_con_successo"
+            response
         } catch (e: Exception) {
             e.printStackTrace()
             false

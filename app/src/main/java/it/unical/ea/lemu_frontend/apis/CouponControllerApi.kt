@@ -15,6 +15,7 @@
 
 package org.openapitools.client.apis
 
+import it.unical.ea.lemu_frontend.apis.IpConfig
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
@@ -40,7 +41,7 @@ class CouponControllerApi(private val authViewModel: AuthViewModel, basePath: ko
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, IpConfig.serverIP)
         }
     }
 

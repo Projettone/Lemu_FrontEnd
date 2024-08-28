@@ -245,10 +245,26 @@ class AuthViewModel (private val activity: Activity) {
         withContext(Dispatchers.IO) {
             try {
                 val response = api.getUserData()
-                user.value = response.data
-                saveUserData(response.data)
+
+                if (response.success == true) {
+                    user.value = response.data
+                    saveUserData(response.data)
+                } else {
+                    handleTokenExpiration(response.message)
+                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
+                handleTokenExpiration(e.message)
+            }
+        }
+    }
+
+    private suspend fun handleTokenExpiration(message: String?) {
+        if (message?.contains("403") == true || message?.contains("Invalid token") == true) {
+            logout()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(activity, "Effettua il login per utilizzare tutte le funzionalità.", Toast.LENGTH_LONG).show()
             }
         }
     }

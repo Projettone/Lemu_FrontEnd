@@ -41,7 +41,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
-import org.openapitools.client.models.RecensioneDto
 import java.io.ByteArrayInputStream
 
 
@@ -64,6 +63,7 @@ fun UserProfileActivity(
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             userProfileViewModel.updateSaldo()
+            authViewModel.getUserData()
         }
     }
 
@@ -172,7 +172,8 @@ fun UserProfileActivity(
                     }
                 }
             },
-            userProfileViewModel = userProfileViewModel
+            userProfileViewModel = userProfileViewModel,
+            navController = navController
         )
     }
 }
@@ -187,10 +188,10 @@ fun ScrollableContent(
     onChangePasswordClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onRedeemCoupon: (String) -> Unit,
-    userProfileViewModel: UserProfileViewModel
+    userProfileViewModel: UserProfileViewModel,
+    navController: NavController
 ) {
     val context = LocalContext.current
-    val reviews by userProfileViewModel.recensioni.collectAsState()
 
 
     Column(
@@ -214,8 +215,29 @@ fun ScrollableContent(
             onSave = onSave
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ChangePasswordButton(onClick = onChangePasswordClick)
-        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                navController.navigate("ordini")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+        ) {
+            Text(text = "I tuoi ordini", color = Color.White)
+        }
+        Button(
+            onClick = {
+                navController.navigate("addProduct")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+        ) {
+            Text(text = "Gestione Prodotti", color = Color.White)
+        }
+        Spacer(modifier = Modifier.height(24.dp))
         RedeemCouponBox(onRedeemCoupon = onRedeemCoupon)
         Spacer(modifier = Modifier.height(24.dp))
         UserReviewsManagement(userProfileViewModel = userProfileViewModel)
@@ -232,6 +254,8 @@ fun ScrollableContent(
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+        ChangePasswordButton(onClick = onChangePasswordClick)
         Spacer(modifier = Modifier.height(16.dp))
         LogoutButton(onClick = onLogoutClick)
 

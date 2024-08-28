@@ -22,6 +22,7 @@ import okhttp3.HttpUrl
 import org.openapitools.client.models.ProdottoDto
 
 import com.squareup.moshi.Json
+import it.unical.ea.lemu_frontend.apis.IpConfig
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 
 import org.openapitools.client.infrastructure.ApiClient
@@ -42,7 +43,7 @@ class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: 
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.91:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, IpConfig.serverIP)
         }
     }
 

@@ -43,14 +43,16 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
     selectedIconIndex = when (currentRoute) {
         "profile" -> 3
         "login" -> 3
-        "ordini" -> 4
+        "ordini" -> 3
         "home" -> 1
         "categorie" -> 2
         "wishlist" -> 5
-        "dettagliOrdine/{id}" -> 4
+        "dettagliOrdine/{id}" -> 3
         "carrello" -> 4
         "ProductCategory/{category}" -> 2
         "ProductsWishlist/{wishlistId}/{wishlistType}" -> 5
+        "addProduct" ->3
+        "checkout" -> 4
         else -> 1
     }
 

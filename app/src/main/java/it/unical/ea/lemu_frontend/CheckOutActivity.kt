@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
+import it.unical.ea.lemu_frontend.viewmodels.OrdineViewModel
 import it.unical.ea.lemu_frontend.viewmodels.PaymentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,8 @@ fun CheckoutActivity(
     authViewModel: AuthViewModel,
     carrelloViewModel: CarrelloViewModel,
     navController: NavController,
-    paymentViewModel: PaymentViewModel
+    paymentViewModel: PaymentViewModel,
+    ordineViewModel: OrdineViewModel
 ) {
     val context = LocalContext.current
     var cardNumber by remember { mutableStateOf("") }
@@ -255,6 +257,12 @@ fun CheckoutActivity(
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 navController.navigate("profile")
+                                ordineViewModel.createAndSendOrder()
+                                authViewModel.user.value?.id?.let {
+                                    carrelloViewModel.deleteAllItemsForUser(
+                                        it
+                                    )
+                                }
                             }
                         } else {
                             withContext(Dispatchers.Main) {

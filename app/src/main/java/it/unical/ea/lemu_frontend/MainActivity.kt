@@ -197,7 +197,7 @@ fun Start( authViewModel: AuthViewModel,
                 UserProfileActivity(authViewModel = authViewModel, userProfileViewModel = userProfileViewModel, navController = navController)
             }
             composable("checkout") {
-                CheckoutActivity(authViewModel = authViewModel, carrelloViewModel = carrelloViewModel, navController = navController, paymentViewModel = paymentViewModel)
+                CheckoutActivity(authViewModel = authViewModel, carrelloViewModel = carrelloViewModel, navController = navController, paymentViewModel = paymentViewModel, ordineViewModel = ordineViewModel)
             }
             composable("searchedUser") {
                 SearchedUserProfileActivity(navController = navController, searchedUserViewModel = searchedUserViewModel
