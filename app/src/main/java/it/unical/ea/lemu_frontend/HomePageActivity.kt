@@ -160,324 +160,329 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
                 }
             }
 
-            LazyColumn(
-                state = lazyListState3,
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                item {
-                    Box {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .padding(6.dp)
-                                .border(0.dp, Color.Transparent, RoundedCornerShape(9.dp))
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(customColor1),
-                            horizontalArrangement = Arrangement.Center,
+            Box {
+                LazyColumn(
+                    state = lazyListState3,
+                    //modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    item {
+                        Box {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .padding(6.dp)
+                                    .border(0.dp, Color.Transparent, RoundedCornerShape(9.dp))
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(customColor1),
+                                horizontalArrangement = Arrangement.Center,
 
-                            )
-                        {
-                            Column(
-                                modifier = Modifier
-                                    .padding(start = 13.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
+                                )
+                            {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(start = 13.dp)
                                 ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.truck),
-                                        contentDescription = "Truck Icon",
-                                        modifier = Modifier.size(30.dp)
-                                    )
-                                    Text(
-                                        text = "Spedizione gratuita",
-                                        fontWeight = FontWeight.Bold,
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.truck),
+                                            contentDescription = "Truck Icon",
+                                            modifier = Modifier.size(30.dp)
+                                        )
+                                        Text(
+                                            text = "Spedizione gratuita",
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+                                    Row {
+                                        Text(
+                                            text = "Esclusivo per te",
+                                            fontSize = 12.sp,
+                                            color = Color.Gray,
+                                            modifier = Modifier.padding(start = 5.dp)
+                                        )
+                                    }
                                 }
-                                Row {
-                                    Text(
-                                        text = "Esclusivo per te",
-                                        fontSize = 12.sp,
-                                        color = Color.Gray,
-                                        modifier = Modifier.padding(start = 5.dp)
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Box(
-                                modifier = Modifier
-                                    .width(1.dp)
-                                    .fillMaxHeight()
-                                    .padding(top = 15.dp)
-                                    .padding(bottom = 50.dp)
-                                    .background(Color.Gray)
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Column(
-                                modifier = Modifier.padding(end = 10.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.truckconfirm),
-                                        contentDescription = "Truck Icon",
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                    Text(
-                                        text = "Garanzia di consegna",
-                                        fontWeight = FontWeight.Bold,
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Row {
-                                    Text(
-                                        text = "Rimbordo per quasiasi problema",
-                                        fontSize = 12.sp,
-                                        color = Color.Gray,
-                                        modifier = Modifier.padding(start = 5.dp)
-                                    )
-                                }
-                            }
-                        }
-                        //immagini categorie "scopri di piu"
-                        LazyRow(
-                            state = lazyListState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomStart)
-                                .padding(top = 55.dp)
-                        ) {
-                            itemsIndexed(images) { index, imageRes ->
+                                Spacer(modifier = Modifier.weight(1f))
                                 Box(
                                     modifier = Modifier
-                                        .fillParentMaxWidth()
-                                        .clickable {
-                                            println(stringList[index])
-                                            navController.navigate("ProductCategory/${stringList[index]}")
-                                        }
-                                        .aspectRatio(16 / 9f),
-                                    contentAlignment = Alignment.Center
-
+                                        .width(1.dp)
+                                        .fillMaxHeight()
+                                        .padding(top = 15.dp)
+                                        .padding(bottom = 50.dp)
+                                        .background(Color.Gray)
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Column(
+                                    modifier = Modifier.padding(end = 10.dp)
                                 ) {
-                                    Image(
-                                        painter = painterResource(id = imageRes),
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
                                     Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center,
-                                        modifier = Modifier
-                                            .border(width = 2.dp, color = Color.White)
-                                            .padding(5.dp)
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.truckconfirm),
+                                            contentDescription = "Truck Icon",
+                                            modifier = Modifier.size(28.dp)
+                                        )
                                         Text(
-                                            text = "Scopri di più", color = Color.White,
-                                            fontSize = 45.sp,
-                                            fontFamily = FontFamily.Serif
+                                            text = "Garanzia di consegna",
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Row {
+                                        Text(
+                                            text = "Rimbordo per quasiasi problema",
+                                            fontSize = 12.sp,
+                                            color = Color.Gray,
+                                            modifier = Modifier.padding(start = 5.dp)
                                         )
                                     }
                                 }
-
                             }
-                        }
-                    }//FINE BOX
-                }//FINE ITEM
-
-
-                //visualizzazione prodotti
-                val productList = if (!isRicerca) paginatedProductList else paginatedProductListSearh
-                items(productList) { productInfo ->
-                    Box(){
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 10.dp)
-                                .padding(start = 5.dp)
-                                .padding(end = 5.dp)
-                                .clickable {
-                                    navController.navigate("prodotto/${productInfo.id}")
-                                }
-                                .border(
-                                    width = 0.5.dp,
-                                    color = LightGrayColor,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                        ) {
-                            Column(
+                            //immagini categorie "scopri di piu"
+                            LazyRow(
+                                state = lazyListState,
                                 modifier = Modifier
-                                    .width(150.dp)
-                                    .height(270.dp)
-                                    .border(2.dp, Color.Transparent, RoundedCornerShape(9.dp))
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = 8.dp,
-                                            bottomStart = 8.dp,
-                                            topEnd = 0.dp,
-                                            bottomEnd = 0.dp
-                                        )
-                                    )
-                                    .background(LightGrayColor)
-                                ,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomStart)
+                                    .padding(top = 55.dp)
                             ) {
-                                val base64WithoutPrefix = productInfo.immagineProdotto?.removePrefix("data:image/png;base64,")
-                                val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
-                                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                                val imageBitmap = bitmap.asImageBitmap()
+                                itemsIndexed(images) { index, imageRes ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillParentMaxWidth()
+                                            .clickable {
+                                                println(stringList[index])
+                                                navController.navigate("ProductCategory/${stringList[index]}")
+                                            }
+                                            .aspectRatio(16 / 9f),
+                                        contentAlignment = Alignment.Center
 
-                                Image(
-                                    painter = BitmapPainter(imageBitmap),
-                                    contentDescription = productInfo.descrizione,
-                                    modifier = Modifier
-                                )
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = imageRes),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center,
+                                            modifier = Modifier
+                                                .border(width = 2.dp, color = Color.White)
+                                                .padding(5.dp)
+                                        ) {
+                                            Text(
+                                                text = "Scopri di più", color = Color.White,
+                                                fontSize = 45.sp,
+                                                fontFamily = FontFamily.Serif
+                                            )
+                                        }
+                                    }
+
+                                }
                             }
-                            Column(
-                                modifier = Modifier.padding(8.dp)
+
+                        }//FINE BOX
+                    }//FINE ITEM
+
+
+                    //visualizzazione prodotti
+                    val productList = if (!isRicerca) paginatedProductList else paginatedProductListSearh
+                    items(productList) { productInfo ->
+                        Box(){
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 10.dp)
+                                    .padding(start = 5.dp)
+                                    .padding(end = 5.dp)
+                                    .clickable {
+                                        navController.navigate("prodotto/${productInfo.id}")
+                                    }
+                                    .border(
+                                        width = 0.5.dp,
+                                        color = LightGrayColor,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
                             ) {
-                                productInfo.descrizione?.let {
-                                    Text(
-                                        modifier = Modifier.padding(top = 23.dp),
-                                        text = it,
-                                        style = TextStyle(fontSize = 15.sp),
-                                        maxLines = 3,
-                                        overflow = TextOverflow.Ellipsis
+                                Column(
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(270.dp)
+                                        .border(2.dp, Color.Transparent, RoundedCornerShape(9.dp))
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = 8.dp,
+                                                bottomStart = 8.dp,
+                                                topEnd = 0.dp,
+                                                bottomEnd = 0.dp
+                                            )
+                                        )
+                                        .background(LightGrayColor)
+                                    ,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    val base64WithoutPrefix = productInfo.immagineProdotto?.removePrefix("data:image/png;base64,")
+                                    val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
+                                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                                    val imageBitmap = bitmap.asImageBitmap()
+
+                                    Image(
+                                        painter = BitmapPainter(imageBitmap),
+                                        contentDescription = productInfo.descrizione,
+                                        modifier = Modifier
                                     )
                                 }
-                                Spacer(modifier = Modifier.height(20.dp))
+                                Column(
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    productInfo.descrizione?.let {
+                                        Text(
+                                            modifier = Modifier.padding(top = 23.dp),
+                                            text = it,
+                                            style = TextStyle(fontSize = 15.sp),
+                                            maxLines = 3,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(20.dp))
 
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = "${productInfo.venduti} + acquistati",
-                                    style = TextStyle(fontSize = 13.sp),
-                                    color = Color.Gray
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "${productInfo.venduti} + acquistati",
+                                        style = TextStyle(fontSize = 13.sp),
+                                        color = Color.Gray
+                                    )
+                                    Spacer(modifier = Modifier.height(10.dp))
 
-                                Text(
-                                    text = "${productInfo.prezzo}€",
-                                    style = TextStyle(fontSize = 20.sp)
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
+                                    Text(
+                                        text = "${productInfo.prezzo}€",
+                                        style = TextStyle(fontSize = 20.sp)
+                                    )
+                                    Spacer(modifier = Modifier.height(10.dp))
 
-                                Text(
-                                    text = "Disponibilità: ${productInfo.disponibilita}",
-                                    style = TextStyle(fontSize = 10.sp)
-                                )
-                                Spacer(modifier = Modifier.height(15.dp))
+                                    Text(
+                                        text = "Disponibilità: ${productInfo.disponibilita}",
+                                        style = TextStyle(fontSize = 10.sp)
+                                    )
+                                    Spacer(modifier = Modifier.height(15.dp))
 
+                                    Button(
+                                        onClick = {
+                                            scope.launch {
+                                                carrelloViewModel.addProductToCart(productInfo, 1)
+                                                snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 5.dp, end = 5.dp),
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = MyYellow),
+                                        shape = RoundedCornerShape(10.dp)
+                                    ) {
+                                        Text(text = "Aggiungi al carrello")
+                                    }
+
+
+                                }
+
+                            }
+
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+
+
+
+                    if(visibile) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color = Color.White)
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "Caricamento prodotti",
+                                        color = MyBlue,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    CircularProgressIndicator(
+                                        color = MyBlue,
+                                        strokeWidth = 4.dp
+                                    )
+                                }
+                            }
+
+                        }
+
+                    }
+                    if(!visibile) {
+
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
                                 Button(
                                     onClick = {
-                                        scope.launch {
-                                            carrelloViewModel.addProductToCart(productInfo, 1)
-                                            snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                        if (currentPage > 0) {
+                                            currentPage--
                                         }
                                     },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 5.dp, end = 5.dp),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = MyYellow),
-                                    shape = RoundedCornerShape(10.dp)
+                                    enabled = currentPage > 0,
+                                    modifier = Modifier.padding(end = 8.dp)
                                 ) {
-                                    Text(text = "Aggiungi al carrello")
+                                    Text(text = "Pagina Precedente")
                                 }
 
-
-                            }
-
-                        }
-                        CustomSnackbarHost(
-                            hostState = snackbarHostState,
-                            modifier = Modifier.align(Alignment.BottomCenter)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
+                                val lista = if (!isRicerca) listaProdottiCompleta else listaRicercheCompleta
 
 
+                                Button(
+
+                                    onClick = {
+
+                                        if (currentPage < (lista.size / productsPerPage)) {
+                                            if (pagineRaggiunte <= currentPage) {
+                                                loadProductsForPage()
+                                            }
+                                            currentPage++
+                                            pagineRaggiunte = currentPage
 
 
-                if(visibile) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = Color.White)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Caricamento prodotti",
-                                    color = MyBlue,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                CircularProgressIndicator(
-                                    color = MyBlue,
-                                    strokeWidth = 4.dp
-                                )
-                            }
-                        }
-
-                    }
-
-                }
-                if(!visibile) {
-
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Button(
-                                onClick = {
-                                    if (currentPage > 0) {
-                                        currentPage--
-                                    }
-                                },
-                                enabled = currentPage > 0,
-                                modifier = Modifier.padding(end = 8.dp)
-                            ) {
-                                Text(text = "Pagina Precedente")
-                            }
-
-                            val lista = if (!isRicerca) listaProdottiCompleta else listaRicercheCompleta
-
-
-                            Button(
-
-                                onClick = {
-
-                                    if (currentPage < (lista.size / productsPerPage)) {
-                                        if (pagineRaggiunte <= currentPage) {
-                                            loadProductsForPage()
                                         }
-                                        currentPage++
-                                        pagineRaggiunte = currentPage
-
-
-                                    }
-                                },
-                                enabled = currentPage < (lista.size / productsPerPage)
-                            ) {
-                                Text(text = "Pagina Successiva")
+                                    },
+                                    enabled = currentPage < (lista.size / productsPerPage)
+                                ) {
+                                    Text(text = "Pagina Successiva")
+                                }
                             }
                         }
                     }
                 }
+                CustomSnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
             }
+
         }
     }
 }

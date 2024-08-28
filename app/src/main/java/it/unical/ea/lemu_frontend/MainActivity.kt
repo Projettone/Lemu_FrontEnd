@@ -48,8 +48,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var paymentViewModel: PaymentViewModel
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
     private lateinit var prodottoViewModel: ProdottoViewModel
-    private lateinit var ordineViewModel: OrdineViewModel
     private lateinit var carrelloViewModel: CarrelloViewModel
+    private lateinit var ordineViewModel: OrdineViewModel
     private lateinit var searchedUserViewModel: SearchedUserViewModel
 
 
@@ -117,7 +117,7 @@ fun Start( authViewModel: AuthViewModel,
 
         else -> 1
     }
-    val carrelloViewModel = remember { CarrelloViewModel(authViewModel = authViewModel)}
+    //val carrelloViewModel = remember { CarrelloViewModel(authViewModel = authViewModel)}
     val wishlistViewModel = remember { WishlistViewModel(authViewModel)}
 
     LaunchedEffect(isLoggedIn) {
@@ -158,7 +158,7 @@ fun Start( authViewModel: AuthViewModel,
                 val productIdString = backStackEntry.arguments?.getString("productId")
 
                 if (productIdString != null) {
-                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel, carrelloViewModel = carrelloViewModel, authViewModel = authViewModel)
+                    ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel, carrelloViewModel = carrelloViewModel, authViewModel = authViewModel, wishlistViewModel = wishlistViewModel)
                 }
             }
             composable("ordini"){
