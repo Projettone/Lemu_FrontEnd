@@ -51,19 +51,20 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
      * 
      * 
      * @param ordineDto 
-     * @return void
+     * @return kotlin.Long
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    fun add1(ordineDto: OrdineDto) : Unit {
+    fun add1(ordineDto: OrdineDto) : kotlin.Long {
         val localVarResponse = add1WithHttpInfo(ordineDto = ordineDto)
 
         return when (localVarResponse.responseType) {
-            ResponseType.Success -> Unit
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.Long
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -81,15 +82,16 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
      * 
      * 
      * @param ordineDto 
-     * @return ApiResponse<Unit?>
+     * @return ApiResponse<kotlin.Long?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    fun add1WithHttpInfo(ordineDto: OrdineDto) : ApiResponse<Unit?> {
+    fun add1WithHttpInfo(ordineDto: OrdineDto) : ApiResponse<kotlin.Long?> {
         val localVariableConfig = add1RequestConfig(ordineDto = ordineDto)
 
-        return request<OrdineDto, Unit>(
+        return request<OrdineDto, kotlin.Long>(
             localVariableConfig
         )
     }
@@ -250,7 +252,11 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         val localVariableBody = null
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/getAll",
@@ -324,6 +330,7 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
+
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/ordine/{orderId}".replace("{"+"orderId"+"}", encodeURIComponent(orderId.toString())),
@@ -472,10 +479,87 @@ class OrdineControllerApi(private val authViewModel: AuthViewModel, basePath: ko
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
 
-        
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/ordinecontroller-api/getOrdiniByidUtente{idUser}".replace("{"+"idUser"+"}", encodeURIComponent(idUser.toString())),
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param ordineId 
+     * @param ordineProdottoDto 
+     * @return kotlin.String
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun updateOrdineProdotti(ordineId: kotlin.Long, ordineProdottoDto: kotlin.collections.List<OrdineProdottoDto>) : kotlin.String {
+        val localVarResponse = updateOrdineProdottiWithHttpInfo(ordineId = ordineId, ordineProdottoDto = ordineProdottoDto)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> (localVarResponse as Success<*>).data as kotlin.String
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param ordineId 
+     * @param ordineProdottoDto 
+     * @return ApiResponse<kotlin.String?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalStateException::class, IOException::class)
+    fun updateOrdineProdottiWithHttpInfo(ordineId: kotlin.Long, ordineProdottoDto: kotlin.collections.List<OrdineProdottoDto>) : ApiResponse<kotlin.String?> {
+        val localVariableConfig = updateOrdineProdottiRequestConfig(ordineId = ordineId, ordineProdottoDto = ordineProdottoDto)
+
+        return request<kotlin.collections.List<OrdineProdottoDto>, kotlin.String>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation updateOrdineProdotti
+     *
+     * @param ordineId 
+     * @param ordineProdottoDto 
+     * @return RequestConfig
+     */
+    fun updateOrdineProdottiRequestConfig(ordineId: kotlin.Long, ordineProdottoDto: kotlin.collections.List<OrdineProdottoDto>) : RequestConfig<kotlin.collections.List<OrdineProdottoDto>> {
+        val localVariableBody = ordineProdottoDto
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+        localVariableHeaders["Content-Type"] = "application/json"
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+
+        return RequestConfig(
+            method = RequestMethod.PUT,
+            path = "/ordinecontroller-api/update/{ordineId}".replace("{"+"ordineId"+"}", encodeURIComponent(ordineId.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,

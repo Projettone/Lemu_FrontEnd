@@ -1,5 +1,6 @@
 package it.unical.ea.lemu_frontend.viewmodels
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -8,6 +9,7 @@ import org.openapitools.client.apis.OrdineControllerApi
 import org.openapitools.client.models.OrdineDto
 import org.openapitools.client.models.OrdineProdottoDto
 import java.time.LocalDateTime
+import java.util.Locale
 
 class OrdineViewModel(private val authViewModel: AuthViewModel, private val carrelloViewModel: CarrelloViewModel) {
     private val api: OrdineControllerApi = OrdineControllerApi(authViewModel)
@@ -80,7 +82,7 @@ class OrdineViewModel(private val authViewModel: AuthViewModel, private val carr
                 _ordine.value = fetchedProducts
             } catch (e: Exception) {
                 e.printStackTrace()
-                _ordine.value = null  // Se vuoi aggiornare l'ordine con `null` in caso di errore
+                _ordine.value = null
             }
         }
     }
@@ -99,37 +101,62 @@ class OrdineViewModel(private val authViewModel: AuthViewModel, private val carr
     }
 
 
-    fun createAndSendOrder() {
-        val dataAcquistoAttuale = LocalDateTime.now().toLocalDate()
+    suspend fun addOrdineProdotto(idOrdine: Long, ordineProdotti: List<OrdineProdottoDto>) {
+        return withContext(Dispatchers.IO) {
+            api.updateOrdineProdotti(idOrdine, ordineProdotti)
 
-        val cartItems = carrelloViewModel.cartItems.value
-
-        val prodottoQuantita = cartItems.map { cartItem ->
-            Pair(cartItem.prodottoId, cartItem.quantity)
         }
-
-        _prodottoQuantitaList.value = prodottoQuantita
-        _prezzoTotaleOrdine.value = carrelloViewModel.totalPrice.value
-
-        val ordineDto = OrdineDto(
-            id = null,
-            indirizzo = authViewModel.user.value?.indirizzo.toString(),
-            idutente = null,
-            dataAcquisto = dataAcquistoAttuale,
-            prezzoTotaleOrdine = _prezzoTotaleOrdine.value,
-            ordineProdotti = null
-        )
-
-        val ordineProdotti = prodottoQuantitaList.value.map { pair ->
-            OrdineProdottoDto(
-                id = null,
-                ordineId = ordineDto.id,
-                prodottoId = pair.first,
-                quantita = pair.second
-            )
-        }
-        ordineDto.ordineProdotti = ordineProdotti
-        api.add1(ordineDto)
     }
+
+
+   suspend fun createAndSendOrder() {
+       return withContext(Dispatchers.IO) {
+           if(carrelloViewModel.cartItems.value.isNotEmpty()){
+               val dataAcquistoAttuale = LocalDateTime.now().toLocalDate()
+
+               val cartItems = carrelloViewModel.cartItems.value
+
+               val prodottoQuantita = cartItems.map { cartItem ->
+                   Pair(cartItem.prodottoId, cartItem.quantity)
+               }
+
+               _prodottoQuantitaList.value = prodottoQuantita
+
+
+               val prezzoTotale = carrelloViewModel.totalPrice.value
+               val prezzoFormattato = String.format(Locale.US, "%.2f", prezzoTotale)
+               val valoreDouble: Double = prezzoFormattato.toDouble()
+               _prezzoTotaleOrdine.value = valoreDouble
+
+               val ordineDto = OrdineDto(
+                   id = null,
+                   indirizzo = authViewModel.user.value?.indirizzo?.citta,
+                   idutente = authViewModel.user.value?.id,
+                   dataAcquisto = dataAcquistoAttuale,
+                   prezzoTotaleOrdine = _prezzoTotaleOrdine.value,
+                   ordineProdotti = null
+               )
+
+               val idOrdine: Long = api.add1(ordineDto)
+
+
+               val ordineProdotti = prodottoQuantitaList.value.map { pair ->
+                   OrdineProdottoDto(
+                       id = null,
+                       ordineId = idOrdine,
+                       prodottoId = pair.first,
+                       quantita = pair.second
+                   )
+               }
+
+
+
+               addOrdineProdotto(idOrdine, ordineProdotti)
+
+
+           }
+
+       }
+   }
 
 }

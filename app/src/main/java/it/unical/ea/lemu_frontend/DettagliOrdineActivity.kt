@@ -70,11 +70,11 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
             if (idOrdine != null) {
                 viewModelOrder.GetOrderbyId(idOrdine)
             }
-
-
+            viewModelProduct.svuotaLista()
             dettagliOrdine.forEachIndexed { index, dettaglio ->
                 viewModelProduct.loadProdotti(dettagliOrdine[index].prodottoId)
             }
+
             loading = false
 
 
@@ -137,72 +137,83 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
 
             }
 
-            items(dettagliOrdine.size) { index ->
-                val ordini = dettagliOrdine[index]
-                val prodotto = prodotti[index]
+            if(dettagliOrdine.isNotEmpty()){
+                items(dettagliOrdine.size) { index ->
+                    if (index < dettagliOrdine.size && index < prodotti.size) {
+                        val ordini = dettagliOrdine[index]
+                        val prodotto = prodotti[index]
 
-                Row(
-                    modifier = Modifier
-                        .padding(end = 12.dp, start = 12.dp, bottom = 19.dp)
-                        .border(0.1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
-                        .padding(9.dp)
-                        .clickable {
-                           navController.navigate("prodotto/${prodotto.id}")
+                        Row(
+                            modifier = Modifier
+                                .padding(end = 12.dp, start = 12.dp, bottom = 19.dp)
+                                .border(0.1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
+                                .padding(9.dp)
+                                .clickable {
+                                    navController.navigate("prodotto/${prodotto.id}")
+                                }
+                        ) {
+
+                            val base64WithoutPrefix = prodotto.immagineProdotto?.removePrefix("data:image/png;base64,")
+                            val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
+                            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                            val imageBitmap = bitmap.asImageBitmap()
+                            Image(
+                                painter = BitmapPainter(imageBitmap),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(120.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = prodotto.descrizione!!,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 4,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Q.tà: ${ordini.quantita}",
+                                    style = TextStyle(fontSize = 15.sp),
+                                    color = Color.Gray,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Venduto da: Lemu",
+                                    style = TextStyle(fontSize = 15.sp),
+                                    color = Color.Gray,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Text(
+                                text = "€${prodotto.prezzo}",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
                         }
-                ) {
-
-                    val base64WithoutPrefix = prodotto.immagineProdotto?.removePrefix("data:image/png;base64,")
-                    val imageBytes = Base64.decode(base64WithoutPrefix, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    val imageBitmap = bitmap.asImageBitmap()
-                    Image(
-                        painter = BitmapPainter(imageBitmap),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(120.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = prodotto.descrizione!!,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 4,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Q.tà: ${ordini.quantita}",
-                            style = TextStyle(fontSize = 15.sp),
-                            color = Color.Gray,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Venduto da: Lemu",
-                            style = TextStyle(fontSize = 15.sp),
-                            color = Color.Gray,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
 
-                    Spacer(modifier = Modifier.width(10.dp))
 
-                    Text(
-                        text = "€${prodotto.prezzo}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
+
+
+
+
                 }
             }
+
 
             item {
                 Text(
