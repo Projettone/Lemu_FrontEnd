@@ -66,7 +66,6 @@ fun MainScreen2(
     val wishlistItems by wishlistViewModel.wishlistItems.collectAsState()
     val emails by wishlistViewModel.sharedEmails.collectAsState()
 
-    // Usa ViewModel per recuperare i dati dei prodotti e le email basati su wishlistId
     LaunchedEffect(wishlistId) {
         wishlistViewModel.getAllWishlistProdotti(wishlistId)
         wishlistViewModel.getSharedEmails(wishlistId)
@@ -127,7 +126,7 @@ fun MainScreen2(
 fun ProductsWishlistActivity(
     wishlistId: Long,
     wishlistItems: List<WishlistItem>,
-    wishlistType: String, // Aggiungi questo parametro
+    wishlistType: String,
     onRemoveItem: (WishlistItem) -> Unit,
     onViewUsers: () -> Unit,
     modifier: Modifier = Modifier,
@@ -146,7 +145,6 @@ fun ProductsWishlistActivity(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
             )
-            // Mostra l'icona utente solo se la wishlist è di tipo "condivisa"
             if (wishlistType == "condivisa") {
                 IconButton(onClick = onViewUsers) {
                     Icon(
@@ -265,7 +263,7 @@ fun EmailDialog(
     emails: List<String>,
     onDismiss: () -> Unit,
     onAddEmail: (String) -> Unit,
-    onRemoveEmail: (String) -> Unit // Nuovo parametro per rimuovere un'email
+    onRemoveEmail: (String) -> Unit
 ) {
     var emailInput by remember { mutableStateOf("") }
 

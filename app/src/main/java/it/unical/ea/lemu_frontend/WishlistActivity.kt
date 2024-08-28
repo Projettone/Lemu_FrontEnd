@@ -59,7 +59,6 @@ import it.unical.ea.lemu_frontend.viewmodels.WishlistViewModel
 
 @Composable
 fun MainScreen1(navController: NavController, viewModel: WishlistViewModel) {
-    // Observe the wishlists from the ViewModel
     val wishlists by viewModel.wishlists.collectAsState()
     val wishlistItems by viewModel.wishlistItems.collectAsState()
 
@@ -68,13 +67,11 @@ fun MainScreen1(navController: NavController, viewModel: WishlistViewModel) {
     var snackbarMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
 
-    // Funzione per gestire il click sulla wishlist
     val onWishlistClick: (Long, String) -> Unit = { wishlistId, tipo ->
-        viewModel.getAllWishlistProdotti(wishlistId) // Richiama il metodo nel ViewModel
+        viewModel.getAllWishlistProdotti(wishlistId)
         navController.navigate("ProductsWishlist/$wishlistId/$tipo")
     }
 
-    // Updated onAddWishlist to use ViewModel
     val onAddWishlist: (String, String) -> Unit = { name, type ->
         viewModel.addWishlist(name, type)
         showDialog = false
@@ -82,7 +79,6 @@ fun MainScreen1(navController: NavController, viewModel: WishlistViewModel) {
         showSnackbar = true
     }
 
-    // Updated onRemoveWishlist to use ViewModel
     val onRemoveWishlist: (Wishlist) -> Unit = { wishlist ->
         viewModel.removeWishlist(wishlist)
         snackbarMessage = "Wishlist rimossa con successo!"

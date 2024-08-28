@@ -1,10 +1,9 @@
 package it.unical.ea.lemu_frontend.viewmodels
 
+import CartItem
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import it.unical.ea.lemu_frontend.R
-import it.unical.ea.lemu_frontend.ui.theme.CartItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,12 +37,9 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                 val utenteId = authViewModel.user.value?.id ?: throw IllegalStateException("ID dell' Utente non trovato")
 
                 val carrelloDto = try {
-                    println("questo è l'id utente " +  utenteId)
                     carrelloControllerApi.getCarrelloByUtenteId(utenteId = utenteId)
                 } catch (e: ClientException) {
-                    println("errore" + e.statusCode)
                     if (e.statusCode == 403) {
-                        // Carrello non trovato, lo creiamo
                         val nuovoCarrello = CarrelloDto(utenteId = utenteId)
                         carrelloControllerApi.createCarrello(nuovoCarrello)
                     } else {
@@ -103,7 +99,7 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                     val updatedItems = _cartItems.value.toMutableList().apply { remove(cartItem) }
                     withContext(Dispatchers.Main) {
                         _cartItems.value = updatedItems
-                        calculateTotalPrice() // Ricalcola il totale dopo la rimozione
+                        calculateTotalPrice()
                     }
                 } catch (e: Exception) {
                     Log.e("CarrelloViewModel", "Errore nella rimozione dell'elemento", e)
@@ -150,7 +146,7 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                     }
                     withContext(Dispatchers.Main) {
                         _cartItems.value = updatedItems
-                        calculateTotalPrice() // Ricalcola il totale dopo l'aggiornamento
+                        calculateTotalPrice()
                     }
                 } catch (e: Exception) {
                     Log.e("CarrelloViewModel", "Errore nell'aggiornamento del database", e)
@@ -167,17 +163,14 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                 val carrelloId = carrelloDto.id ?: throw IllegalArgumentException("ID del carrello non trovato")
                 val carrelloProdotti = carrelloControllerApi.getAllCarrelloProdottiByCarrelloId(carrelloId)
 
-                // Controlla se il prodotto è già presente nel carrello
                 val existingCartItem = carrelloProdotti.find { it.prodottoId == prodottoDto.id }
 
                 if (existingCartItem != null) {
-                    // Il prodotto è già nel carrello, aggiorna la quantità
                     val currentQuantity = existingCartItem.quantita ?: 0
                     val newQuantity = currentQuantity+ quantita
                     val updatedCarrelloProdottiDto = existingCartItem.copy(quantita = newQuantity)
                     carrelloControllerApi.updateCarrelloProdotti(existingCartItem.id!!, updatedCarrelloProdottiDto)
 
-                    // Aggiorna la lista dei cartItems
                     val updatedItems = _cartItems.value.map { item ->
                         if (item.prodottoId == prodottoDto.id) {
                             item.copy(quantity = newQuantity)
@@ -189,7 +182,6 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                         _cartItems.value = updatedItems
                     }
                 } else {
-                    // Il prodotto non è nel carrello, aggiungilo
                     val newCarrelloProdottiDto = CarrelloProdottiDto(
                         carrelloId = carrelloId,
                         prodottoId = prodottoDto.id,
@@ -197,7 +189,6 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                     )
                     val createdCarrelloProdottiDto = carrelloControllerApi.createCarrelloProdotti(newCarrelloProdottiDto)
 
-                    // Aggiungi il nuovo prodotto a cartItems
                     val newCartItem = CartItem(
                         carrelloProdottoId = createdCarrelloProdottiDto.id ?: throw IllegalStateException("ID del CarrelloProdotto non trovato"),
                         prodottoId = prodottoDto.id ?: throw IllegalStateException("ID del CarrelloProdotto non trovato"),
@@ -212,7 +203,6 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
                     }
                 }
 
-                // Ricalcola il prezzo totale
                 withContext(Dispatchers.Main) {
                     calculateTotalPrice()
                 }
@@ -222,4 +212,37 @@ class CarrelloViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
             }
         }
     }
+
+    fun deleteAllItemsForUser(utenteId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val carrelloDto = carrelloControllerApi.getCarrelloByUtenteId(utenteId)
+
+                val carrelloId = carrelloDto.id ?: throw IllegalArgumentException("ID del carrello non trovato")
+
+                deleteAllItemsInCart(carrelloId)
+
+            } catch (e: Exception) {
+                Log.e("CarrelloViewModel", "Errore durante la cancellazione di tutti i prodotti nel carrello per l'utente $utenteId", e)
+            }
+        }
+    }
+
+    fun deleteAllItemsInCart(carrelloId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                carrelloControllerApi.deleteAllCarrelloProdottiByCarrelloId(carrelloId)
+
+                withContext(Dispatchers.Main) {
+                    _cartItems.value = emptyList()
+                    _totalPrice.value = 0.0
+                }
+            } catch (e: Exception) {
+                Log.e("CarrelloViewModel", "Errore durante la cancellazione di tutti i prodotti nel carrello", e)
+            }
+        }
+    }
+
+
+
 }

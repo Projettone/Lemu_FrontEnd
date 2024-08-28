@@ -27,19 +27,15 @@ import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 
 @Composable
 fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel) {
-    // Usa rememberSaveable per memorizzare la categoria selezionata
     var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
 
-    // Se una categoria è stata selezionata, mostra la schermata dei prodotti
     if (selectedCategory != null) {
         ProductsCategory(category = selectedCategory, navController = navController, authViewModel = authViewModel)
     } else {
-        // Altrimenti, mostra la schermata delle categorie
         val numberOfRows = 6 // Numero di righe per colonna
         val numberOfImagesPerRow = 3 // Numero di immagini per riga
         val spacingBetweenImages = 16.dp // Spazio tra le immagini
 
-        // Lista di risorse delle immagini
         val imageList = listOf(
             R.drawable.abbigliamento,
             R.drawable.autoemoto,
@@ -56,10 +52,8 @@ fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel)
             R.drawable.informatica,
             R.drawable.scarpe,
             R.drawable.sport
-            // Aggiungi altre risorse delle immagini qui...
         )
 
-        // Lista di testi associati alle immagini
         val textList = listOf(
             "Abbigliamento",
             "Auto e moto",
@@ -76,7 +70,6 @@ fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel)
             "Informatica",
             "Scarpe",
             "Sport"
-            // Aggiungi altri testi qui...
         )
 
         LazyColumn(
@@ -103,9 +96,8 @@ fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel)
                                     .weight(1f)
                                     .aspectRatio(0.8f)
                                     .clickable {
-                                        // Quando una categoria è cliccata, selezionala e naviga alla schermata dei prodotti
                                         selectedCategory = text
-                                        navController.navigate("ProductCategory/${text}") // Passa la categoria come argomento
+                                        navController.navigate("ProductCategory/${text}")
                                     }
                             ) {
                                 Column(

@@ -1,4 +1,3 @@
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.BorderStroke
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import it.unical.ea.lemu_frontend.R
-import it.unical.ea.lemu_frontend.ui.theme.CartItem
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 
 @Composable
@@ -238,3 +236,13 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
         }
     }
 }
+
+data class CartItem(
+    val carrelloProdottoId: Long,
+    val prodottoId: Long,
+    val imageRes: String,
+    val name: String,
+    val quantity: Int,
+    val price: Float,
+    val maxAvailability: Int
+)

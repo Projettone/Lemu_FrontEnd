@@ -17,19 +17,14 @@ class CategoryViewModel(private val authViewModel: AuthViewModel) : ViewModel() 
     val products: State<List<ProdottoDto>> = _products
 
     fun fetchProductsByCategory(category: String?) {
-        println("sono dentro")
-        println(category)
         viewModelScope.launch {
             try {
                 val productList = withContext(Dispatchers.IO) {
-                    // Usa la funzione di rete sincrona qui
                     prodottoControllerApi.getProdutCategory(category ?: "")
                 }
                 _products.value = productList
-                println("Numero di prodotti: ${productList.size}")
             } catch (e: Exception) {
                 _products.value = emptyList()
-                println("Numero di prodotti: 0 (nessun prodotto trovato o errore)")
                 e.printStackTrace()
             }
         }

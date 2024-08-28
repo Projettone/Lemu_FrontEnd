@@ -47,7 +47,6 @@ fun ProductsCategory(
     }
     val products by viewModel.products
 
-    // Filtra i prodotti in base alla categoria selezionata, se applicabile
     LaunchedEffect(category) {
         viewModel.fetchProductsByCategory(category)
     }
@@ -118,7 +117,7 @@ fun CustomSnackbar(data: SnackbarData) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = data.visuals.message, // Aggiorna qui l'accesso al messaggio
+                text = data.visuals.message,
                 color = Color.White,
                 fontSize = 16.sp
             )
@@ -131,7 +130,7 @@ fun CustomSnackbar(data: SnackbarData) {
 fun ProductCard(
     prodottoDto: ProdottoDto,
     navController: NavController,
-    onAddToCartClick: () -> Unit // Funzione di callback per l'aggiunta al carrello
+    onAddToCartClick: () -> Unit
 ) {
     val imageBitmap = remember(prodottoDto.immagineProdotto) {
         decodeBase64Image(prodottoDto.immagineProdotto)

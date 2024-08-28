@@ -18,10 +18,13 @@ package org.openapitools.client.apis
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.HttpUrl
+
 import org.openapitools.client.models.CarrelloDto
 import org.openapitools.client.models.CarrelloProdottiDto
+
 import com.squareup.moshi.Json
 import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
+
 import org.openapitools.client.infrastructure.ApiClient
 import org.openapitools.client.infrastructure.ApiResponse
 import org.openapitools.client.infrastructure.ClientException
@@ -29,16 +32,18 @@ import org.openapitools.client.infrastructure.ClientError
 import org.openapitools.client.infrastructure.ServerException
 import org.openapitools.client.infrastructure.ServerError
 import org.openapitools.client.infrastructure.MultiValueMap
+import org.openapitools.client.infrastructure.PartConfig
 import org.openapitools.client.infrastructure.RequestConfig
 import org.openapitools.client.infrastructure.RequestMethod
 import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
+import org.openapitools.client.infrastructure.toMultiValue
 
 class CarrelloControllerApi(private val authViewModel: AuthViewModel, basePath: kotlin.String = defaultBasePath, client: OkHttpClient = ApiClient.defaultClient) : ApiClient(basePath, client) {
     companion object {
         @JvmStatic
         val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.9:8080")
+            System.getProperties().getProperty(ApiClient.baseUrlKey, "http://192.168.1.190:8080")
         }
     }
 
@@ -185,6 +190,78 @@ class CarrelloControllerApi(private val authViewModel: AuthViewModel, basePath: 
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/carrello-api/prodotti/add",
+            query = localVariableQuery,
+            headers = localVariableHeaders,
+            requiresAuthentication = false,
+            body = localVariableBody
+        )
+    }
+
+    /**
+     * 
+     * 
+     * @param carrelloId 
+     * @return void
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     * @throws UnsupportedOperationException If the API returns an informational or redirection response
+     * @throws ClientException If the API returns a client error response
+     * @throws ServerException If the API returns a server error response
+     */
+    @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
+    fun deleteAllCarrelloProdottiByCarrelloId(carrelloId: kotlin.Long) : Unit {
+        val localVarResponse = deleteAllCarrelloProdottiByCarrelloIdWithHttpInfo(carrelloId = carrelloId)
+
+        return when (localVarResponse.responseType) {
+            ResponseType.Success -> Unit
+            ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
+            ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
+            ResponseType.ClientError -> {
+                val localVarError = localVarResponse as ClientError<*>
+                throw ClientException("Client error : ${localVarError.statusCode} ${localVarError.message.orEmpty()}", localVarError.statusCode, localVarResponse)
+            }
+            ResponseType.ServerError -> {
+                val localVarError = localVarResponse as ServerError<*>
+                throw ServerException("Server error : ${localVarError.statusCode} ${localVarError.message.orEmpty()} ${localVarError.body}", localVarError.statusCode, localVarResponse)
+            }
+        }
+    }
+
+    /**
+     * 
+     * 
+     * @param carrelloId 
+     * @return ApiResponse<Unit?>
+     * @throws IllegalStateException If the request is not correctly configured
+     * @throws IOException Rethrows the OkHttp execute method exception
+     */
+    @Throws(IllegalStateException::class, IOException::class)
+    fun deleteAllCarrelloProdottiByCarrelloIdWithHttpInfo(carrelloId: kotlin.Long) : ApiResponse<Unit?> {
+        val localVariableConfig = deleteAllCarrelloProdottiByCarrelloIdRequestConfig(carrelloId = carrelloId)
+
+        return request<Unit, Unit>(
+            localVariableConfig
+        )
+    }
+
+    /**
+     * To obtain the request config of the operation deleteAllCarrelloProdottiByCarrelloId
+     *
+     * @param carrelloId 
+     * @return RequestConfig
+     */
+    fun deleteAllCarrelloProdottiByCarrelloIdRequestConfig(carrelloId: kotlin.Long) : RequestConfig<Unit> {
+        val localVariableBody = null
+        val localVariableQuery: MultiValueMap = mutableMapOf()
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
+
+        authViewModel.getToken()?.let { token ->
+            localVariableHeaders["Authorization"] = "Bearer $token"
+        }
+        
+        return RequestConfig(
+            method = RequestMethod.DELETE,
+            path = "/carrello-api/prodotti/deleteByCarrello/{carrelloId}".replace("{"+"carrelloId"+"}", encodeURIComponent(carrelloId.toString())),
             query = localVariableQuery,
             headers = localVariableHeaders,
             requiresAuthentication = false,
@@ -399,7 +476,7 @@ class CarrelloControllerApi(private val authViewModel: AuthViewModel, basePath: 
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/carrello-api/prodotti/get/{carrelloid}/all".replace("{"+"carrelloid"+"}", encodeURIComponent(carrelloid.toString())),
@@ -473,7 +550,7 @@ class CarrelloControllerApi(private val authViewModel: AuthViewModel, basePath: 
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
-
+        
         return RequestConfig(
             method = RequestMethod.GET,
             path = "/carrello-api/getByUtente/{utenteId}".replace("{"+"utenteId"+"}", encodeURIComponent(utenteId.toString())),
@@ -625,7 +702,7 @@ class CarrelloControllerApi(private val authViewModel: AuthViewModel, basePath: 
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
-
+        
         return RequestConfig(
             method = RequestMethod.PUT,
             path = "/carrello-api/update/{id}".replace("{"+"id"+"}", encodeURIComponent(id.toString())),
