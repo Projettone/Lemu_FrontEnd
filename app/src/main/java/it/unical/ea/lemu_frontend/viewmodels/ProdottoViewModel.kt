@@ -49,6 +49,10 @@ class ProdottoViewModel (private val authViewModel: AuthViewModel){
     private val _wishlists = MutableStateFlow<List<WishlistDto>>(emptyList())
     val wishlists: StateFlow<List<WishlistDto>> = _wishlists
 
+    fun svuotaLista() {
+        _prodotto.value = emptyList()
+    }
+
     suspend fun findWishlistByIdUtente() {
         return withContext(Dispatchers.IO) {
             try {

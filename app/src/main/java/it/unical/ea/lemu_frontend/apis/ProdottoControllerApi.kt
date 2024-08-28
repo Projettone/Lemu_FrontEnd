@@ -109,7 +109,6 @@ class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: 
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
 
-
         return RequestConfig(
             method = RequestMethod.POST,
             path = "/prodottocontroller-api/add",
@@ -181,7 +180,6 @@ class ProdottoControllerApi(private val authViewModel: AuthViewModel, basePath: 
         authViewModel.getToken()?.let { token ->
             localVariableHeaders["Authorization"] = "Bearer $token"
         }
-
 
         return RequestConfig(
             method = RequestMethod.DELETE,

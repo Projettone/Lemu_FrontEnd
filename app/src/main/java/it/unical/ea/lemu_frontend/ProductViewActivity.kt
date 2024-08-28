@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,11 +27,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
@@ -73,7 +78,7 @@ import org.openapitools.client.models.ProdottoDto
 import org.openapitools.client.models.RecensioneDto
 
 @Composable
-fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel, carrelloViewModel: CarrelloViewModel, authViewModel: AuthViewModel) {
+fun ProductViewActivity(productIdString: String, navController: NavHostController,viewModel: ProdottoViewModel, carrelloViewModel: CarrelloViewModel, authViewModel: AuthViewModel, wishlistViewModel: WishlistViewModel) {
     val MyYellow = Color(0xFFFFBE00)
     val MyBlue = Color(0xFF047FC6)
     val MyOrange = Color(0xFFFB8201)
@@ -97,6 +102,9 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     val scaffoldState = rememberScaffoldState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+
+
 
     val paginatedListaRecensioni = remember(currentPage,listaRecensioni) {
         listaRecensioni.chunked(productsPerPage).getOrElse(currentPage) { emptyList() } ?: emptyList()
@@ -234,10 +242,10 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                 .padding(8.dp)
                                 .clickable {
                                     coroutineScope.launch(Dispatchers.IO) {
-                                        if(authViewModel.isLoggedIn.value){
+                                        if (authViewModel.isLoggedIn.value) {
                                             viewModel.findWishlistByIdUtente()
                                             showDialog = true
-                                        }else{
+                                        } else {
                                             scope.launch {
                                                 snackbarHostState.showSnackbar("Devi fare l'accesso per aggiungere ai preferiti!")
                                             }
@@ -254,28 +262,100 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
                 if (showDialog) {
                     AlertDialog(
+                        modifier = Modifier
+                            .height(500.dp)
+                            .background(color = Color.Gray),
                         onDismissRequest = { showDialog = false },
-                        title = {
-                            Text(text = "Your Wishlist")
-                        },
+
                         text = {
-                            if (listaWishlist.isEmpty()) {
-                                Text(text = "No items in your wishlist.")
-                            } else {
-                                LazyColumn {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                if(listaWishlist.isEmpty()){
+                                    Text(
+                                        text = "Devi creare prima almeno una wishlist.",
+                                        style = MaterialTheme.typography.body1,
+                                        modifier = Modifier.padding(vertical = 16.dp)
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.Warning,
+                                        contentDescription = "Empty wishlist icon",
+                                        modifier = Modifier
+                                            .size(400.dp)
+                                            .padding(vertical = 1.dp),
+                                        tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                                    )
+                                }else{
+                                    Text(
+                                        text = "Scegli la wishlist",
+                                        style = MaterialTheme.typography.h6,
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
                                     items(listaWishlist) { item ->
-                                        item.nome?.let { Text(text = it) }
+                                        item.nome?.let { itemName ->
+                                            Card(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        coroutineScope.launch(Dispatchers.IO) {
+                                                            item.id?.let {
+                                                                wishlistViewModel.addProductToWishlist(
+                                                                    it,
+                                                                    product
+                                                                )
+                                                                showDialog = false
+                                                                scope.launch {
+                                                                    snackbarHostState.showSnackbar("Prodotto aggiunto alla wishlist ${item.nome}!")
+                                                                }
+                                                            }
+                                                        }
+                                                        Log.d(
+                                                            "Wishlist",
+                                                            "Hai cliccato su: $itemName"
+                                                        )
+                                                    }
+                                                    .padding(8.dp),
+                                                elevation = 4.dp,
+                                                shape = RoundedCornerShape(12.dp),
+                                                backgroundColor = MaterialTheme.colors.surface
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(16.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = itemName,
+                                                        style = MaterialTheme.typography.body1,
+                                                        modifier = Modifier.weight(1f)
+                                                    )
+
+                                                    Icon(
+                                                        imageVector = Icons.Default.FavoriteBorder,
+                                                        contentDescription = "Wishlist Icon",
+                                                        tint = MaterialTheme.colors.primary
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         },
                         confirmButton = {
                             Button(onClick = { showDialog = false }) {
-                                Text("Close")
+                                Text("Chiudi")
                             }
                         }
                     )
                 }
+
+
 
 
                 Text(text = "${product.prezzo}€",style = TextStyle(fontSize = 30.sp))

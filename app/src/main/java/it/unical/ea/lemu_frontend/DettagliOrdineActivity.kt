@@ -205,12 +205,6 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
                             )
                         }
                     }
-
-
-
-
-
-
                 }
             }
 
