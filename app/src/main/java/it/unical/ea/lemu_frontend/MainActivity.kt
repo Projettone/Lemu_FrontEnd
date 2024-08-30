@@ -146,10 +146,10 @@ fun Start( authViewModel: AuthViewModel,
     ) { innerPadding ->
         NavHost(navController,startDestination = "home", modifier = Modifier.padding(innerPadding)) {
             composable("home") {
-                HomePageActivity(navController = navController, viewModel = prodottoViewModel,isRicerca = false, keyword = "*", carrelloViewModel = carrelloViewModel)
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel,isRicerca = false, keyword = "*", carrelloViewModel = carrelloViewModel, authViewModel = authViewModel)
             }
             composable("homeSearch"){
-                HomePageActivity(navController = navController, viewModel = prodottoViewModel, isRicerca = true, keyword = searchKeyword, carrelloViewModel = carrelloViewModel)
+                HomePageActivity(navController = navController, viewModel = prodottoViewModel, isRicerca = true, keyword = searchKeyword, carrelloViewModel = carrelloViewModel, authViewModel = authViewModel)
             }
             composable("addProduct"){
                 AddProductActivity(authViewModel = authViewModel, navController = navController, prodottoViewModel = prodottoViewModel)
@@ -158,6 +158,8 @@ fun Start( authViewModel: AuthViewModel,
                 val productIdString = backStackEntry.arguments?.getString("productId")
 
                 if (productIdString != null) {
+                    isLogoVisible = true
+                    isArrowVisible = true
                     ProductViewActivity(productIdString = productIdString, navController = navController , viewModel = prodottoViewModel, carrelloViewModel = carrelloViewModel, authViewModel = authViewModel, wishlistViewModel = wishlistViewModel)
                 }
             }

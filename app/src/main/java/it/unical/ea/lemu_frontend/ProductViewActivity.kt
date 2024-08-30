@@ -3,6 +3,7 @@ package it.unical.ea.lemu_frontend
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -59,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -102,6 +104,7 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
     val scaffoldState = rememberScaffoldState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
 
 
@@ -242,7 +245,7 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
                                 .padding(8.dp)
                                 .clickable {
                                     coroutineScope.launch(Dispatchers.IO) {
-                                        if (authViewModel.isLoggedIn.value) {
+                                        if (authViewModel.checkAuthentication()) {
                                             viewModel.findWishlistByIdUtente()
                                             showDialog = true
                                         } else {
@@ -419,12 +422,14 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
                         Button(
                             onClick = {
-                                scope.launch {
-                                    carrelloViewModel.addProductToCart(product, quantity)
-                                    snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                if (!authViewModel.checkAuthentication()){
+                                    Toast.makeText(context, "Effettuare il login per aggiungere un prodotto al carrello", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    scope.launch {
+                                        carrelloViewModel.addProductToCart(product, quantity)
+                                        snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                    }
                                 }
-
-
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -564,23 +569,26 @@ fun ProductViewActivity(productIdString: String, navController: NavHostControlle
 
                 Button(
                     onClick = {
+                        if (!authViewModel.checkAuthentication()){
+                            Toast.makeText(context, "Effettuare il login per inserire una recensione", Toast.LENGTH_SHORT).show()
+                        } else{
+                            coroutineScope.launch(Dispatchers.IO){
+                                try {
+                                    viewModel.addRecensione(rating, reviewText, productId, product)
+                                    reviewText = ""
+                                    rating = 0f
 
-                        coroutineScope.launch(Dispatchers.IO){
-                            try {
-                                viewModel.addRecensione(rating, reviewText, productId, product)
-                                reviewText = ""
-                                rating = 0f
-
-                                isBannerVisible = true
-                                loadRecensioni()
-                                delay(2000L)
-                                isBannerVisible = false
+                                    isBannerVisible = true
+                                    loadRecensioni()
+                                    delay(2000L)
+                                    isBannerVisible = false
 
 
-                            } catch (e: Exception) {
-                                Log.e("Errore nell'aggiunta della recensione", e.toString())
+                                } catch (e: Exception) {
+                                    Log.e("Errore nell'aggiunta della recensione", e.toString())
+                                }
+
                             }
-
                         }
                     },
                     colors = ButtonDefaults.buttonColors(MyOrange),

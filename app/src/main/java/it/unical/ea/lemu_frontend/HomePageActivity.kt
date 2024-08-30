@@ -46,6 +46,7 @@ import org.openapitools.client.models.ProdottoDto
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.widget.Toast
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -59,10 +60,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
+import it.unical.ea.lemu_frontend.viewmodels.AuthViewModel
 import it.unical.ea.lemu_frontend.viewmodels.CarrelloViewModel
 
 @Composable
-fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel, isRicerca: Boolean, keyword: String,carrelloViewModel: CarrelloViewModel) {
+fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel, isRicerca: Boolean, keyword: String,carrelloViewModel: CarrelloViewModel, authViewModel: AuthViewModel) {
     val customColor = Color(0xFFF8F3F3)
     val customColor1 = Color(0xFFFFF3E7)
     val LightGrayColor = Color(0xFFECECEC)
@@ -72,7 +75,6 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
     val lazyListState = rememberLazyListState()
     val lazyListState2 = rememberLazyListState()
     val lazyListState3 = rememberLazyListState()
-    var isLogged by remember { mutableStateOf(false) }
     var currentPage by remember { mutableStateOf(0) }
     val productsPerPage = 5
     val listaProdottiCompleta by viewModel.listaProdotti.collectAsState()
@@ -82,6 +84,7 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
 
     val images = listOf(
@@ -92,12 +95,11 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
         R.drawable.abbigliamento
     )
     val stringList = listOf(
-        "trucchi",
-        "sport",
-        "giardinaggio",
-        "informatica",
-        "abbigliamento",
-
+        "Bellezza",
+        "Sport",
+        "Giardinaggio",
+        "Informatica",
+        "Abbigliamento",
     )
     val images2 = listOf(
         R.drawable.bellezza
@@ -374,9 +376,16 @@ fun HomePageActivity(navController: NavController, viewModel: ProdottoViewModel,
 
                                     Button(
                                         onClick = {
-                                            scope.launch {
-                                                carrelloViewModel.addProductToCart(productInfo, 1)
-                                                snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                            if (!authViewModel.checkAuthentication()){
+                                                Toast.makeText(context, "Effettuare il login per aggiungere un prodotto al carrello", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                scope.launch {
+                                                    carrelloViewModel.addProductToCart(
+                                                        productInfo,
+                                                        1
+                                                    )
+                                                    snackbarHostState.showSnackbar("Prodotto aggiunto al carrello!")
+                                                }
                                             }
                                         },
                                         modifier = Modifier

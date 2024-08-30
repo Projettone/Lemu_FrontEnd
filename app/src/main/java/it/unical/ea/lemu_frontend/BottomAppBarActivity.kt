@@ -53,6 +53,7 @@ fun BottomAppBarActivity(navController: NavController, authViewModel: AuthViewMo
         "ProductsWishlist/{wishlistId}/{wishlistType}" -> 5
         "addProduct" ->3
         "checkout" -> 4
+        "productUser" -> 3
         else -> 1
     }
 

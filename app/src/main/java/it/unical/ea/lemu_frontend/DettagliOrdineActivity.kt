@@ -217,24 +217,6 @@ fun DettagliOrdineActivity(idOrdine: String, viewModelOrder: OrdineViewModel, vi
                     modifier = Modifier.padding(12.dp)
                 )
 
-                Column(
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .border(0.1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Indirizzo di spedizione",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "${ordine?.indirizzo}",
-                        fontSize = 15.sp,
-                    )
-                }
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 12.dp, start = 14.dp)
