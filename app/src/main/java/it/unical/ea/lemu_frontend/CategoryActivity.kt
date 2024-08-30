@@ -32,9 +32,9 @@ fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel)
     if (selectedCategory != null) {
         ProductsCategory(category = selectedCategory, navController = navController, authViewModel = authViewModel)
     } else {
-        val numberOfRows = 6 // Numero di righe per colonna
-        val numberOfImagesPerRow = 3 // Numero di immagini per riga
-        val spacingBetweenImages = 16.dp // Spazio tra le immagini
+        val numberOfRows = 6
+        val numberOfImagesPerRow = 3
+        val spacingBetweenImages = 16.dp
 
         val imageList = listOf(
             R.drawable.abbigliamento,
@@ -56,7 +56,7 @@ fun CategoryActivity(navController: NavController, authViewModel: AuthViewModel)
 
         val textList = listOf(
             "Abbigliamento",
-            "Auto e moto",
+            "Auto e Moto",
             "Bellezza",
             "Borse",
             "Cancelleria",

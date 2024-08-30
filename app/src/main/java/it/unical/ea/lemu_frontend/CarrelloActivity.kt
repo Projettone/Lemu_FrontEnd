@@ -43,7 +43,7 @@ fun CarrelloActivity(navController: NavController, carrelloViewModel: CarrelloVi
 
         if (cartItems.isEmpty()) {
             Image(
-                painter = painterResource(id = R.drawable.cart_logo),
+                painter = painterResource(id = R.drawable.carrellovuoto),
                 contentDescription = "Carrello Vuoto",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -189,7 +189,7 @@ fun CartItemCard(
 
 @Composable
 fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Totale: ${String.format("%.2f", totalPrice)}€",
@@ -228,14 +228,20 @@ fun CheckoutSection(totalPrice: Double, onCheckout: () -> Unit) {
                 color = Color(0xFF228B22)
             )
         }
-        Button(
-            onClick = onCheckout,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Procedi all'acquisto")
+            Button(
+                onClick = onCheckout
+            ) {
+                Text(text = "Procedi all'acquisto")
+            }
         }
     }
 }
+
 
 data class CartItem(
     val carrelloProdottoId: Long,

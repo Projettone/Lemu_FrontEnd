@@ -141,15 +141,26 @@ fun WishlistActivity(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            items(wishlists) { wishlist ->
-                WishlistCard(
-                    wishlist = wishlist,
-                    onRemoveWishlist = { onRemoveWishlist(wishlist) },
-                    onWishlistClick = { onWishlistClick(wishlist.id, wishlist.tipo) }
-                )
+        if (wishlists.isEmpty()) {
+            Image(
+                painter = painterResource(id = R.drawable.wishlistvuota),
+                contentDescription = "Wishlist Vuota",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(wishlists) { wishlist ->
+                    WishlistCard(
+                        wishlist = wishlist,
+                        onRemoveWishlist = { onRemoveWishlist(wishlist) },
+                        onWishlistClick = { onWishlistClick(wishlist.id, wishlist.tipo) }
+                    )
+                }
             }
         }
     }

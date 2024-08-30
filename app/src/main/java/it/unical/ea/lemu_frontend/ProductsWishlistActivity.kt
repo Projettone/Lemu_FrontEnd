@@ -109,12 +109,12 @@ fun MainScreen2(
                 onAddEmail = { email ->
                     if (isValidEmail(email)) {
                         wishlistViewModel.addEmailToWishlist(wishlistId, email)
-                        wishlistViewModel.getSharedEmails(wishlistId) // Refresh the email list
+                        wishlistViewModel.getSharedEmails(wishlistId)
                     }
                 },
                 onRemoveEmail = { email ->
                     wishlistViewModel.removeEmailFromWishlist(wishlistId, email)
-                    wishlistViewModel.getSharedEmails(wishlistId) // Refresh the email list
+                    wishlistViewModel.getSharedEmails(wishlistId)
                 }
             )
         }
@@ -155,15 +155,26 @@ fun ProductsWishlistActivity(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            items(wishlistItems) { wishlistItem ->
-                WishlistItemCard(
-                    wishlistItem = wishlistItem,
-                    onRemoveItem = onRemoveItem,
-                    navController = navController
-                )
+        if (wishlistItems.isEmpty()) {
+            Image(
+                painter = painterResource(id = R.drawable.wishlistprodottivuota),
+                contentDescription = "Nessun Prodotto nella Wishlist",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(wishlistItems) { wishlistItem ->
+                    WishlistItemCard(
+                        wishlistItem = wishlistItem,
+                        onRemoveItem = onRemoveItem,
+                        navController = navController
+                    )
+                }
             }
         }
     }

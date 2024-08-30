@@ -11,7 +11,7 @@ import org.openapitools.client.models.ProdottoDto
 
 class CategoryViewModel(private val authViewModel: AuthViewModel) : ViewModel() {
 
-    private val prodottoControllerApi = ProdottoControllerApi(authViewModel)  // Instantiate the API controller
+    private val prodottoControllerApi = ProdottoControllerApi(authViewModel)
 
     private val _products = mutableStateOf<List<ProdottoDto>>(emptyList())
     val products: State<List<ProdottoDto>> = _products
