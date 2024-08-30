@@ -226,7 +226,7 @@ class AuthViewModel (private val activity: Activity) {
     }
 
     fun validateCredenzialiPassword(password: String): Boolean {
-        return password.isNotEmpty() && password.length >= 1
+        return password.isNotEmpty() && password.length >= 8
     }
 
     private fun saveToken(token: String) {

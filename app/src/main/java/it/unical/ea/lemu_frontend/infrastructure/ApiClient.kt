@@ -60,9 +60,9 @@ open class ApiClient(val baseUrl: String, var client: OkHttpClient = defaultClie
         @JvmStatic
         val highTimeoutClient: OkHttpClient by lazy {
             OkHttpClient.Builder()
-                .connectTimeout(100, TimeUnit.SECONDS)
-                .writeTimeout(100, TimeUnit.SECONDS)
-                .readTimeout(100, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build()
         }
 

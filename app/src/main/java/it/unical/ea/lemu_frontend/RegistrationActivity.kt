@@ -145,6 +145,16 @@ fun RegistrationActivity(navController: NavController, authViewModel: AuthViewMo
                         Toast.makeText(context, "Inserisci tutti i dati", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+
+                    if (!authViewModel.validateCredenzialiEmail(email)) {
+                        Toast.makeText(context, "Inserire un indirizzo email valido", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    if (!authViewModel.validateCredenzialiPassword(password)) {
+                        Toast.makeText(context, "Password non valida, assicurarsi che la lunghezza sia di almeno 8 caratteri", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     if (password != confirmPassword) {
                         Toast.makeText(context, "Le password non coincidono", Toast.LENGTH_SHORT).show()
                     } else {
